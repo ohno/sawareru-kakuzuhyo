@@ -94,7 +94,6 @@ button, input, select { font: inherit; color: inherit; }
 .logo .k-g { color: var(--logo-g); }
 .logo .k-y { color: var(--logo-y); }
 .logo .k-b { color: var(--logo-b); }
-.mode-toggles { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
 .sub-legend { font-size: 11px; font-weight: 600; color: var(--text-3); }
 .sec-body.checks .sub-legend { margin-top: 6px; }
 .checks-sub { display: flex; flex-direction: column; gap: 7px; }
@@ -163,19 +162,11 @@ button, input, select { font: inherit; color: inherit; }
 .ticks { position: relative; height: 16px; font-size: 10.5px; color: var(--text-3); margin: 2px 8px 0; }
 .ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 
-.toggles { border: 0; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 5px; }
-.toggles legend { font-size: 11px; font-weight: 600; color: var(--text-3); letter-spacing: 0.04em; margin-bottom: 4px; padding: 0; }
-.toggles label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-2); }
-.toggles input { accent-color: var(--accent); width: 15px; height: 15px; }
-.toggles + .toggles { margin-top: 16px; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
-.field-row .field { margin-top: 0; }
 .arrow-key { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; margin: 0; font-size: 11.5px; color: var(--text-3); }
 .arrow-key i { display: inline-block; width: 26px; height: 0; border-top: 3px solid var(--text-2); margin-left: 4px; }
 .arrow-key i:first-child { margin-left: 0; }
 .arrow-key i.dotted { border-top-style: dotted; }
 
-.legend-note { font-size: 11px; color: var(--text-3); margin: -2px 0 6px; }
 .hl-scale { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
 .hl-scale .gradient { flex: 1; margin-top: 0; }
 .stable-sw { flex: none; width: 40px; height: 16px; border-radius: 5px; color: #fff; font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }

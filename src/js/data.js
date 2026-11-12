@@ -30,13 +30,13 @@ const [elements, abundances, riken, fission, fuel, drip, hyper, hyperDrip] = awa
 /** [symbol, English name, Japanese name], index = Z (0 = the neutron, up to 126) */
 export const ELEMENTS = elements.elements.map((e) => [e.symbol, e.en, e.ja]);
 /** per Z: introduction, characteristic isotopes [[A, note], ...], discovery year (or 'ancient') */
-export const ELEMENT_INFO = elements.elements.map((e) => e.info);
+export const ELEMENT_DESCRIPTION = elements.elements.map((e) => e.description);
 export const ELEMENT_ISOTOPES = elements.elements.map((e) => e.isotopes);
 export const ELEMENT_DISCOVERY = elements.elements.map((e) => e.discovered);
 /** protosolar abundances: label, and per Z { num, mass, rank } (shares of all atoms and of all mass) or null */
 export const ABUNDANCE = abundances;
 
-/** nuclides first identified at RIKEN [Z, A, year, reference, DOI], and those credited to RIKEN only by its LEGO chart (+ note) */
+/** nuclides first identified at RIKEN [Z, A, year, reference, doi], and those credited to RIKEN only by its LEGO chart (+ note) */
 export const RIKEN_NUCLIDES = riken.nuclides;
 export const RIKEN_LOCAL = riken.local;
 /** thermal fission of ²³⁵U: [Z, A, cumulative yield, independent yield] */
@@ -45,9 +45,9 @@ export const FY_SOURCE = fission.source;
 /** fuel-cycle groups: members { group: [[Z, A, note or null], ...] } and the note of each group */
 export const FUEL_MEMBERS = fuel.members;
 export const FUEL_NOTES = fuel.notes;
-/** drip lines of ordinary nuclei: [Z, nMinProton, nMaxNeutron, nMinLo, nMinHi, nMaxLo, nMaxHi] */
+/** drip lines of ordinary nuclei: [Z, proton, neutron, protonMin, protonMax, neutronMin, neutronMax] (N) */
 export const DRIP_LINES = drip.lines;
-/** observed hypernuclei: [kind, A, nameZ, coreZ, coreN, B, year, experiment, ref, doi] */
+/** observed hypernuclei: [kind, A, nameZ, coreZ, coreN, B, year, experiment, reference, doi] */
 export const HYPERNUCLEI = hyper.hypernuclei;
 export const HYPER_SOURCE = hyper.source;
 /** theoretical hypernuclear drip lines, one entry per paper (their line styles are in hyper.js) */

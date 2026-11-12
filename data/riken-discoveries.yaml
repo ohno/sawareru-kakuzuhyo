@@ -1,6 +1,6 @@
 # FRIB Discovery of Nuclides Project, version of 2026-09-25: the nuclides with lab = RIKEN.
 nuclides:
-  columns: [Z, A, year, reference, DOI]
+  columns: [Z, A, year, reference, doi]
   rows:
     - [0, 4, 2016, 'Kisamori et al., Phys.Rev.Lett. 116, 052501 (2016)', '10.1103/PhysRevLett.116.052501']
     - [1, 7, 2003, 'Korsheninnikov et al., Phys.Rev.Lett. 90, 082501 (2003)', '10.1103/PhysRevLett.90.082501']
@@ -290,6 +290,6 @@ nuclides:
 
 # Credited to RIKEN by RIKEN's LEGO chart, to another laboratory by FRIB.
 local:
-  columns: [Z, A, year, reference, DOI, note]
+  columns: [Z, A, year, reference, doi, note]
   rows:
     - [108, 263, 2008, '理研 GARIS での観測（²⁰⁶Pb(⁵⁸Fe,n) 反応。森田浩介らの超重元素研究の報告）', '', 'FRIB の発見データベースでは Berkeley（Dragojević et al., Phys. Rev. C 79, 011602 (2009)）の発見とされています。理研のレゴ核図表では理研の発見として表示されています。']

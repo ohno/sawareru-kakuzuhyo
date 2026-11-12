@@ -9,7 +9,7 @@ export const FUEL_GROUPS = {
   major: { name: 'U・Pu（主要アクチノイド）', color: '#2f6fd6' },
   ma: { name: 'マイナーアクチノイド（MA）', color: '#8b4fd8' },
   llfp: { name: '長寿命FP（LLFP）', color: '#d01012' },
-  key: { name: '主なFP（発熱・被ばく・中性子吸収）', color: '#f08a00' },
+  notable: { name: '主なFP（発熱・被ばく・中性子吸収）', color: '#f08a00' },
   fp: { name: 'そのほかのFP', color: '#f5c400' },
 };
 
@@ -72,8 +72,8 @@ export const MODE_FILTERS = {
 /** nuclides that get a floating name tag in each mode */
 export const MODE_CALLOUTS = {
   riken: [[113, 278, 'ニホニウム Nh：理研が発見した元素']],
-  fp: MEMBERS.key.map(([z, a]) => [z, a]),
+  fp: MEMBERS.notable.map(([z, a]) => [z, a]),
   llfp: MEMBERS.llfp.map(([z, a]) => [z, a]),
   ma: MEMBERS.ma.map(([z, a]) => [z, a]),
-  fuel: [...MEMBERS.llfp, ...MEMBERS.key, [93, 237], [95, 241], [92, 235], [92, 238], [94, 239]].map(([z, a]) => [z, a]),
+  fuel: [...MEMBERS.llfp, ...MEMBERS.notable, [93, 237], [95, 241], [92, 235], [92, 238], [94, 239]].map(([z, a]) => [z, a]),
 };

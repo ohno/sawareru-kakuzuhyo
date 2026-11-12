@@ -3,7 +3,7 @@
 # 2026-08-04), for X the 1p Ξ⁻ state of Friedman & Gal. year, experiment, reference: the earliest publication.
 source: Mainz Chart of Hypernuclides（2026年8月版）、Friedman & Gal, arXiv:2212.12283（Ξ）
 hypernuclei:
-  columns: [kind, A, nameZ, coreZ, coreN, B, year, experiment, reference, DOI]
+  columns: [kind, A, nameZ, coreZ, coreN, B, year, experiment, reference, doi]
   rows:
     - ['L', 3, 1, 1, 1, 0.17, 1957, 'Berkeley Bevatron emulsion', 'Schneps et al., Phys. Rev. 106, 1062 (1957)', '10.1103/PhysRev.106.1062']
     - ['L', 4, 1, 1, 2, 2.11, 1957, 'Berkeley Bevatron emulsion', 'Schneps et al., Phys. Rev. 106, 1062 (1957)', '10.1103/PhysRev.106.1062']

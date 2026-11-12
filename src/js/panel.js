@@ -4,7 +4,7 @@ import {
   fmtHalfLife, fmtSeconds, fmtJpi, fmtKeV, fmtMeV, fmtBranch, sup, feDeficit, HL_CSS, HL_STABLE, HL_RANGE,
   LEGO_PALETTE,
 } from './nuclear.js';
-import { ELEMENT_INFO, ELEMENT_ISOTOPES, ELEMENT_DISCOVERY, ABUNDANCE } from './data.js';
+import { ELEMENT_DESCRIPTION, ELEMENT_ISOTOPES, ELEMENT_DISCOVERY, ABUNDANCE } from './data.js';
 import { FUEL_GROUPS, FY_SOURCE } from './fuel.js';
 import { HYPER_KINDS, hyperHtml, HYPER_SOURCE, EXPERIMENTS } from './hyper.js';
 
@@ -151,7 +151,7 @@ function elementProps(nuc) {
 // element introduction and its characteristic isotopes (one per line; click to go there)
 function elementHtml(nuc, graph) {
   const el = ELEMENTS[nuc.z];
-  const info = ELEMENT_INFO[nuc.z] || '';
+  const info = ELEMENT_DESCRIPTION[nuc.z] || '';
   const isotopes = (ELEMENT_ISOTOPES[nuc.z] || []).map(([a, note]) => {
     const i = graph.find(nuc.z, a - nuc.z);
     const label = `<span class="iso-nuc">${nucHtml({ a, s: el[0] })}</span><small>${esc(note)}</small>`;

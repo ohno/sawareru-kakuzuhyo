@@ -1068,7 +1068,7 @@ async function init() {
     applyKinds();
   }));
   // hypernuclear drip lines, one check box per source (each draws on the layers it has numbers for)
-  $('#hyper-drip').innerHTML = HYPER_DRIP_SOURCES.map((src) => `<label class="check" title="${src.cite.replace(/"/g, '&quot;')}">
+  $('#hyper-drip').innerHTML = HYPER_DRIP_SOURCES.map((src) => `<label class="check" title="${src.citation.replace(/"/g, '&quot;')}">
     <input type="checkbox" data-hdrip="${src.key}"${src.on ? ' checked' : ''}> <i class="kind-sw" style="background:${src.color}"></i>${src.label}</label>`).join('');
   document.querySelectorAll('[data-hdrip]').forEach((cb) => cb.addEventListener('change', (e) => {
     if (e.isTrusted && cb.checked && !chart.hyper) setHyper(true);

@@ -5,7 +5,7 @@ sources:
   - key: samanta2008
     short: Samanta 2008
     label: Samanta ら 2008（液滴模型 BWMH）
-    cite: 'C. Samanta, P. Roy Chowdhury, D. N. Basu, "Lambda hyperonic effect on the normal drip lines", J. Phys. G: Nucl. Part. Phys. 35, 065101 (2008)'
+    citation: 'C. Samanta, P. Roy Chowdhury, D. N. Basu, "Lambda hyperonic effect on the normal drip lines", J. Phys. G: Nucl. Part. Phys. 35, 065101 (2008)'
     layers:
       0:
         neutron:
@@ -70,7 +70,7 @@ sources:
   - key: roychowdhury2010
     short: Roy Chowdhury 2010（Ξ⁻）
     label: Roy Chowdhury ら 2010（Ξ⁻、液滴模型 BWMH）
-    cite: P. Roy Chowdhury, C. Samanta, D. N. Basu, "Charged and neutral hyperonic effects on the driplines", Rom. Rep. Phys. 62, 65-98 (2010) [arXiv:nucl-th/0605005, 2006]
+    citation: P. Roy Chowdhury, C. Samanta, D. N. Basu, "Charged and neutral hyperonic effects on the driplines", Rom. Rep. Phys. 62, 65-98 (2010) [arXiv:nucl-th/0605005, 2006]
     layers:
       2:
         neutron:
@@ -96,7 +96,7 @@ sources:
     short: Khan 2015
     label: Khan ら 2015（Skyrme-HF、偶偶核のみ）
     zStep: 2
-    cite: E. Khan, J. Margueron, F. Gulminelli, Ad. R. Raduta, "Microscopic evaluation of the hypernuclear chart with Lambda hyperons", Phys. Rev. C 92, 044313 (2015)
+    citation: E. Khan, J. Margueron, F. Gulminelli, Ad. R. Raduta, "Microscopic evaluation of the hypernuclear chart with Lambda hyperons", Phys. Rev. C 92, 044313 (2015)
     layers:
       0:
         neutron:
@@ -131,7 +131,7 @@ sources:
   - key: meoto2022
     short: Meoto 2022（2n）
     label: Meoto 2022（1Λ の 2 中性子ドリップ、Z = 6–25）
-    cite: E. F. Meoto, "Two-neutron drip lines of a few single lambda hypernuclei", J. Phys. Commun. 6, 125004 (2022)
+    citation: E. F. Meoto, "Two-neutron drip lines of a few single lambda hypernuclei", J. Phys. Commun. 6, 125004 (2022)
     layers:
       1:
         neutron:

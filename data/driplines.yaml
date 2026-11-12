@@ -1,8 +1,8 @@
 # Two-nucleon drip lines of six Skyrme EDFs, even Z: from the most bound isotope outward, the last N before
 # S2p <= 0 (proton side) or S2n <= 0 (neutron side).
-# nMinProton, nMaxNeutron: means of the six models; Lo, Hi: their min and max.
+# proton, neutron: N of each drip line, the mean of the six models; Min, Max: their spread.
 lines:
-  columns: [Z, nMinProton, nMaxNeutron, nMinLo, nMinHi, nMaxLo, nMaxHi]
+  columns: [Z, proton, neutron, protonMin, protonMax, neutronMin, neutronMax]
   rows:
     - [    8,   4.3,    19,     4,     6,    18,    20]
     - [   10,     7,    24,     6,     8,    20,    28]

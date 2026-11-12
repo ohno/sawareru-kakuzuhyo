@@ -1,8 +1,8 @@
 # Protosolar abundances, Lodders, Bergemann & Palme 2025 (tables of Zenodo 14988840): logEps = log10(N/N_H) + 12,
-# mass = share of all mass. The share of all atoms and the rank are worked out from logEps by scripts/build.py.
+# massFraction = share of all mass. The share of all atoms and the rank are worked out from logEps by scripts/build.py.
 label: 太陽系の元素組成（宇宙の平均的な組成の目安）
 elements:
-  columns: [Z, logEps, mass]
+  columns: [Z, logEps, massFraction]
   rows:
     - [1, 12, 0.706]
     - [2, 10.992, 0.2752]
