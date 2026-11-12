@@ -1,0 +1,50 @@
+# Builds the site into dist/ (scripts/build.py) and publishes it on GitHub Pages.
+# Repository settings: Pages → Build and deployment → Source: "GitHub Actions".
+# The KTUY05-based data (yellow predicted nuclei, island of stability) is built only when the repository variable
+# USE_KTUY is "true" (Settings → Secrets and variables → Actions → Variables): reusing it needs JAEA's permission.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+      - name: Build the site
+        run: |
+          if [ "${{ vars.USE_KTUY }}" = "true" ]; then
+            python scripts/build.py
+          else
+            python scripts/build.py --no-ktuy
+          fi
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

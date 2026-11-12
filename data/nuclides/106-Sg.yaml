@@ -1,0 +1,173 @@
+258Sg:
+  ME: 105300.0
+  dME: 410.0
+  ME_est: true
+  T: 2.7 ms
+  dT: '0.5'
+  Jpi: 0+
+  Year: 1997
+  BR: [SF~100, 'A ?']
+
+259Sg:
+  ME: 106520.0
+  dME: 180.0
+  ME_est: true
+  T: 402 ms
+  dT: '56'
+  Jpi: (11/2-)
+  Year: 1985
+  BR: [A~100, 'SF ?', 'B+ ?']
+  Iso:
+    - Lbl: m
+      Ex: 87.0
+      T: 226 ms
+      Jpi: (1/2+)
+      BR: [A~97 1, SF~3 1, 'B+ ?']
+
+260Sg:
+  ME: 106547.0
+  dME: 21.0
+  T: 4.95 ms
+  dT: '0.33'
+  Jpi: 0+
+  Year: 1984
+  BR: [SF=71 3, A=29 3]
+
+261Sg:
+  ME: 108005.0
+  dME: 18.0
+  T: 183 ms
+  dT: '5'
+  Jpi: (3/2+)
+  Year: 1984
+  BR: [A=98.1 4, B+=1.3 3, SF=0.6 2]
+  Iso:
+    - Lbl: m
+      Ex: 100.0
+      Ex_est: true
+      T: 9.3 μs
+      Jpi: 7/2+#
+      BR: [IT=100]
+
+262Sg:
+  ME: 108369.0
+  dME: 22.0
+  T: 10.3 ms
+  dT: '1.7'
+  Jpi: 0+
+  Year: 2001
+  BR: [SF=94 6, 'A ?']
+
+263Sg:
+  ME: 110200.0
+  dME: 100.0
+  ME_est: true
+  T: 940 ms
+  dT: '140'
+  Jpi: 3/2+#
+  Year: 1974
+  BR: [A=87 8, SF=13 8]
+  Iso:
+    - Lbl: m
+      Ex: 51.0
+      T: 420 ms
+      Jpi: 7/2+#
+      BR: [A~100, 'SF ?', 'IT ?']
+
+264Sg:
+  ME: 110780.0
+  dME: 280.0
+  ME_est: true
+  T: 78 ms
+  dT: '25'
+  Jpi: 0+
+  Year: 2006
+  BR: [SF>80, 'A ?']
+
+265Sg:
+  ME: 112790.0
+  dME: 140.0
+  ME_est: true
+  T: 9.2 s
+  dT: '1.6'
+  Jpi: 11/2-#
+  Year: 1994
+  BR: [A>50, 'SF ?']
+  Iso:
+    - Lbl: m
+      Ex: -10.0
+      Ex_est: true
+      T: 16.4 s
+      BR: [A>50, 'SF ?']
+
+266Sg:
+  ME: 113620.0
+  dME: 250.0
+  ME_est: true
+  T: 390 ms
+  dT: '110'
+  Jpi: 0+
+  Year: 2006
+  BR: [SF>90]
+
+267Sg:
+  ME: 115810.0
+  dME: 260.0
+  ME_est: true
+  T: 1.8 m
+  dT: '0.7'
+  Year: 2008
+  BR: [SF=83, A=17]
+
+268Sg:
+  ME: 116800.0
+  dME: 470.0
+  ME_est: true
+  T: 2 m
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']
+
+269Sg:
+  ME: 119690.0
+  dME: 370.0
+  ME_est: true
+  T: 5 m
+  dT: '2'
+  Year: 2010
+  BR: [A~100, 'SF ?']
+
+270Sg:
+  ME: 121430.0
+  dME: 460.0
+  ME_est: true
+  T: 3 m
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']
+
+271Sg:
+  ME: 124620.0
+  dME: 590.0
+  ME_est: true
+  T: 2.2 m
+  dT: '1.1'
+  Year: 2004
+  BR: [A=42 23, SF=58 23]
+
+272Sg:
+  ME: 126520.0
+  dME: 690.0
+  ME_est: true
+  T: 4 m
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']
+
+273Sg:
+  ME: 129920.0
+  dME: 400.0
+  ME_est: true
+  T: 5 m
+  T_est: true
+  BR: ['SF ?']

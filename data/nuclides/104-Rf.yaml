@@ -1,0 +1,240 @@
+253Rf:
+  ME: 93640.0
+  dME: 410.0
+  ME_est: true
+  T: 13 ms
+  dT: '5'
+  Jpi: (7/2)(+#)
+  Year: 1997
+  BR: [SF~100, 'A ?']
+  Iso:
+    - Lbl: m
+      Ex: 200.0
+      Ex_est: true
+      T: 52 μs
+      Jpi: (1/2)(+#)
+      BR: [SF~100, 'A ?']
+
+254Rf:
+  ME: 93200.0
+  dME: 280.0
+  ME_est: true
+  T: 22.9 μs
+  dT: '1.0'
+  Jpi: 0+
+  Year: 1997
+  BR: [SF~100, A<1.5]
+  Iso:
+    - Lbl: m
+      Ex: 1300.0
+      Ex_est: true
+      T: 4.3 μs
+      Jpi: 8-#
+      BR: [IT~100, SF<10]
+    - Lbl: n
+      Ex: 2000.0
+      Ex_est: true
+      T: 247 μs
+      Jpi: 16+#
+      BR: [IT~100, SF<40]
+
+255Rf:
+  ME: 94330.0
+  dME: 180.0
+  ME_est: true
+  T: 1.63 s
+  dT: '0.05'
+  Jpi: (9/2-)
+  Year: 1975
+  BR: [A=52.8 22, SF=47.2 22, B+<6]
+  Iso:
+    - Lbl: m
+      Ex: 150.0
+      T: 43 μs
+      Jpi: (5/2+)
+      BR: [IT=100]
+    - Lbl: n
+      Ex: 1050.0
+      T: 16 μs
+      Jpi: 19/2+#
+      BR: [IT=100]
+    - Lbl: p
+      Ex: 1300.0
+      T: 41 μs
+      Jpi: 25/2+#
+      BR: [IT=100]
+
+256Rf:
+  ME: 94222.0
+  dME: 18.0
+  T: 6.60 ms
+  dT: '0.05'
+  Jpi: 0+
+  Year: 1975
+  BR: [SF=99.69 10, A=0.31 10]
+  Iso:
+    - Lbl: m
+      Ex: 1120.0
+      Ex_est: true
+      T: 25 μs
+      Jpi: 4-#
+      BR: [IT=100, 'SF ?']
+    - Lbl: n
+      Ex: 1400.0
+      Ex_est: true
+      T: 17 μs
+      Jpi: 8-#
+      BR: [IT=100, 'SF ?']
+    - Lbl: p
+      Ex: 2400.0
+      Ex_est: true
+      T: 27 μs
+      BR: [IT=100, 'SF ?']
+
+257Rf:
+  ME: 95866.0
+  dME: 11.0
+  T: 5.0 s
+  dT: '0.2'
+  Jpi: (1/2+)
+  Year: 1969
+  BR: [A=89.3 14, B+=9.4 14, SF=1.3 3]
+  Iso:
+    - Lbl: m
+      Ex: 73.0
+      T: 4.5 s
+      Jpi: 11/2-#
+      BR: [A=88.5 15, B+=11.5 15, 'SF ?']
+    - Lbl: n
+      Ex: 1155.0
+      T: 106 μs
+      Jpi: 21/2+#
+      BR: [IT=100]
+
+258Rf:
+  ME: 96344.0
+  dME: 16.0
+  T: 12.5 ms
+  dT: '0.5'
+  Jpi: 0+
+  Year: 1969
+  BR: [SF=95.1 16, A=4.9 16]
+  Iso:
+    - Lbl: m
+      Ex: 1200.0
+      Ex_est: true
+      T: 3.4 ms
+      BR: ['IT= ?', 'A ?', 'B+ ?']
+    - Lbl: n
+      Ex: 1500.0
+      Ex_est: true
+      T: 15 μs
+      BR: ['IT ?', 'SF ?']
+
+259Rf:
+  ME: 98370.0
+  dME: 70.0
+  ME_est: true
+  T: 2.63 s
+  dT: '0.26'
+  Jpi: 3/2+#
+  Year: 1969
+  BR: [A=85 4, B+=15 4, SF<3]
+
+260Rf:
+  ME: 99150.0
+  dME: 200.0
+  ME_est: true
+  T: 21 ms
+  dT: '1'
+  Jpi: 0+
+  Year: 1985
+  BR: [SF~100, 'A ?', 'B+ ?']
+
+261Rf:
+  ME: 101320.0
+  dME: 70.0
+  T: 2.1 s
+  dT: '0.2'
+  Jpi: 3/2+#
+  Year: 1970
+  BR: [SF=82 4, A=18 4]
+  Iso:
+    - Lbl: m
+      Ex: 70.0
+      Ex_est: true
+      T: 74 s
+      Jpi: 11/2-#
+      BR: [A~100, 'B+ ?', 'SF ?']
+
+262Rf:
+  ME: 102390.0
+  dME: 220.0
+  ME_est: true
+  T: 250 ms
+  dT: '100'
+  Jpi: 0+
+  Year: 1985
+  BR: [SF~100]
+  Iso:
+    - Lbl: m
+      Ex: 1000.0
+      Ex_est: true
+      T: 47 ms
+      Jpi: (8-,9-)#
+      BR: [SF=100]
+
+263Rf:
+  ME: 104760.0
+  dME: 150.0
+  ME_est: true
+  T: 11 m
+  dT: '3'
+  Year: 2003
+  BR: [SF~100, 'A ?']
+
+264Rf:
+  ME: 106080.0
+  dME: 360.0
+  ME_est: true
+  T: 1 h
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?']
+
+265Rf:
+  ME: 108690.0
+  dME: 360.0
+  ME_est: true
+  T: 1.6 m
+  dT: '0.6'
+  Jpi: 9/2+#
+  Year: 2010
+  BR: [SF~100, 'A ?']
+
+266Rf:
+  ME: 110140.0
+  dME: 410.0
+  ME_est: true
+  T: 4 h
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']
+
+267Rf:
+  ME: 113440.0
+  dME: 580.0
+  ME_est: true
+  T: 2.5 h
+  dT: '1.5'
+  Year: 2004
+  BR: [SF=100]
+
+268Rf:
+  ME: 115480.0
+  dME: 660.0
+  ME_est: true
+  T: 1 h
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']

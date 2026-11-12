@@ -1,0 +1,27 @@
+293Og:
+  ME: 198800.0
+  dME: 710.0
+  ME_est: true
+  T: 1 ms
+  T_est: true
+  Year: 2010
+  BR: ['A ?']
+
+294Og:
+  ME: 199320.0
+  dME: 550.0
+  ME_est: true
+  T: 0.7 ms
+  dT: '0.3'
+  Jpi: 0+
+  Year: 2004
+  BR: [A~100, 'SF ?']
+
+295Og:
+  ME: 201370.0
+  dME: 660.0
+  ME_est: true
+  T: 680 ms
+  dT: '540'
+  Year: 2006
+  BR: [A~100]

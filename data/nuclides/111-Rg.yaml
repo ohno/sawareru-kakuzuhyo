@@ -1,0 +1,127 @@
+272Rg:
+  ME: 142770.0
+  dME: 230.0
+  ME_est: true
+  T: 4.2 ms
+  dT: '1.1'
+  Year: 1995
+  BR: [A=100]
+
+273Rg:
+  ME: 142890.0
+  dME: 400.0
+  ME_est: true
+  T: 2 ms
+  T_est: true
+  BR: ['A ?']
+
+274Rg:
+  ME: 144610.0
+  dME: 210.0
+  ME_est: true
+  T: 20 ms
+  dT: '11'
+  Year: 2004
+  BR: [A~100]
+
+275Rg:
+  ME: 145400.0
+  dME: 450.0
+  ME_est: true
+  T: 5 ms
+  T_est: true
+  BR: ['A ?']
+
+276Rg:
+  ME: 147390.0
+  dME: 630.0
+  ME_est: true
+  T: 10 ms
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+277Rg:
+  ME: 148410.0
+  dME: 470.0
+  ME_est: true
+  T: 4 ms
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+278Rg:
+  ME: 150520.0
+  dME: 390.0
+  ME_est: true
+  T: 8 ms
+  dT: '5'
+  Year: 2007
+  BR: [A=100]
+
+279Rg:
+  ME: 151720.0
+  dME: 420.0
+  ME_est: true
+  T: 170 ms
+  dT: '110'
+  Year: 2004
+  BR: [A=100]
+
+280Rg:
+  ME: 153890.0
+  dME: 530.0
+  ME_est: true
+  T: 4.3 s
+  dT: '0.5'
+  Year: 2004
+  BR: [A=100]
+
+281Rg:
+  ME: 155330.0
+  dME: 770.0
+  ME_est: true
+  T: 19 s
+  dT: '5'
+  Year: 2010
+  BR: [SF=87 8, A=13 8]
+
+282Rg:
+  ME: 157740.0
+  dME: 590.0
+  ME_est: true
+  T: 130 s
+  dT: '50'
+  Year: 2010
+  BR: [A=100]
+
+283Rg:
+  ME: 159380.0
+  dME: 680.0
+  ME_est: true
+  T: 2 m
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+284Rg:
+  ME: 161970.0
+  dME: 500.0
+  ME_est: true
+  T: 1 m
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+285Rg:
+  ME: 163730.0
+  dME: 600.0
+  ME_est: true
+  T: 30 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+286Rg:
+  ME: 166510.0
+  dME: 460.0
+  ME_est: true
+  T: 10 s
+  T_est: true
+  Year: 2016
+  BR: [A~100, 'SF ?']

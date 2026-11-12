@@ -1,0 +1,111 @@
+5Be:
+  ME: 37140.0
+  dME: 2000.0
+  ME_est: true
+  T: particle-unbound
+  Jpi: 1/2+#
+  BR: ['p ?']
+
+6Be:
+  ME: 18375.0
+  dME: 5.0
+  T: 5.0 zs
+  dT: '0.3'
+  Jpi: 0+
+  Year: 1958
+  BR: [2p=100]
+
+7Be:
+  ME: 15769.0
+  dME: 0.07
+  T: 53.22 d
+  dT: '0.06'
+  Jpi: 3/2-
+  Year: 1938
+  BR: [EC=100]
+
+8Be:
+  ME: 4941.67
+  dME: 0.04
+  T: 81.9 as
+  dT: '3.7'
+  Jpi: 0+
+  Year: 1932
+  BR: [A=100]
+
+9Be:
+  ME: 11348.45
+  dME: 0.08
+  T: stable
+  Jpi: 3/2-*
+  Year: 1921
+  IS: 100.0
+
+10Be:
+  ME: 12607.49
+  dME: 0.08
+  T: 1.387 My
+  dT: '0.012'
+  Jpi: 0+
+  Year: 1935
+  BR: [B-=100]
+
+11Be:
+  ME: 20177.17
+  dME: 0.24
+  T: 13.76 s
+  dT: '0.07'
+  Jpi: 1/2+*
+  Year: 1958
+  BR: [B-=100, B-A=3.3 1, B-p=0.0013 3, 'B-n ?']
+
+12Be:
+  ME: 25077.8
+  dME: 1.9
+  T: 21.46 ms
+  dT: '0.05'
+  Jpi: 0+
+  Year: 1966
+  BR: [B-=100, B-n=0.50 3]
+  Iso:
+    - Lbl: m
+      Ex: 2251.0
+      T: 233 ns
+      Jpi: 0+
+      BR: [IT=100]
+
+13Be:
+  ME: 33659.0
+  dME: 10.0
+  T: 1.0 zs
+  dT: '0.7'
+  Jpi: (1/2-)
+  Year: 1983
+  BR: ['n ?']
+
+14Be:
+  ME: 39950.0
+  dME: 130.0
+  T: 4.53 ms
+  dT: '0.27'
+  Jpi: 0+
+  Year: 1973
+  BR: [B-=100, B-n=86 6, B-2n=5 2, B-t=0.02 1, B-A<0.004]
+
+15Be:
+  ME: 49830.0
+  dME: 170.0
+  T: 790 ys
+  dT: '270'
+  Jpi: (5/2+)
+  Year: 2013
+  BR: [n=100]
+
+16Be:
+  ME: 57450.0
+  dME: 170.0
+  T: 650 ys
+  dT: '130'
+  Jpi: 0+
+  Year: 2012
+  BR: [2n=100]

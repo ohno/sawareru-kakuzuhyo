@@ -1,0 +1,33 @@
+291Ts:
+  ME: 191650.0
+  dME: 600.0
+  ME_est: true
+  T: 2 ms
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+292Ts:
+  ME: 193620.0
+  dME: 670.0
+  ME_est: true
+  T: 10 ms
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+293Ts:
+  ME: 194430.0
+  dME: 780.0
+  ME_est: true
+  T: 25 ms
+  dT: '6'
+  Year: 2010
+  BR: [A=100]
+
+294Ts:
+  ME: 196400.0
+  dME: 590.0
+  ME_est: true
+  T: 70 ms
+  dT: '30'
+  Year: 2010
+  BR: [A=100]

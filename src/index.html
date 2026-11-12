@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>さわれる核図表</title>
+  <link rel="icon" href="data:,">
+  <meta name="description" content="NUBASE2020 の全核種を3Dで探索できるインタラクティブ核図表。ホバーで性質と崩壊先を表示。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="scene" aria-label="3D核図表"></canvas>
+
+  <aside id="controls" class="panel left collapsed">
+    <header class="brand">
+      <h1 class="logo" aria-label="さわれる核図表"><span class="k-r">さ</span><span class="k-g">わ</span><span class="k-y">れ</span><span class="k-b">る</span>核図表</h1>
+      <button id="collapse" class="icon-btn" title="パネルを開く・たたむ" aria-expanded="false">+</button>
+    </header>
+    <div class="panel-body">
+      <div id="intro" class="intro"></div>
+      <form id="search-form" class="search" autocomplete="off" role="search">
+        <input id="search" type="search" placeholder="核種を検索（例: 238U、ウラン）" aria-label="核種を検索">
+        <button type="submit" class="btn search-go" title="検索した核へ移動" aria-label="検索した核へ移動"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      </form>
+      <p id="search-msg" class="search-msg" role="status"></p>
+      <p class="hint">試しに検索: <a href="#14C" data-goto="14C">¹⁴C</a> · <a href="#56Fe" data-goto="56Fe">⁵⁶Fe</a> · <a href="#137Cs" data-goto="137Cs">¹³⁷Cs</a> · <a href="#235U" data-goto="235U">²³⁵U</a> · <a href="#278Nh" data-goto="278Nh">²⁷⁸Nh</a></p>
+      <button class="tut-start" data-tutorial>▶ チュートリアルを見る<small>核図表とこのページの使い方（約 1 分半）</small></button>
+
+      <details class="sec" data-sec="howto">
+        <summary>使い方</summary>
+        <div id="howto" class="sec-body"></div>
+      </details>
+
+      <details class="sec" data-sec="view">
+        <summary>表示</summary>
+        <div class="sec-body checks">
+          <label class="check"><input type="checkbox" id="opt-toolbar" checked> 操作バー</label>
+          <label class="check"><input type="checkbox" id="opt-timeline" checked> 時間発展バー</label>
+          <label class="check"><input type="checkbox" id="opt-dim" checked> 選択中は他の核を暗く</label>
+          <label class="check"><input type="checkbox" id="opt-xray" checked> カメラの手前の核を半透明に</label>
+          <label class="check"><input type="checkbox" id="opt-labels" checked> 元素記号ラベル</label>
+          <label class="check"><input type="checkbox" id="opt-elements" checked> 元素名</label>
+          <label class="check"><input type="checkbox" id="opt-z" checked> 原子番号 Z</label>
+          <label class="check"><input type="checkbox" id="opt-nh" checked> ニホニウムの強調</label>
+          <label class="check"><input type="checkbox" id="opt-magic" checked> 魔法数ライン</label>
+          <label class="check"><input type="checkbox" id="opt-drip"> ドリップライン（理論予測）</label>
+          <label class="check" title="超重核で閉殻（Z = 114〜126, N = 184 付近）が強く束縛し、寿命の長い核があると予測される領域。KTUY05 質量公式の殻エネルギーが −6 MeV より深い核を緑に光らせます（深いほど強く）。未発見の元素 119〜126 の予測核も加わります"><input type="checkbox" id="opt-island"> 安定の島（理論予測）</label>
+          <span class="sub-legend">核の分類（理研レゴ核図表の配色）</span>
+          <label class="check"><input type="checkbox" data-lego="st" checked> <i class="kind-sw lego-sw" style="background:#1b1b1d"></i>安定核</label>
+          <label class="check"><input type="checkbox" data-lego="found" checked> <i class="kind-sw lego-sw" style="background:#c91a09"></i>不安定核（発見済み）</label>
+          <label class="check"><input type="checkbox" data-lego="unfound" checked> <i class="kind-sw lego-sw" style="background:#f5c400"></i>不安定核（未発見）</label>
+          <label class="check"><input type="checkbox" data-lego="riken" checked> <i class="kind-sw lego-sw" style="background:#237841"></i>理研で発見した原子核</label>
+          <label class="check"><input type="checkbox" data-lego="rikenSH" checked> <i class="kind-sw lego-sw" style="background:#0055bf"></i>理研で発見した超重原子核</label>
+          <span class="sub-legend">推定値</span>
+          <label class="check"><input type="checkbox" id="opt-unobs" checked> 未観測核（推定値）</label>
+          <label class="check" title="NUBASE2020 に推定値だけが載っている、原子核として結合しないと見積もられた未観測の核（³Li、⁵Be、⁶B など）"><input type="checkbox" id="opt-unbound"> 未観測の非束縛核（推定値）</label>
+          <span class="sub-legend">核燃料サイクル</span>
+          <label class="check"><input type="checkbox" data-mode="fp"> 核分裂生成物（FP）</label>
+          <label class="check"><input type="checkbox" data-mode="llfp"> 長寿命核分裂生成物（LLFP）</label>
+          <label class="check"><input type="checkbox" data-mode="ma"> マイナーアクチノイド（MA）</label>
+          <label class="check"><input type="checkbox" data-mode="fuel"> 使用済み燃料の主な核種</label>
+          <p id="filter-desc" class="caption"></p>
+          <span class="sub-legend">核の種類</span>
+          <label class="check"><input type="checkbox" data-kind="N" checked> 通常核</label>
+          <label class="check"><input type="checkbox" data-kind="L" checked> <i class="kind-sw" style="background:#e8262f"></i>Λハイパー核</label>
+          <label class="check"><input type="checkbox" data-kind="S" checked> <i class="kind-sw" style="background:#f07a1a"></i>Σハイパー核</label>
+          <label class="check"><input type="checkbox" data-kind="LL" checked> <i class="kind-sw" style="background:#d23fd2"></i>ΛΛハイパー核</label>
+          <label class="check"><input type="checkbox" data-kind="X" checked> <i class="kind-sw" style="background:#8f45e6"></i>Ξハイパー核</label>
+          <span class="sub-legend">ハイパー核モードの平面</span>
+          <label class="check"><input type="checkbox" data-layer="0" checked> <i class="kind-sw" style="background:#e9c44a"></i>s = 0（通常核）</label>
+          <label class="check"><input type="checkbox" data-layer="1" checked> <i class="kind-sw" style="background:#ff5b6e"></i>s = 1（Λ, Σ ハイパー核）</label>
+          <label class="check"><input type="checkbox" data-layer="2" checked> <i class="kind-sw" style="background:#d65bd6"></i>s = 2（ΛΛ, Ξ ハイパー核）</label>
+          <span class="sub-legend">ハイパー核モードのドリップライン（理論予測）</span>
+          <div id="hyper-drip" class="checks-sub"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-sec="look">
+        <summary>高さと色</summary>
+        <div class="sec-body">
+          <label class="field">
+            <span>高さ</span>
+            <select id="height">
+              <optgroup label="結合エネルギー・質量">
+                <option value="meA" selected>核子1個あたりの質量</option>
+                <option value="bfe">B/A の ⁵⁶Fe との差</option>
+                <option value="bfeA">B/A の ⁵⁶Fe との差 × A</option>
+                <option value="me">質量超過 Δ</option>
+                <option value="ba">結合エネルギー B/A</option>
+                <option value="b">結合エネルギー B</option>
+              </optgroup>
+              <optgroup label="そのほか">
+                <option value="hl">半減期（対数）</option>
+                <option value="s2n">2中性子分離エネルギー S₂ₙ</option>
+                <option value="sn">中性子分離エネルギー Sₙ</option>
+                <option value="qa">α崩壊 Q値 Qα</option>
+                <option value="fy">核分裂収率（²³⁵U）</option>
+                <option value="year">核種の発見年</option>
+                <option value="flat">なし（2D）</option>
+              </optgroup>
+            </select>
+          </label>
+          <p id="height-note" class="caption"></p>
+          <label class="field inline">
+            <span>高さの倍率</span>
+            <input type="range" id="hscale" min="0.25" max="2" step="0.05" value="1">
+            <output id="hscale-out" for="hscale">1 倍</output>
+          </label>
+          <label class="field inline" title="高さの基準面を持ち上げます。この値より低い部分はボードの下に沈みます">
+            <span>基準面</span>
+            <input type="range" id="hbase" min="0" max="3" step="0.05" value="0">
+            <output id="hbase-out" for="hbase">0</output>
+          </label>
+          <label class="field">
+            <span>色</span>
+            <select id="color">
+              <option value="lego" selected>理研レゴ核図表の配色</option>
+              <option value="hl">半減期</option>
+              <option value="decay">崩壊モード</option>
+              <option value="ba">結合エネルギー B/A</option>
+              <option value="year">核種の発見年</option>
+              <option value="fy">核分裂収率（²³⁵U）</option>
+              <option value="group">使用済み燃料の分類</option>
+              <option value="height">高さと同じ量</option>
+            </select>
+          </label>
+          <div id="legend" class="legend"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-sec="decay">
+        <summary>崩壊の矢印</summary>
+        <div class="sec-body">
+          <p class="arrow-key"><i class="solid"></i>崩壊先<i class="dotted"></i>崩壊元（親核）</p>
+          <label class="field row">
+            <span>分岐比のしきい値</span>
+            <select id="opt-branch">
+              <option value="0">すべて</option>
+              <option value="0.1">0.1 % 以上</option>
+              <option value="1" selected>1 % 以上</option>
+              <option value="5">5 % 以上</option>
+              <option value="10">10 % 以上</option>
+              <option value="50">50 % 以上</option>
+            </select>
+          </label>
+          <label class="field row">
+            <span>親核をさかのぼる</span>
+            <select id="opt-gen">
+              <option value="0">しない</option>
+              <option value="1">1 世代</option>
+              <option value="2" selected>2 世代</option>
+              <option value="3">3 世代</option>
+              <option value="4">4 世代</option>
+              <option value="5">5 世代</option>
+              <option value="6">6 世代</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" id="opt-chain" checked> 安定核までの崩壊系列</label>
+        </div>
+      </details>
+    </div>
+  </aside>
+
+  <div class="toolbar" role="toolbar" aria-label="視点">
+    <div class="seg" role="group" aria-label="表示モード">
+      <button class="btn" data-dim="2d" aria-pressed="false" title="平らにして真上から見る">2Dモード</button>
+      <button class="btn" data-dim="3d" aria-pressed="true" title="高さを付けて斜めから見る">3Dモード</button>
+    </div>
+    <span class="sep"></span>
+    <div class="seg" role="group" aria-label="ドラッグ操作">
+      <button class="btn" data-drag="pan" aria-pressed="false" title="ドラッグで平行移動">移動</button>
+      <button class="btn" data-drag="rotate" aria-pressed="true" title="ドラッグで回転">回転</button>
+    </div>
+    <span class="sep"></span>
+    <button class="btn" data-view="focus" title="選んだ核へカメラを近づける（F キー）">選択核をズーム</button>
+    <span class="sep"></span>
+    <button class="btn riken-btn" id="riken" aria-pressed="false" title="理研で発見された核種だけを表示">理研が発見</button>
+    <button class="btn hyper-btn" id="hyper" aria-pressed="false" title="ストレンジクォークを含むハイパー核を、s クォーク数の層に重ねて表示">ハイパー核</button>
+    <span class="sep"></span>
+    <button class="btn icon" id="sound" aria-pressed="false"></button>
+    <button class="btn icon" id="theme" title="ダークモードにする" aria-label="ダークモードにする"></button>
+    <!-- Icons: camera and circle-help from Feather, Copyright (c) 2013-2023 Cole Bemis, MIT License; rotate-ccw from
+         Lucide, Copyright (c) 2026 Lucide Icons and Contributors, ISC License. See THIRD-PARTY-NOTICES. -->
+    <button class="btn icon" id="shot" title="画像として保存" aria-label="画像として保存"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+    <button class="btn icon" id="reset" title="表示をリセット（R キー）" aria-label="表示をリセット"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+    <button class="btn icon" id="help" title="チュートリアルを見る" aria-label="チュートリアルを見る"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+  </div>
+
+  <aside id="info" class="panel right" hidden>
+    <button id="info-unpin" class="icon-btn info-unpin" title="閉じる（核をクリックするとまた開きます）" aria-label="閉じる">×</button>
+    <button id="info-toggle" class="icon-btn info-toggle" title="たたむ" aria-expanded="true">−</button>
+    <div id="info-body" aria-live="polite"></div>
+  </aside>
+
+  <div class="timeline">
+    <select id="time-mode" class="time-mode" aria-label="時間発展の種類" title="時間発展の種類">
+      <option value="year" selected>発見年</option>
+      <option value="height">高い順に消す</option>
+    </select>
+    <button id="play" class="btn play" aria-label="発見の歴史を再生">▶</button>
+    <input id="year" type="range" step="1" aria-label="時間発展の位置">
+    <div id="year-label" class="year-label"></div>
+  </div>
+
+  <div id="tooltip" class="tooltip" hidden></div>
+  <div class="credit"><a href="https://github.com/ohno/sawareru-kakuzuhyo/blob/main/data/README.md" target="_blank" rel="noopener">データの出典</a> · © 2026 RIKEN</div>
+  <div id="loading" class="loading"><div class="spinner"></div><p>核データを読み込み中…</p></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

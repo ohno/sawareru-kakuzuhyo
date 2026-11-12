@@ -1,0 +1,51 @@
+289Lv:
+  ME: 184460.0
+  dME: 500.0
+  ME_est: true
+  T: 16 ms
+  T_est: true
+  BR: ['A ?']
+
+290Lv:
+  ME: 185030.0
+  dME: 550.0
+  ME_est: true
+  T: 9 ms
+  dT: '3'
+  Jpi: 0+
+  Year: 2004
+  BR: [A~100, 'SF ?']
+
+291Lv:
+  ME: 187240.0
+  dME: 620.0
+  ME_est: true
+  T: 26 ms
+  dT: '12'
+  Year: 2004
+  BR: [A~100, 'SF ?']
+
+292Lv:
+  ME: 188130.0
+  dME: 760.0
+  ME_est: true
+  T: 16 ms
+  dT: '6'
+  Jpi: 0+
+  Year: 2004
+  BR: [A~100, 'SF ?']
+
+293Lv:
+  ME: 190570.0
+  dME: 520.0
+  ME_est: true
+  T: 70 ms
+  dT: '30'
+  Year: 2004
+  BR: [A~100, 'SF ?']
+  Iso:
+    - Lbl: m
+      Ex: 720.0
+      Ex_est: true
+      T: 80 ms
+      BR: [A=100]
