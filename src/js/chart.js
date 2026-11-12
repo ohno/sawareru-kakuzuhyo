@@ -453,7 +453,7 @@ export class NuclideChart {
   isShown(i) {
     if (!this.showNormal) return false;
     const nuc = this.nuclides[i];
-    if (this.hiddenLego.size && this.hiddenLego.has(legoKey(nuc))) return false;
+    if (this.hiddenLego.size && this.hiddenLego.has(legoKey(nuc, this.hiddenLego))) return false;
     if (nuc.isl && !this.islandOn) return false;
     if (this.filter === 'riken') return this.riken.has(i) && nuc.rk <= this.yearLimit;
     if (this.filterFn && !this.filterFn(nuc)) return false;
@@ -560,7 +560,7 @@ export class NuclideChart {
 
   // ---------- colors ----------
   colorOf(nuc) {
-    if (this.colorMode === 'lego') return legoColor(nuc, this.theme);
+    if (this.colorMode === 'lego') return legoColor(nuc, this.theme, this.hiddenLego);
     const cat = primaryCategory(nuc);
     if (this.colorMode === 'decay' || cat === 'un') {
       const c = CATEGORIES[cat];

@@ -36,9 +36,8 @@ export const ELEMENT_DISCOVERY = elements.elements.map((e) => e.discovered);
 /** protosolar abundances: label, cite, and per Z { num, mass, rank } (shares of all atoms and of all mass) or null */
 export const ABUNDANCE = abundances;
 
-/** nuclides first identified at RIKEN [Z, A, year, reference, doi], and those credited to RIKEN only by its LEGO chart (+ note) */
+/** nuclides first identified at RIKEN [Z, A, year, reference, doi] */
 export const RIKEN_NUCLIDES = riken.nuclides;
-export const RIKEN_LOCAL = riken.local;
 /** thermal fission of ²³⁵U: [Z, A, cumulative yield, independent yield] */
 export const FISSION_YIELDS = fission.yields;
 export const FY_SOURCE = fission.source;

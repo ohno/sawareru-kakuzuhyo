@@ -279,9 +279,15 @@ export const LEGO_PALETTE = [
   { key: 'rikenSH', name: '理研で発見した超重原子核', color: '#0055bf' },
 ];
 const LEGO_BY_KEY = Object.fromEntries(LEGO_PALETTE.map((c) => [c.key, c]));
-export const legoKey = (nuc) => (nuc.rk ? (nuc.z >= 104 ? 'rikenSH' : 'riken') : nuc.st ? 'st' : nuc.y ? 'found' : 'unfound');
-export function legoColor(nuc, theme = 'light') {
-  const c = LEGO_BY_KEY[legoKey(nuc)];
+// A RIKEN class switched off in the 表示 section (keys in `off`) gives its nuclei back to the class they belong to
+// besides: unstable and discovered (red), so they stay on the chart while that class is shown.
+export function legoKey(nuc, off) {
+  const rk = nuc.rk ? (nuc.z >= 104 ? 'rikenSH' : 'riken') : null;
+  if (rk && !off?.has(rk)) return rk;
+  return nuc.st ? 'st' : nuc.y ? 'found' : 'unfound';
+}
+export function legoColor(nuc, theme = 'light', off = null) {
+  const c = LEGO_BY_KEY[legoKey(nuc, off)];
   return hexToRgb(theme === 'dark' && c.dark ? c.dark : c.color);
 }
 

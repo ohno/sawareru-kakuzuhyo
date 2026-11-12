@@ -285,9 +285,9 @@ export function detailHtml(nuc, idx, graph, { pinned, theme, minBranch = 1, gene
   ${facts}
   <div class="badges">${badges.join('')}</div>
   ${nuc.fuelNote ? `<p class="fuel-note" style="--c:${FUEL_GROUPS[nuc.fuel].color}">${esc(nuc.fuelNote)}</p>` : ''}
-  ${nuc.rkRef || nuc.rkNote ? `<p class="rk-ref">${nuc.rkRef ? `理研での発見: ${nuc.rkDoi
+  ${nuc.rkRef ? `<p class="rk-ref">理研での発見: ${nuc.rkDoi
     ? `<a href="https://doi.org/${encodeURI(nuc.rkDoi)}" target="_blank" rel="noopener">${esc(nuc.rkRef)}</a>`
-    : esc(nuc.rkRef)}` : ''}${nuc.rkRef && nuc.rkNote ? '<br>' : ''}${nuc.rkNote ? esc(nuc.rkNote) : ''}</p>` : ''}
+    : esc(nuc.rkRef)}</p>` : ''}
 
   ${elementHtml(nuc, graph)}
 

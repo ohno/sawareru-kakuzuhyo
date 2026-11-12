@@ -30,7 +30,7 @@
     <div class="panel-body">
       <div id="intro" class="intro"></div>
       <form id="search-form" class="search" autocomplete="off" role="search">
-        <input id="search" type="search" placeholder="核種を検索（例: 238U、ウラン）" aria-label="核種を検索">
+        <input id="search" type="search" placeholder="核種を検索（例: 238U、ウラン）" aria-label="核種を検索" title="238U、U-238、ウラン、uranium のほか、Z=50、N=82、A=208（いちばん安定な核）、Z=50 N=82（両方を満たす核）でも探せます">
         <button type="submit" class="btn search-go" title="検索した核へ移動" aria-label="検索した核へ移動"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
       </form>
       <p id="search-msg" class="search-msg" role="status"></p>
@@ -214,7 +214,6 @@
   </div>
 
   <div id="tooltip" class="tooltip" hidden></div>
-  <div class="display-hint">画面にふれると操作できます</div>
   <div class="credit"><a href="https://github.com/ohno/sawareru-kakuzuhyo/blob/main/data/README.md" target="_blank" rel="noopener">データの出典</a> · <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">© 2026 RIKEN</a></div>
   <div id="loading" class="loading"><div class="spinner"></div><p>核データを読み込み中…</p></div>
 

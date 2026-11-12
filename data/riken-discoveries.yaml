@@ -1,4 +1,7 @@
 # FRIB Discovery of Nuclides Project, version of 2026-09-25: the nuclides with lab = RIKEN.
+# The same 285 nuclides as RIKEN Nishina Center's own list, https://www.nishina.riken.jp/nuclides/new_isotope.html
+# (checked 2026-11-12; it lists the isomer 195mAt for 195At). The years are FRIB's (the paper given); for 52 nuclides
+# that list gives another year, often of an earlier report or the online date.
 nuclides:
   columns: [Z, A, year, reference, doi]
   rows:
@@ -287,9 +290,3 @@ nuclides:
     - [109, 270, 2004, 'Morita et al., J.Phys.Soc.Jpn. 73, 2593 (2004)', '10.1143/JPSJ.73.2593']
     - [111, 274, 2004, 'Morita et al., J.Phys.Soc.Jpn. 73, 2593 (2004)', '10.1143/JPSJ.73.2593']
     - [113, 278, 2004, 'Morita et al., J.Phys.Soc.Jpn. 73, 2593 (2004)', '10.1143/JPSJ.73.2593']
-
-# Credited to RIKEN by RIKEN's LEGO chart, to another laboratory by FRIB.
-local:
-  columns: [Z, A, year, reference, doi, note]
-  rows:
-    - [108, 263, 2008, '理研 GARIS での観測（²⁰⁶Pb(⁵⁸Fe,n) 反応。森田浩介らの超重元素研究の報告）', '', 'FRIB の発見データベースでは Berkeley（Dragojević et al., Phys. Rev. C 79, 011602 (2009)）の発見とされています。理研のレゴ核図表では理研の発見として表示されています。']

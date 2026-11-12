@@ -11,7 +11,7 @@ import { NihoniumGlow } from './nihonium.js';
 import { StabilityIsland } from './island.js';
 import { Tutorial } from './tutorial.js';
 import { ColumnSound, cantileverHz, REF_HZ } from './sound.js';
-import { RIKEN_NUCLIDES, RIKEN_LOCAL, nuclidesRequest, showLoadError } from './data.js';
+import { RIKEN_NUCLIDES, nuclidesRequest, showLoadError } from './data.js';
 import { MODES, MODE_FILTERS, MODE_CALLOUTS, FUEL_GROUPS, annotateFuel } from './fuel.js';
 
 THREE.ColorManagement.enabled = false;
@@ -161,7 +161,7 @@ async function init() {
 
   function resize() {
     const w = window.innerWidth, h = window.innerHeight;
-    renderer.setSize(w, h, false);
+    renderer.setSize(w, h); // also the canvas's CSS size: what is drawn lines up with the page (and the tutorial's tiles)
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     // a tall, narrow screen needs the camera further back to see the whole chart (the framing above relies on it)
@@ -621,37 +621,86 @@ async function init() {
     if (SYMBOL_TO_Z.has(t)) return SYMBOL_TO_Z.get(t);
     return ELEMENTS.findIndex((e) => e[1].toLowerCase() === t || e[2] === s.trim());
   }
-  function bestIsotope(z) {
-    const list = nuclides.map((n, i) => [n, i]).filter(([n]) => n.z === z);
-    if (!list.length) return -1;
-    list.sort(([a], [b]) => (b.st ? 1e40 + (b.ab || 0) : b.t || 0) - (a.st ? 1e40 + (a.ab || 0) : a.t || 0));
-    return list[0][1];
+  // The most stable of several nuclides: a stable one, else a discovered one with the longest half-life (an
+  // unobserved one only by its estimate). Among stable isotopes the most abundant (the element's own isotope); among
+  // stable isotones or isobars, and where no half-life tells, the lowest mass per nucleon (the bottom of the valley
+  // the height shows; for isobars, where their beta decays end).
+  const byAbundance = (a, b) => (b.ab || 0) - (a.ab || 0);
+  const byMassPerNucleon = (a, b) => (a.me ?? Infinity) / a.a - (b.me ?? Infinity) / b.a;
+  function moreStable(a, b, tie) {
+    if (!a.st !== !b.st) return !!a.st;
+    if (!a.y !== !b.y) return !!a.y;
+    if ((a.t || 0) !== (b.t || 0)) return (a.t || 0) > (b.t || 0);
+    return (a.st ? tie : byMassPerNucleon)(a, b) < 0;
   }
+  function mostStable(list, tie) {
+    let best = -1;
+    for (const i of list) if (best < 0 || moreStable(nuclides[i], nuclides[best], tie)) best = i;
+    return best;
+  }
+  const bestIsotope = (z) => mostStable(nuclides.flatMap((nuc, i) => (nuc.z === z ? [i] : [])), byAbundance);
+  /**
+   * Conditions on Z, N and A, all of which must hold: "Z=50 N=82", "A=208", "z50, a132", or an element for Z
+   * ("U A=238"). -> { z, n, a } (those given; `clash` when one is given twice with different values), or null for
+   * any other query. N alone needs "=" ("N15" is nitrogen-15).
+   */
+  function conditions(q) {
+    const tokens = q.replace(/\s*[=:]\s*/g, '=').replace(/(^|[\s,、])([zna]) (?=\d)/gi, '$1$2')
+      .split(/[\s,、;&]+/).filter((t) => t && !/^(and|かつ)$/i.test(t));
+    const cond = {};
+    let given = 0;
+    const set = (k, v) => {
+      if (k in cond && cond[k] !== v) cond.clash = true;
+      cond[k] = v;
+    };
+    for (const t of tokens) {
+      const m = t.match(/^([zna])(=?)(\d+)$/i);
+      if (m && (m[1].toLowerCase() !== 'n' || m[2] || tokens.length > 1)) {
+        set(m[1].toLowerCase(), +m[3]);
+        given++;
+        continue;
+      }
+      const z = elementZ(t);
+      if (z < 0) return null;
+      set('z', z);
+    }
+    return given ? cond : null;
+  }
+  /** search text -> { i: nuclide index or -1, note: what was chosen, for a search by one of Z, N, A } */
   function parseQuery(q) {
     q = q.normalize('NFKC').trim().replace(/\s+/g, ' ');
-    if (!q) return -1;
+    if (!q) return { i: -1 };
+    const c = conditions(q);
+    if (c) {
+      const list = c.clash ? [] : nuclides.flatMap((nuc, i) => (
+        (c.z ?? nuc.z) === nuc.z && (c.n ?? nuc.n) === nuc.n && (c.a ?? nuc.a) === nuc.a ? [i] : []));
+      const keys = ['z', 'n', 'a'].filter((k) => k in c);
+      if (keys.length > 1 || list.length < 2) return { i: list.length ? list[0] : -1 };
+      const k = keys[0], i = mostStable(list, k === 'z' ? byAbundance : byMassPerNucleon);
+      return { i, note: `${k.toUpperCase()} = ${c[k]} の核のうち、最も安定な ${nucText(nuclides[i])} を表示しています` };
+    }
     let m;
-    if ((m = q.match(/^z\s*=?\s*(\d+)[\s,]+n\s*=?\s*(\d+)$/i))) return graph.find(+m[1], +m[2]);
-    if ((m = q.match(/^z\s*=?\s*(\d+)$/i))) return bestIsotope(+m[1]);
     if ((m = q.match(/^(\d+)\s*-?\s*(\D+)$/))) {
       const z = elementZ(m[2]);
-      if (z >= 0) return graph.find(z, +m[1] - z);
+      if (z >= 0) return { i: graph.find(z, +m[1] - z) };
     }
     if ((m = q.match(/^(\D+?)\s*-?\s*(\d+)$/))) {
       const z = elementZ(m[1]);
-      if (z >= 0) return graph.find(z, +m[2] - z);
+      if (z >= 0) return { i: graph.find(z, +m[2] - z) };
     }
     const z = elementZ(q);
-    return z >= 0 ? bestIsotope(z) : -1;
+    return { i: z >= 0 ? bestIsotope(z) : -1 };
   }
   function goto(q) {
-    const i = parseQuery(q);
+    const { i, note } = parseQuery(q);
     const msg = $('#search-msg');
     if (i < 0) {
       msg.textContent = `「${q}」に一致する核種が見つかりません`;
+      msg.classList.remove('note');
       return false;
     }
-    msg.textContent = '';
+    msg.textContent = note || '';
+    msg.classList.add('note'); // not an error
     // elements 119–126 are only there with the island of stability
     if (nuclides[i]?.isl && !chart.islandOn) $('#opt-island').click();
     if (!chart.visible[i]) {
@@ -667,9 +716,9 @@ async function init() {
     if (goto($('#search').value)) $('#search').blur();
   });
   $('#search').addEventListener('input', () => ($('#search-msg').textContent = ''));
-  // only the button searches: Enter in the box (implicit form submission) does nothing
+  // Enter searches too (the form's submit), but not the Enter that settles a conversion of the Japanese input
   $('#search').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.isComposing) e.preventDefault();
+    if (e.key === 'Enter' && (e.isComposing || e.keyCode === 229)) e.preventDefault();
   });
 
   // ---------- keyboard ----------
@@ -795,6 +844,7 @@ async function init() {
   // the classes of the LEGO chart legend, each switched on and off on its own
   document.querySelectorAll('[data-lego]').forEach((cb) => cb.addEventListener('change', () => {
     chart.hiddenLego = new Set([...document.querySelectorAll('[data-lego]')].filter((x) => !x.checked).map((x) => x.dataset.lego));
+    chart.recolor(); // a RIKEN class switched off turns red (see legoKey)
     chart.retarget();
     refreshCut();
     updateYearLabel();
@@ -1482,7 +1532,7 @@ async function init() {
   camera.position.copy(v0.pos).add(new THREE.Vector3(0, 120, 120));
   flyTo(v0, 2.2);
   if (location.hash.length > 1) {
-    const i = parseQuery(decodeURIComponent(location.hash.slice(1)));
+    const { i } = parseQuery(decodeURIComponent(location.hash.slice(1)));
     if (i >= 0) {
       pin(i);
       fly = null;
@@ -1606,7 +1656,7 @@ function addPredicted(nuclides, rows) {
  */
 function addRikenDiscoveries(nuclides) {
   const byZA = new Map(nuclides.map((n) => [n.z * 1000 + n.a, n]));
-  for (const [z, a, year, ref, doi, note] of [...RIKEN_NUCLIDES, ...RIKEN_LOCAL]) {
+  for (const [z, a, year, ref, doi] of RIKEN_NUCLIDES) {
     let nuc = byZA.get(z * 1000 + a);
     if (!nuc) {
       nuc = { z, n: a - z, a, s: ELEMENTS[z][0], x: 1, y: year };
@@ -1615,8 +1665,7 @@ function addRikenDiscoveries(nuclides) {
     nuc.rk = year;
     nuc.rkRef = ref;
     nuc.rkDoi = doi;
-    if (note) nuc.rkNote = note;
     if (!nuc.y) nuc.y = year; // observed since NUBASE2020 was compiled
   }
-  return RIKEN_NUCLIDES.length + RIKEN_LOCAL.length;
+  return RIKEN_NUCLIDES.length;
 }
