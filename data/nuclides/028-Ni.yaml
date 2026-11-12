@@ -1,0 +1,389 @@
+48Ni:
+  ME: 18180.0
+  dME: 420.0
+  ME_est: true
+  T: 2.8 ms
+  dT: '0.8'
+  Jpi: 0+
+  Year: 2000
+  BR: [2p=70 20, B+=30 20, 'B+p ?']
+
+49Ni:
+  ME: 8530.0
+  dME: 600.0
+  ME_est: true
+  T: 7.5 ms
+  dT: '1.0'
+  Jpi: 7/2-#
+  Year: 1996
+  BR: [B+=100, B+p=83.4 13.2]
+
+50Ni:
+  ME: -3460.0
+  dME: 500.0
+  ME_est: true
+  T: 18.5 ms
+  dT: '1.2'
+  Jpi: 0+
+  Year: 1994
+  BR: [B+=100, B+p=73 6, B+2p=14 5]
+
+51Ni:
+  ME: -11650.0
+  dME: 500.0
+  ME_est: true
+  T: 23.8 ms
+  dT: '0.2'
+  Jpi: 7/2-#
+  Year: 1987
+  BR: [B+=100, B+p=87.2 8, B+2p=0.5 2]
+
+52Ni:
+  ME: -22560.0
+  dME: 80.0
+  T: 41.8 ms
+  dT: '1.0'
+  Jpi: 0+
+  Year: 1987
+  BR: [B+=100, B+p=31.1 5]
+
+53Ni:
+  ME: -29631.0
+  dME: 25.0
+  T: 55.2 ms
+  dT: '0.7'
+  Jpi: (7/2-)
+  Year: 1976
+  BR: [B+=100, B+p=22.7 7]
+
+54Ni:
+  ME: -39278.0
+  dME: 5.0
+  T: 114.1 ms
+  dT: '0.3'
+  Jpi: 0+
+  Year: 1977
+  BR: [B+=100, 'B+p ?']
+  Iso:
+    - Lbl: m
+      Ex: 6457.4
+      T: 152 ns
+      Jpi: 10+
+      BR: [IT=64 2, p=36 2]
+
+55Ni:
+  ME: -45336.0
+  dME: 0.7
+  T: 203.9 ms
+  dT: '1.3'
+  Jpi: 7/2-
+  Year: 1972
+  BR: [B+=100]
+
+56Ni:
+  ME: -53907.6
+  dME: 0.4
+  T: 6.075 d
+  dT: '0.010'
+  Jpi: 0+
+  Year: 1952
+  BR: [B+=100]
+
+57Ni:
+  ME: -56084.0
+  dME: 0.6
+  T: 35.60 h
+  dT: '0.06'
+  Jpi: 3/2-
+  Year: 1938
+  BR: [B+=100]
+
+58Ni:
+  ME: -60228.9
+  dME: 0.3
+  T: stable
+  Jpi: 0+
+  Year: 1921
+  IS: 68.0769
+  BR: ['2B+ ?']
+
+59Ni:
+  ME: -61156.8
+  dME: 0.4
+  T: 81 ky
+  dT: '5'
+  Jpi: 3/2-
+  Year: 1951
+  BR: [B+=100]
+
+60Ni:
+  ME: -64473.2
+  dME: 0.4
+  T: stable
+  Jpi: 0+
+  Year: 1921
+  IS: 26.2231
+
+61Ni:
+  ME: -64222.0
+  dME: 0.4
+  T: stable
+  Jpi: 3/2-*
+  Year: 1934
+  IS: 1.1399
+
+62Ni:
+  ME: -66746.4
+  dME: 0.4
+  T: stable
+  Jpi: 0+
+  Year: 1934
+  IS: 3.6345
+
+63Ni:
+  ME: -65512.9
+  dME: 0.4
+  T: 101.2 y
+  dT: '1.5'
+  Jpi: 1/2-*
+  Year: 1951
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 87.15
+      T: 1.67 μs
+      Jpi: 5/2-
+      BR: [IT=100]
+
+64Ni:
+  ME: -67099.0
+  dME: 0.5
+  T: stable
+  Jpi: 0+
+  Year: 1935
+  IS: 0.9256
+
+65Ni:
+  ME: -65125.8
+  dME: 0.5
+  T: 2.5175 h
+  dT: '0.0005'
+  Jpi: 5/2-
+  Year: 1946
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 63.37
+      T: 69 μs
+      Jpi: 1/2-
+      BR: [IT=100]
+
+66Ni:
+  ME: -66006.3
+  dME: 1.4
+  T: 54.6 h
+  dT: '0.3'
+  Jpi: 0+
+  Year: 1948
+  BR: [B-=100]
+
+67Ni:
+  ME: -63742.7
+  dME: 2.9
+  T: 21 s
+  dT: '1'
+  Jpi: 1/2-
+  Year: 1978
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 1006.6
+      T: 13.34 μs
+      Jpi: 9/2+
+      BR: [IT=100]
+
+68Ni:
+  ME: -63463.8
+  dME: 3.0
+  T: 29 s
+  dT: '2'
+  Jpi: 0+
+  Year: 1977
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 1603.51
+      T: 270 ns
+      Jpi: 0+
+      BR: [IT=100]
+    - Lbl: n
+      Ex: 2849.1
+      T: 850 μs
+      Jpi: 5-
+      BR: [IT=100]
+
+69Ni:
+  ME: -59979.0
+  dME: 4.0
+  T: 11.4 s
+  dT: '0.3'
+  Jpi: (9/2+)
+  Year: 1984
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 321.0
+      T: 3.5 s
+      Jpi: (1/2-)
+      BR: [B-~100, IT<0.01]
+    - Lbl: n
+      Ex: 2700.0
+      T: 439 ns
+      Jpi: (17/2-)
+      BR: [IT=100]
+
+70Ni:
+  ME: -59213.9
+  dME: 2.1
+  T: 6.0 s
+  dT: '0.3'
+  Jpi: 0+
+  Year: 1987
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 2860.91
+      T: 232 ns
+      Jpi: 8+
+      BR: [IT=100]
+
+71Ni:
+  ME: -55406.2
+  dME: 2.2
+  T: 2.56 s
+  dT: '0.03'
+  Jpi: (9/2+)
+  Year: 1987
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 499.0
+      T: 2.3 s
+      Jpi: (1/2-)
+      BR: [B-=100]
+
+72Ni:
+  ME: -54226.1
+  dME: 2.2
+  T: 1.57 s
+  dT: '0.05'
+  Jpi: 0+
+  Year: 1987
+  BR: [B-=100, 'B-n ?']
+
+73Ni:
+  ME: -50108.2
+  dME: 2.4
+  T: 840 ms
+  dT: '30'
+  Jpi: (9/2+)
+  Year: 1987
+  BR: [B-=100, 'B-n ?']
+
+74Ni:
+  ME: -48700.0
+  dME: 200.0
+  ME_est: true
+  T: 507.7 ms
+  dT: '4.6'
+  Jpi: 0+
+  Year: 1987
+  BR: [B-=100, 'B-n ?']
+
+75Ni:
+  ME: -44240.0
+  dME: 200.0
+  ME_est: true
+  T: 331.6 ms
+  dT: '3.2'
+  Jpi: 9/2+#
+  Year: 1992
+  BR: [B-=100, B-n=10.0 28]
+
+76Ni:
+  ME: -42190.0
+  dME: 300.0
+  ME_est: true
+  T: 234.6 ms
+  dT: '2.7'
+  Jpi: 0+
+  Year: 1995
+  BR: [B-=100, B-n=14.0 36]
+  Iso:
+    - Lbl: m
+      Ex: 2418.0
+      T: 547.8 ns
+      Jpi: (8+)
+      BR: [IT=100]
+
+77Ni:
+  ME: -37350.0
+  dME: 400.0
+  ME_est: true
+  T: 158.9 ms
+  dT: '4.2'
+  Jpi: 9/2+#
+  Year: 1995
+  BR: [B-=100, B-n=26 13, 'B-2n ?']
+
+78Ni:
+  ME: -34880.0
+  dME: 400.0
+  ME_est: true
+  T: 122.2 ms
+  dT: '5.1'
+  Jpi: 0+
+  Year: 1995
+  BR: [B-=100, 'B-n ?', 'B-2n ?']
+
+79Ni:
+  ME: -28160.0
+  dME: 500.0
+  ME_est: true
+  T: 44 ms
+  dT: '8'
+  Jpi: 5/2+#
+  Year: 2010
+  BR: [B-=100, 'B-n ?', 'B-2n ?']
+
+80Ni:
+  ME: -23240.0
+  dME: 600.0
+  ME_est: true
+  T: 30 ms
+  dT: '22'
+  Jpi: 0+
+  Year: 2014
+  BR: [B-=100, 'B-n ?', 'B-2n ?']
+
+81Ni:
+  ME: -16090.0
+  dME: 700.0
+  ME_est: true
+  T: 30 ms
+  dT: '>410ns'
+  T_est: true
+  Jpi: 3/2+#
+  Year: 2017
+  BR: ['B- ?']
+
+82Ni:
+  ME: -10720.0
+  dME: 800.0
+  ME_est: true
+  T: 16 ms
+  dT: '>410ns'
+  T_est: true
+  Jpi: 0+
+  Year: 2017
+  BR: ['B- ?']

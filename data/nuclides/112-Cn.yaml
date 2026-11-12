@@ -1,0 +1,123 @@
+276Cn:
+  ME: 150360.0
+  dME: 500.0
+  ME_est: true
+  T: 100 μs
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']
+
+277Cn:
+  ME: 152330.0
+  dME: 150.0
+  ME_est: true
+  T: 790 μs
+  dT: '330'
+  Year: 1996
+  BR: [A=100]
+
+278Cn:
+  ME: 152840.0
+  dME: 440.0
+  ME_est: true
+  T: 2 ms
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']
+
+279Cn:
+  ME: 155020.0
+  dME: 400.0
+  ME_est: true
+  T: 60 μs
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+280Cn:
+  ME: 155650.0
+  dME: 580.0
+  ME_est: true
+  T: 5 ms
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']
+
+281Cn:
+  ME: 157950.0
+  dME: 400.0
+  ME_est: true
+  T: 180 ms
+  dT: '80'
+  Year: 2010
+  BR: [A~100, 'SF ?']
+
+282Cn:
+  ME: 158830.0
+  dME: 550.0
+  ME_est: true
+  T: 1.1 ms
+  dT: '0.3'
+  Jpi: 0+
+  Year: 2004
+  BR: [SF~100, 'A ?']
+
+283Cn:
+  ME: 161340.0
+  dME: 620.0
+  ME_est: true
+  T: 4.7 s
+  dT: '0.8'
+  Year: 2004
+  BR: [A=81, SF=19]
+
+284Cn:
+  ME: 162420.0
+  dME: 760.0
+  ME_est: true
+  T: 102 ms
+  dT: '17'
+  Jpi: 0+
+  Year: 2004
+  BR: [SF=100]
+
+285Cn:
+  ME: 165090.0
+  dME: 510.0
+  ME_est: true
+  T: 30 s
+  dT: '8'
+  Year: 2004
+  BR: [A=100]
+  Iso:
+    - Lbl: m
+      Ex: 530.0
+      Ex_est: true
+      T: 15 s
+      BR: [A=100]
+
+286Cn:
+  ME: 166450.0
+  dME: 700.0
+  ME_est: true
+  T: 30 s
+  dT: '30'
+  Jpi: 0+
+  Year: 2016
+  BR: [A~100, 'SF ?']
+
+287Cn:
+  ME: 169370.0
+  dME: 700.0
+  ME_est: true
+  T: 30 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+288Cn:
+  ME: 170930.0
+  dME: 700.0
+  ME_est: true
+  T: 10 s
+  T_est: true
+  Jpi: 0+
+  BR: ['A ?', 'SF ?']

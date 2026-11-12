@@ -1,0 +1,4 @@
+# Not kept in git: downloaded raw data, the built site (scripts/build.py), Python caches
+/raw/
+/dist/
+__pycache__/

@@ -1,0 +1,345 @@
+52Cu:
+  ME: -1880.0
+  dME: 600.0
+  ME_est: true
+  Jpi: 3+#
+  BR: ['p ?']
+
+53Cu:
+  ME: -13140.0
+  dME: 500.0
+  ME_est: true
+  Jpi: 3/2-#
+  BR: ['p ?']
+
+54Cu:
+  ME: -21240.0
+  dME: 400.0
+  ME_est: true
+  Jpi: 3+#
+  BR: ['p ?']
+
+55Cu:
+  ME: -31640.0
+  dME: 160.0
+  T: 55.9 ms
+  dT: '1.5'
+  Jpi: 3/2-#
+  Year: 1987
+  BR: [B+=100, 'B+p=?']
+
+56Cu:
+  ME: -38630.0
+  dME: 6.0
+  T: 80.8 ms
+  dT: '0.6'
+  Jpi: (4+)
+  Year: 1987
+  BR: [B+=100, B+p=0.40 12]
+
+57Cu:
+  ME: -47309.0
+  dME: 0.5
+  T: 196.4 ms
+  dT: '0.7'
+  Jpi: 3/2-*
+  Year: 1976
+  BR: [B+=100]
+
+58Cu:
+  ME: -51667.9
+  dME: 0.6
+  T: 3.204 s
+  dT: '0.007'
+  Jpi: 1+*     T=0
+  Year: 1952
+  BR: [B+=100]
+
+59Cu:
+  ME: -56358.5
+  dME: 0.5
+  T: 81.5 s
+  dT: '0.5'
+  Jpi: 3/2-*
+  Year: 1947
+  BR: [B+=100]
+
+60Cu:
+  ME: -58345.3
+  dME: 1.6
+  T: 23.7 m
+  dT: '0.4'
+  Jpi: 2+*
+  Year: 1947
+  BR: [B+=100]
+
+61Cu:
+  ME: -61984.1
+  dME: 1.0
+  T: 3.343 h
+  dT: '0.016'
+  Jpi: 3/2-*
+  Year: 1937
+  BR: [B+=100]
+
+62Cu:
+  ME: -62787.5
+  dME: 0.6
+  T: 9.672 m
+  dT: '0.008'
+  Jpi: 1+*
+  Year: 1936
+  BR: [B+=100]
+
+63Cu:
+  ME: -65579.9
+  dME: 0.4
+  T: stable
+  Jpi: 3/2-*
+  Year: 1923
+  IS: 69.15
+
+64Cu:
+  ME: -65424.4
+  dME: 0.4
+  T: 12.7004 h
+  dT: '0.0013'
+  Jpi: 1+*
+  Year: 1936
+  BR: [B+=61.52 26, B-=38.48 26]
+
+65Cu:
+  ME: -67263.7
+  dME: 0.6
+  T: stable
+  Jpi: 3/2-*
+  Year: 1923
+  IS: 30.85
+
+66Cu:
+  ME: -66258.3
+  dME: 0.6
+  T: 5.120 m
+  dT: '0.014'
+  Jpi: 1+*
+  Year: 1937
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 1154.2
+      T: 600 ns
+      Jpi: (6)-
+      BR: [IT=100]
+
+67Cu:
+  ME: -67319.6
+  dME: 0.9
+  T: 61.83 h
+  dT: '0.12'
+  Jpi: 3/2-*
+  Year: 1948
+  BR: [B-=100]
+
+68Cu:
+  ME: -65567.0
+  dME: 1.6
+  T: 30.9 s
+  dT: '0.6'
+  Jpi: 1+*
+  Year: 1953
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 721.26
+      T: 3.75 m
+      Jpi: 6-*
+      BR: [IT=86 2, B-=14 2]
+
+69Cu:
+  ME: -65736.2
+  dME: 1.4
+  T: 2.85 m
+  dT: '0.15'
+  Jpi: 3/2-*
+  Year: 1966
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 2742.0
+      T: 357 ns
+      Jpi: (13/2+)
+      BR: [IT=100]
+
+70Cu:
+  ME: -62976.4
+  dME: 1.1
+  T: 44.5 s
+  dT: '0.2'
+  Jpi: 6-*
+  Year: 1971
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 101.1
+      T: 33 s
+      Jpi: 3-*
+      BR: [B-=52 9, IT=48 9]
+    - Lbl: n
+      Ex: 242.6
+      T: 6.6 s
+      Jpi: 1+*
+      BR: [B-=93.2 9, IT=6.8 9]
+
+71Cu:
+  ME: -62711.1
+  dME: 1.5
+  T: 19.4 s
+  dT: '1.4'
+  Jpi: 3/2-*
+  Year: 1983
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 2755.7
+      T: 271 ns
+      Jpi: (19/2-)
+      BR: [IT=100]
+
+72Cu:
+  ME: -59783.0
+  dME: 1.4
+  T: 6.63 s
+  dT: '0.03'
+  Jpi: 2-*
+  Year: 1983
+  BR: [B-=100]
+  Iso:
+    - Lbl: m
+      Ex: 270.3
+      T: 1.76 μs
+      Jpi: (6-)
+      BR: [IT=100]
+
+73Cu:
+  ME: -58987.4
+  dME: 1.9
+  T: 4.20 s
+  dT: '0.12'
+  Jpi: 3/2-*
+  Year: 1983
+  BR: [B-=100, B-n=0.029 6]
+
+74Cu:
+  ME: -56006.0
+  dME: 6.0
+  T: 1.606 s
+  dT: '0.009'
+  Jpi: 2-*
+  Year: 1987
+  BR: [B-=100, B-n=0.075 16]
+
+75Cu:
+  ME: -54470.2
+  dME: 0.7
+  T: 1.224 s
+  dT: '0.003'
+  Jpi: 5/2-*
+  Year: 1985
+  BR: [B-=100, B-n=2.7 4]
+  Iso:
+    - Lbl: m
+      Ex: 61.7
+      T: 310 ns
+      Jpi: 1/2-
+      BR: [IT=100]
+    - Lbl: n
+      Ex: 66.2
+      T: 149 ns
+      Jpi: 3/2-
+      BR: [IT=100]
+
+76Cu:
+  ME: -50981.6
+  dME: 0.9
+  T: 637.7 ms
+  dT: '5.5'
+  Jpi: 3-*
+  Year: 1987
+  BR: [B-=100, B-n=7.2 5]
+  Iso:
+    - Lbl: m
+      T: 1.27 s
+      Jpi: (1,3)
+      BR: [B-=100]
+
+77Cu:
+  ME: -48862.8
+  dME: 1.2
+  T: 470.3 ms
+  dT: '1.7'
+  Jpi: 5/2-*
+  Year: 1987
+  BR: [B-=100, B-n=30.1 13]
+
+78Cu:
+  ME: -44789.0
+  dME: 13.0
+  T: 330.7 ms
+  dT: '2.0'
+  Jpi: (6-)*
+  Year: 1991
+  BR: [B-=100, B-n=50.6 45, 'B-2n ?']
+
+79Cu:
+  ME: -42410.0
+  dME: 100.0
+  T: 241.3 ms
+  dT: '2.1'
+  Jpi: (5/2-)*
+  Year: 1991
+  BR: [B-=100, B-n=66 10, 'B-2n ?']
+
+80Cu:
+  ME: -36680.0
+  dME: 300.0
+  ME_est: true
+  T: 113.3 ms
+  dT: '6.4'
+  Year: 1995
+  BR: [B-=100, B-n=58 9, 'B-2n ?']
+
+81Cu:
+  ME: -31910.0
+  dME: 300.0
+  ME_est: true
+  T: 73.2 ms
+  dT: '6.8'
+  Jpi: 5/2-#
+  Year: 2010
+  BR: [B-=100, B-n=81 20, 'B-2n ?']
+
+82Cu:
+  ME: -25730.0
+  dME: 400.0
+  ME_est: true
+  T: 34 ms
+  dT: '7'
+  Year: 2010
+  BR: [B-=100, 'B-n ?', 'B-2n ?']
+
+83Cu:
+  ME: -20390.0
+  dME: 500.0
+  ME_est: true
+  T: 21 ms
+  dT: '>410ns'
+  T_est: true
+  Jpi: 5/2-#
+  Year: 2017
+  BR: ['B- ?', 'B-n ?', 'B-2n ?']
+
+84Cu:
+  ME: -13720.0
+  dME: 500.0
+  ME_est: true
+  BR: ['B- ?', 'B-n ?']

@@ -1,0 +1,80 @@
+284Fl:
+  ME: 168780.0
+  dME: 660.0
+  ME_est: true
+  T: 3.1 ms
+  dT: '1.3'
+  Jpi: 0+
+  Year: 2015
+  BR: [SF~100, 'A ?']
+
+285Fl:
+  ME: 170930.0
+  dME: 400.0
+  ME_est: true
+  T: 210 ms
+  dT: '100'
+  Year: 2010
+  BR: [A~100, SF<20]
+
+286Fl:
+  ME: 171610.0
+  dME: 550.0
+  ME_est: true
+  T: 130 ms
+  dT: '30'
+  Jpi: 0+
+  Year: 2004
+  BR: [A=59 11, SF=41 11]
+
+287Fl:
+  ME: 173930.0
+  dME: 620.0
+  ME_est: true
+  T: 510 ms
+  dT: '120'
+  Year: 2004
+  BR: [A~100, 'SF ?']
+
+288Fl:
+  ME: 174920.0
+  dME: 760.0
+  ME_est: true
+  T: 653 ms
+  dT: '113'
+  Jpi: 0+
+  Year: 2004
+  BR: [A~100, 'SF ?']
+
+289Fl:
+  ME: 177470.0
+  dME: 510.0
+  ME_est: true
+  T: 2.1 s
+  dT: '0.6'
+  Year: 2004
+  BR: [A~100, 'SF ?']
+  Iso:
+    - Lbl: m
+      Ex: 750.0
+      Ex_est: true
+      T: 1.1 s
+      BR: [A=100]
+
+290Fl:
+  ME: 178730.0
+  dME: 700.0
+  ME_est: true
+  T: 80 s
+  dT: '60'
+  Jpi: 0+
+  Year: 2016
+  BR: [A~100, 'SF ?', B+<50]
+
+291Fl:
+  ME: 181500.0
+  dME: 700.0
+  ME_est: true
+  T: 10 s
+  T_est: true
+  BR: ['A ?', 'SF ?']

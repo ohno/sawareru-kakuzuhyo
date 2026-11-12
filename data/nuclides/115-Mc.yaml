@@ -1,0 +1,51 @@
+287Mc:
+  ME: 177750.0
+  dME: 440.0
+  ME_est: true
+  T: 60 ms
+  dT: '30'
+  Year: 2004
+  BR: [A=100]
+
+288Mc:
+  ME: 179670.0
+  dME: 540.0
+  ME_est: true
+  T: 177 ms
+  dT: '20'
+  Year: 2004
+  BR: [A=100]
+
+289Mc:
+  ME: 180680.0
+  dME: 780.0
+  ME_est: true
+  T: 410 ms
+  dT: '150'
+  Year: 2010
+  BR: [A=100]
+
+290Mc:
+  ME: 182790.0
+  dME: 590.0
+  ME_est: true
+  T: 840 ms
+  dT: '360'
+  Year: 2010
+  BR: [A=100]
+
+291Mc:
+  ME: 184180.0
+  dME: 740.0
+  ME_est: true
+  T: 1 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+292Mc:
+  ME: 186600.0
+  dME: 700.0
+  ME_est: true
+  T: 5 s
+  T_est: true
+  BR: ['A ?', 'SF ?']

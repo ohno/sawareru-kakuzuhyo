@@ -1,0 +1,172 @@
+260Bh:
+  ME: 113120.0
+  dME: 200.0
+  ME_est: true
+  T: 41 ms
+  dT: '14'
+  Year: 2008
+  BR: [A~100, 'B+ ?', 'SF ?']
+
+261Bh:
+  ME: 113080.0
+  dME: 180.0
+  T: 12.8 ms
+  dT: '3.2'
+  Jpi: (5/2-)
+  Year: 1989
+  BR: [A~100, 'SF ?']
+
+262Bh:
+  ME: 114250.0
+  dME: 90.0
+  T: 84 ms
+  dT: '11'
+  Year: 1981
+  BR: [A~100, SF<20]
+  Iso:
+    - Lbl: m
+      Ex: 220.0
+      T: 9.5 ms
+      BR: [A~100, 'SF ?']
+
+263Bh:
+  ME: 114500.0
+  dME: 310.0
+  ME_est: true
+  T: 200 ms
+  T_est: true
+  Jpi: 5/2-#
+  BR: ['A ?']
+
+264Bh:
+  ME: 115960.0
+  dME: 180.0
+  ME_est: true
+  T: 1.07 s
+  dT: '0.21'
+  Year: 1995
+  BR: [A~86, SF~14, 'B+ ?']
+
+265Bh:
+  ME: 116400.0
+  dME: 240.0
+  ME_est: true
+  T: 1.19 s
+  dT: '0.52'
+  Jpi: 5/2-#
+  Year: 2004
+  BR: ['A=?']
+
+266Bh:
+  ME: 118100.0
+  dME: 160.0
+  ME_est: true
+  T: 10.6 s
+  dT: '2.2'
+  Year: 2000
+  BR: [A~100, 'B+ ?', 'SF ?']
+
+267Bh:
+  ME: 118770.0
+  dME: 260.0
+  ME_est: true
+  T: 22 s
+  dT: '10'
+  Jpi: 5/2-#
+  Year: 2000
+  BR: [A=100]
+
+268Bh:
+  ME: 120710.0
+  dME: 380.0
+  ME_est: true
+  T: 190 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+269Bh:
+  ME: 121480.0
+  dME: 370.0
+  ME_est: true
+  T: 1 m
+  T_est: true
+  Jpi: 5/2-#
+  BR: ['A ?']
+
+270Bh:
+  ME: 124230.0
+  dME: 300.0
+  ME_est: true
+  T: 3.8 m
+  dT: '3.0'
+  Year: 2007
+  BR: [A=100]
+
+271Bh:
+  ME: 125860.0
+  dME: 380.0
+  ME_est: true
+  T: 2.9 s
+  dT: '1.9'
+  Year: 2013
+  BR: [A=100]
+
+272Bh:
+  ME: 128790.0
+  dME: 530.0
+  ME_est: true
+  T: 11.3 s
+  dT: '1.8'
+  Year: 2004
+  BR: [A~100]
+
+273Bh:
+  ME: 130680.0
+  dME: 660.0
+  ME_est: true
+  T: 1 m
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+274Bh:
+  ME: 133760.0
+  dME: 580.0
+  ME_est: true
+  T: 57 s
+  dT: '27'
+  Year: 2010
+  BR: [A=100]
+
+275Bh:
+  ME: 135780.0
+  dME: 600.0
+  ME_est: true
+  T: 1 m
+  T_est: true
+  Jpi: 5/2-#
+  BR: ['SF ?']
+
+276Bh:
+  ME: 138950.0
+  dME: 600.0
+  ME_est: true
+  T: 60 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+277Bh:
+  ME: 141100.0
+  dME: 600.0
+  ME_est: true
+  T: 10 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+278Bh:
+  ME: 144370.0
+  dME: 400.0
+  ME_est: true
+  T: 2 s
+  T_est: true
+  Year: 2016
+  BR: [SF~100, 'A ?']

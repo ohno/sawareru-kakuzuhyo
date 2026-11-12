@@ -1,0 +1,176 @@
+15Ne:
+  ME: 40220.0
+  dME: 70.0
+  T: 770 ys
+  dT: '300'
+  Jpi: (3/2-)
+  Year: 2014
+  BR: [2p=100]
+
+16Ne:
+  ME: 23987.0
+  dME: 20.0
+  T: '>5.7 zs'
+  Jpi: 0+
+  Year: 1977
+  BR: [2p=100]
+
+17Ne:
+  ME: 16500.5
+  dME: 0.4
+  T: 109.2 ms
+  dT: '0.6'
+  Jpi: 1/2-*
+  Year: 1963
+  BR: [B+=100, B+p=94.4 29, B+A=3.51 1, B+pA=0.014 4]
+
+18Ne:
+  ME: 5317.6
+  dME: 0.4
+  T: 1664.20 ms
+  dT: '0.47'
+  Jpi: 0+
+  Year: 1954
+  BR: [B+=100]
+
+19Ne:
+  ME: 1752.05
+  dME: 0.16
+  T: 17.2569 s
+  dT: '0.0019'
+  Jpi: 1/2+*
+  Year: 1939
+  BR: [B+=100]
+
+20Ne:
+  ME: -7041.9322
+  dME: 0.0015
+  T: stable
+  Jpi: 0+
+  Year: 1913
+  IS: 90.48
+
+21Ne:
+  ME: -5731.78
+  dME: 0.04
+  T: stable
+  Jpi: 3/2+*
+  Year: 1928
+  IS: 0.27
+
+22Ne:
+  ME: -8024.716
+  dME: 0.018
+  T: stable
+  Jpi: 0+
+  Year: 1913
+  IS: 9.25
+
+23Ne:
+  ME: -5154.05
+  dME: 0.1
+  T: 37.15 s
+  dT: '0.03'
+  Jpi: 5/2+*
+  Year: 1936
+  BR: [B-=100]
+
+24Ne:
+  ME: -5951.6
+  dME: 0.5
+  T: 3.38 m
+  dT: '0.02'
+  Jpi: 0+
+  Year: 1956
+  BR: ['B-=100[gs=0,m=100]']
+
+25Ne:
+  ME: -2036.0
+  dME: 29.0
+  T: 602 ms
+  dT: '8'
+  Jpi: 1/2+*
+  Year: 1970
+  BR: [B-=100]
+
+26Ne:
+  ME: 481.0
+  dME: 18.0
+  T: 197 ms
+  dT: '2'
+  Jpi: 0+
+  Year: 1970
+  BR: [B-=100, B-n=0.13 3]
+
+27Ne:
+  ME: 7050.0
+  dME: 90.0
+  T: 30.9 ms
+  dT: '1.1'
+  Jpi: (3/2+)
+  Year: 1977
+  BR: [B-=100, B-n=2.0 5, 'B-2n ?']
+
+28Ne:
+  ME: 11300.0
+  dME: 130.0
+  T: 18.8 ms
+  dT: '0.2'
+  Jpi: 0+
+  Year: 1979
+  BR: [B-=100, B-n=12 1, B-2n=3.7 5]
+
+29Ne:
+  ME: 18400.0
+  dME: 150.0
+  T: 14.7 ms
+  dT: '0.4'
+  Jpi: (3/2-)
+  Year: 1985
+  BR: [B-=100, B-n=28 5, B-2n=4 1]
+
+30Ne:
+  ME: 23280.0
+  dME: 250.0
+  T: 7.22 ms
+  dT: '0.18'
+  Jpi: 0+
+  Year: 1985
+  BR: [B-=100, B-n=13 4, B-2n=8.9 23]
+
+31Ne:
+  ME: 31180.0
+  dME: 270.0
+  T: 3.4 ms
+  dT: '0.8'
+  Jpi: (3/2-)
+  Year: 1996
+  BR: [B-=100, 'B-n ?', 'B-2n ?']
+
+32Ne:
+  ME: 37000.0
+  dME: 500.0
+  ME_est: true
+  T: 3.5 ms
+  dT: '0.9'
+  Jpi: 0+
+  Year: 1990
+  BR: [B-=100, 'B-n ?', 'B-2n ?']
+
+33Ne:
+  ME: 46130.0
+  dME: 600.0
+  ME_est: true
+  Jpi: 7/2-#
+  BR: ['n ?']
+
+34Ne:
+  ME: 52840.0
+  dME: 510.0
+  ME_est: true
+  T: 2 ms
+  dT: '>1.5us'
+  T_est: true
+  Jpi: 0+
+  Year: 2002
+  BR: ['B- ?', 'B-2n ?', 'B-n ?']

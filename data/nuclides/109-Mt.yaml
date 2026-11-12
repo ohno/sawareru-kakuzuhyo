@@ -1,0 +1,161 @@
+265Mt:
+  ME: 126620.0
+  dME: 440.0
+  ME_est: true
+  T: 2 ms
+  T_est: true
+  BR: ['A ?']
+
+266Mt:
+  ME: 127670.0
+  dME: 100.0
+  T: 2.0 ms
+  dT: '0.5'
+  Year: 1982
+  BR: [A~100, 'SF ?']
+  Iso:
+    - Lbl: m
+      Ex: 1140.0
+      T: 6 ms
+      BR: [A=100]
+
+267Mt:
+  ME: 127790.0
+  dME: 500.0
+  ME_est: true
+  T: 10 ms
+  T_est: true
+  BR: ['A ?']
+
+268Mt:
+  ME: 129150.0
+  dME: 230.0
+  ME_est: true
+  T: 23 ms
+  dT: '7'
+  Year: 1995
+  BR: [A=100]
+
+269Mt:
+  ME: 129300.0
+  dME: 310.0
+  ME_est: true
+  T: 100 ms
+  T_est: true
+  BR: ['A ?']
+
+270Mt:
+  ME: 130710.0
+  dME: 190.0
+  ME_est: true
+  T: 800 ms
+  dT: '400'
+  Year: 2004
+  BR: [A~100]
+
+271Mt:
+  ME: 131100.0
+  dME: 330.0
+  ME_est: true
+  T: 400 ms
+  T_est: true
+  BR: ['A ?']
+
+272Mt:
+  ME: 133480.0
+  dME: 490.0
+  ME_est: true
+  T: 400 ms
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+273Mt:
+  ME: 134780.0
+  dME: 420.0
+  ME_est: true
+  T: 800 ms
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+274Mt:
+  ME: 137250.0
+  dME: 380.0
+  ME_est: true
+  T: 850 ms
+  dT: '540'
+  Year: 2007
+  BR: [A=100]
+
+275Mt:
+  ME: 138770.0
+  dME: 390.0
+  ME_est: true
+  T: 31 ms
+  dT: '17'
+  Year: 2004
+  BR: [A=100]
+
+276Mt:
+  ME: 141310.0
+  dME: 530.0
+  ME_est: true
+  T: 700 ms
+  dT: '80'
+  Year: 2004
+  BR: [A=100]
+  Iso:
+    - Lbl: m
+      Ex: 250.0
+      T: 7 s
+      BR: [A=100]
+
+277Mt:
+  ME: 143010.0
+  dME: 660.0
+  ME_est: true
+  T: 9 s
+  dT: '6'
+  Year: 2013
+  BR: [SF=100, 'A ?']
+
+278Mt:
+  ME: 145770.0
+  dME: 580.0
+  ME_est: true
+  T: 6 s
+  dT: '3'
+  Year: 2010
+  BR: [A=100]
+
+279Mt:
+  ME: 147590.0
+  dME: 670.0
+  ME_est: true
+  T: 20 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+280Mt:
+  ME: 150510.0
+  dME: 600.0
+  ME_est: true
+  T: 10 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+281Mt:
+  ME: 152400.0
+  dME: 600.0
+  ME_est: true
+  T: 1 s
+  T_est: true
+  BR: ['A ?', 'SF ?']
+
+282Mt:
+  ME: 155460.0
+  dME: 450.0
+  ME_est: true
+  T: 100 ms
+  T_est: true
+  Year: 2016
+  BR: [A~100, 'SF ?']
