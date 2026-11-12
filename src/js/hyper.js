@@ -8,15 +8,15 @@ import { makeTextSprite, FOOT, MASS_OFFSET } from './chart.js';
 
 export { HYPER_SOURCE } from './data.js';
 
-// line color and dash of each drip-line source, and whether it is shown at first (the lines: data/hyper-driplines.yaml)
+// how each paper's drip lines are drawn (in the color of their layer), and the one shown at first: only one, so that
+// the lines do not lie on top of each other
 const DRIP_STYLE = {
-  samanta2008: { color: '#0f9d8a', dash: 'solid', on: true },
-  roychowdhury2010: { color: '#8f45e6', dash: 'dash', on: false },
-  khan2015: { color: '#2f6fd6', dash: 'solid', on: true },
-  meoto2022: { color: '#e07a10', dash: 'dot', on: false },
+  samanta2008: { dash: 'solid', on: true },
+  roychowdhury2010: { dash: 'dash' },
+  meoto2022: { dash: 'dot' },
 };
-/** the theoretical hypernuclear drip lines, one entry per paper, with their line styles */
-export const HYPER_DRIP_SOURCES = DRIP_DATA.map((src) => ({ ...src, ...DRIP_STYLE[src.key] }));
+/** the theoretical hypernuclear drip lines, one entry per paper, with their dash and whether shown at first */
+export const HYPER_DRIP_SOURCES = DRIP_DATA.map((src) => ({ on: false, ...src, ...DRIP_STYLE[src.key] }));
 
 export const LAYER_GAP = 26; // world units between strangeness layers
 export const HYPER_BASE = 1e6; // hypernucleus k is addressed as HYPER_BASE + k next to nuclide indices
@@ -69,17 +69,17 @@ const DRIP_X_MAX = 206; // right edge of the board (N)
 const DASHES = { solid: null, dash: [0.9, 1.5], dot: [0.3, 0.7] }; // [on, period] along the line
 
 /**
- * One drip line of a source on a layer, as a flat ribbon at height y: a staircase along the cell edges just
- * outside the bound region (one step per Z, so the odd–even zig-zag of the tables stays visible; a source with
- * even Z only spans two rows per step). Gaps in Z break it.
+ * One drip line on a layer, as a flat ribbon at height y: a staircase along the cell edges just outside the bound
+ * region (one step per Z, so the odd–even zig-zag of the tables stays visible), solid, dashed or dotted. Gaps in Z
+ * break it.
  */
-function dripRibbon(rows, side, y, dash, zStep = 1) {
+function dripRibbon(rows, side, y, dash) {
   const dx = side === 'neutron' ? 0.5 : -0.5;
   const runs = [];
   [...rows].sort((a, b) => a[0] - b[0]).forEach(([z, n], k, all) => {
-    if (!k || z !== all[k - 1][0] + zStep) runs.push([]);
+    if (!k || z !== all[k - 1][0] + 1) runs.push([]);
     const x = Math.min(DRIP_X_MAX, n + dx);
-    runs[runs.length - 1].push([x, -z + zStep / 2], [x, -z - zStep / 2]);
+    runs[runs.length - 1].push([x, -z + 0.5], [x, -z - 0.5]);
   });
   const pos = [];
   const quad = (a, b, c, d) => pos.push(...a, ...b, ...c, ...a, ...c, ...d);
@@ -218,23 +218,25 @@ export class HyperLayers {
       else tag.position.set(118, y + 2.8, z1 + 2);
       lg.add(tag);
     }
-    // theoretical drip lines on each layer, one colour per source, named at the heavy end of the neutron line
-    // (on the s = 0 layer they run over the tops of the cubes)
+    // theoretical drip lines on each layer in the color of the layer, named at the heavy end of the neutron line
+    // (on the s = 0 layer they run over the tops of the cubes); the papers are named only in the left panel
     this.dripGroups = [];
     for (const src of HYPER_DRIP_SOURCES) {
       for (const [s, lines] of Object.entries(src.layers)) {
         const group = new THREE.Group();
         group.visible = this.dripOn.has(src.key);
         const y = +s * gap + (+s === 0 || stacked ? FOOT + 0.05 : 0.06);
-        const mat = new THREE.MeshBasicMaterial({ color: src.color, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthWrite: false });
+        const layer = LAYERS[+s];
+        const color = dark ? layer.color : layer.ink;
+        const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthWrite: false });
         for (const side of ['neutron', 'proton']) {
           if (!lines[side]) continue;
-          const m = new THREE.Mesh(dripRibbon(lines[side], side, y, src.dash, src.zStep), mat);
+          const m = new THREE.Mesh(dripRibbon(lines[side], side, y, src.dash), mat);
           m.renderOrder = 4;
           group.add(m);
         }
         const end = (lines.neutron || lines.proton).reduce((a, b) => (b[0] > a[0] ? b : a));
-        const t = makeTextSprite(src.short, { color: src.color, weight: 700, size: 2, anchor: 'left', stroke: dark ? '#050506' : '#ffffff' });
+        const t = makeTextSprite('ハイパー核のドリップライン（存在限界の理論予想）', { color, weight: 700, size: 2, anchor: 'left', stroke: dark ? '#050506' : '#ffffff' });
         t.position.set(Math.min(DRIP_X_MAX, end[1] + 2), y + 0.8, -end[0]);
         group.add(t);
         this.layerGroups.get(+s).add(group);

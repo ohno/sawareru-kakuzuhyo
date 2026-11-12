@@ -1,7 +1,7 @@
 // HTML for the detail panel, the hover tooltip and the 2D decay-chain diagram.
 import {
   ELEMENTS, CATEGORIES, isMagic, primaryCategory, modeCategory, modeLabel, modeDesc, nucHtml, nucText,
-  fmtHalfLife, fmtSeconds, fmtJpi, fmtKeV, fmtMeV, fmtBranch, sup, feDeficit, HL_CSS, HL_STABLE, HL_RANGE,
+  fmtHalfLife, fmtSeconds, fmtJpi, fmtKeV, fmtBranch, sup, feDeficit, HL_CSS, HL_STABLE, HL_RANGE,
   LEGO_PALETTE,
 } from './nuclear.js';
 import { ELEMENT_DESCRIPTION, ELEMENT_ISOTOPES, ELEMENT_DISCOVERY, ABUNDANCE } from './data.js';
@@ -120,9 +120,10 @@ export function howtoHtml() {
       <dt><kbd>Esc</kbd></dt><dd>選択を解除</dd>
       <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>中性子数 ±1（固定中）</dd>
       <dt><kbd>↑</kbd><kbd>↓</kbd></dt><dd>陽子数 ±1（固定中）</dd>
-      <dt><kbd>F</kbd></dt><dd>選択した核へカメラを移動</dd>
-      <dt><kbd>R</kbd></dt><dd>表示をリセット</dd>
-      <dt><kbd>M</kbd></dt><dd>選んだ核の音のオン / オフ</dd>
+      <dt><kbd>f</kbd></dt><dd>選択した核へカメラを移動</dd>
+      <dt><kbd>r</kbd></dt><dd>表示をリセット</dd>
+      <dt><kbd>m</kbd></dt><dd>選んだ核の音のオン / オフ</dd>
+      <dt><kbd>d</kbd></dt><dd>ディスプレイモード（自動で回転・再生。操作すると終了）</dd>
     </dl>`;
 }
 
@@ -204,7 +205,6 @@ export function detailHtml(nuc, idx, graph, { pinned, theme, minBranch = 1, gene
   else if (nuc.ub) badges.push('<span class="badge plain">未観測・非束縛（推定値）</span>');
   else if (!nuc.y) badges.push('<span class="badge plain">未観測</span>');
 
-  const est = new Set(nuc.de || []);
   const hlSub = nuc.st ? '' : [nuc.dt ? `± ${esc(nuc.dt)}` : '', nuc.t ? fmtSeconds(nuc.t) : ''].filter(Boolean).join('　');
 
   const modes = graph.daughters(idx);
@@ -243,15 +243,6 @@ export function detailHtml(nuc, idx, graph, { pinned, theme, minBranch = 1, gene
       ['質量超過 Δ', fmtKeV(nuc.me, nuc.dme, nuc.mee)],
       ['結合エネルギー B/A', nuc.ba !== undefined ? fmtKeV(nuc.ba, undefined, nuc.mee) : '—'],
       ['B/A − B/A(⁵⁶Fe)', dfe !== null ? `${dfe > 0 ? '−' : '+'}${Math.abs(dfe).toFixed(3)} MeV${nuc.mee ? ' #' : ''}` : '—'],
-    ]],
-    ['分離エネルギーと Q 値', [
-      ['中性子分離 Sₙ', fmtMeV(nuc.sn, est.has('sn'))],
-      ['陽子分離 Sₚ', fmtMeV(nuc.sp, est.has('sp'))],
-      ['2中性子分離 S₂ₙ', fmtMeV(nuc.s2n, est.has('s2n'))],
-      ['2陽子分離 S₂ₚ', fmtMeV(nuc.s2p, est.has('s2p'))],
-      ['Qα', fmtMeV(nuc.qa, est.has('qa'))],
-      ['Qβ⁻', fmtMeV(nuc.qb, est.has('qb'))],
-      ['Q<sub>EC</sub>', fmtMeV(nuc.qec, est.has('qec'))],
     ]],
     ...(nuc.fyc || nuc.fyi ? [['核分裂収率', [
       ['核分裂収率（累積）', fmtYield(nuc.fyc), '²³⁵U の熱中性子核分裂、基底状態'],
@@ -376,6 +367,12 @@ function chainSvg(idx, graph, theme, minBranch, route) {
     const label = cell >= 22 ? `<text x="${X(p.n)}" y="${Y(p.z) + 3.5}" class="svg-l" fill="${cat === 'st' && theme !== 'dark' ? '#fff' : '#1d1d1f'}">${p.a}${p.s}</text>` : '';
     return `<g class="svg-node${onRoute.has(i) && !selected ? ' on-route' : ''}" data-idx="${i}"><rect x="${X(p.n) - cell * 0.44}" y="${Y(p.z) - cell * 0.44}" width="${cell * 0.88}" height="${cell * 0.88}" rx="2" fill="${catColor(cat, theme)}" ${selected ? 'stroke="#e8364a" stroke-width="2.5"' : ''}><title>${nucText(p)} ${fmtHalfLife(p)}</title></rect>${label}</g>`;
   }).join('');
+  const notes = pts.map((p) => {
+    const i = graph.find(p.z, p.n);
+    const x = Math.min(W - 18, Math.max(18, X(p.n)));
+    const y = Y(p.z) - cell * 0.5 - 4 < 12 ? Y(p.z) + cell * 0.5 + 13 : Y(p.z) - cell * 0.5 - 4;
+    return `<text class="svg-note" data-idx="${i}" x="${x}" y="${y}"><tspan font-size="0.72em" dy="-0.35em">${p.a}</tspan><tspan dy="0.35em">${p.s}</tspan></text>`;
+  }).join('');
   const lines = edges.map((e) => {
     const a = graph.nuclides[e.from], b = graph.nuclides[e.to];
     const x1 = X(a.n), y1 = Y(a.z), x2 = X(b.n), y2 = Y(b.z);
@@ -387,7 +384,7 @@ function chainSvg(idx, graph, theme, minBranch, route) {
   }).join('');
   return `<svg class="chain-svg" viewBox="0 0 ${W} ${h + 18}" width="100%" role="img" aria-label="崩壊系列の核図表">
     <defs>${markers}</defs>
-    ${rects}${lines}
+    ${rects}${lines}${notes}
     <text x="${W - 4}" y="${h + 14}" class="svg-axis" text-anchor="end">N →</text>
     <text x="4" y="${h + 14}" class="svg-axis">Z ↑ · N ${Math.ceil(nMin)}–${Math.floor(nMax)}, Z ${Math.ceil(zMin)}–${Math.floor(zMax)}</text>
   </svg>`;

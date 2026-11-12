@@ -2,6 +2,7 @@
 // column of light, with sparkles twinkling around it. Light mode blends normally (an additive glow vanishes on a
 // light background); dark mode adds light.
 import * as THREE from 'three';
+import { FOOT } from './chart.js';
 
 const Z_NH = 113;
 const A_RIKEN = 278;
@@ -21,6 +22,34 @@ function haloTexture() {
   g.fillRect(0, 0, 128, 128);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+// ²⁷⁸Nh as the chart writes it on a box top (mass number small at the far left, the symbol below), but in white
+// letters with a dark rim, so that it stays readable in the light that would wash out the chart's own label
+function labelTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const g = c.getContext('2d');
+  g.lineJoin = 'round';
+  g.strokeStyle = '#06324d';
+  g.fillStyle = '#ffffff';
+  g.textBaseline = 'middle';
+  const write = (text, weight, size, x, y) => {
+    g.font = `${weight} ${size}px Inter, "Helvetica Neue", Arial, sans-serif`;
+    g.lineWidth = size * 0.22;
+    g.strokeText(text, x, y);
+    g.fillText(text, x, y);
+  };
+  // the layout of the chart's label atlas (chart.js) on the box top: the mass number from the left edge of the
+  // upper strip, the symbol centered below it
+  g.textAlign = 'left';
+  write(String(A_RIKEN), 500, 44, 24, 59);
+  g.textAlign = 'center';
+  write('Nh', 600, 92, 128, 146);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
   return t;
 }
 
@@ -144,6 +173,15 @@ export class NihoniumGlow {
     this.sparks.frustumCulled = false;
     this.sparks.renderOrder = 5;
     this.column.add(this.sparks);
+
+    // the name on the box top, drawn after the light
+    this.label = new THREE.Mesh(
+      new THREE.PlaneGeometry(FOOT, FOOT),
+      new THREE.MeshBasicMaterial({ map: labelTexture(), transparent: true, depthWrite: false }),
+    );
+    this.label.rotation.x = -Math.PI / 2;
+    this.label.renderOrder = 6;
+    this.group.add(this.label);
     this.setTheme('light');
   }
 
@@ -165,13 +203,17 @@ export class NihoniumGlow {
     this.enabled = on;
     this.group.visible = on && this.main >= 0;
     this.chart.setGlow(this.main >= 0 ? [this.main] : [], on ? 1 : 0);
+    if (!on) this.chart.uniforms.uSpot.value.z = 0;
   }
 
   /** follows the animated box height; pxScale converts a world size at unit distance to pixels */
-  update(time, pxScale) {
+  update(time, pxScale, camera) {
     if (!this.enabled || this.main < 0) return;
     const chart = this.chart;
     this.group.visible = chart.visible[this.main] === 1;
+    // the labels of the boxes around are drawn again over the light (chart.js, LABEL_ONLY)
+    const nh = chart.nuclides[this.main];
+    chart.uniforms.uSpot.value.set(nh.n, -nh.z, this.group.visible ? 14 : 0);
     if (!this.group.visible) return;
     const dim = 1 - chart.uniforms.uFocus.value * 0.75; // fades with the rest while another nucleus is selected
     const nuc = chart.nuclides[this.main];
@@ -184,6 +226,12 @@ export class NihoniumGlow {
     this.aura.scale.setScalar(26 * (1 + 0.06 * pulse));
     this.aura.material.opacity = this.look.aura * dim * (0.85 + 0.15 * pulse);
     this.column.position.set(nuc.n, top, -nuc.z);
+    // the label shows and fades with the distance like the box-top labels of the chart
+    const u = chart.uniforms;
+    this.label.visible = u.uLabels.value > 0.5;
+    this.label.position.set(nuc.n, top + 0.02, -nuc.z);
+    const d = camera.position.distanceTo(this.label.position);
+    this.label.material.opacity = 1 - THREE.MathUtils.smoothstep(d, u.uLabelNear.value, u.uLabelFar.value);
     const b = this.beam.material.uniforms, c = this.core.material.uniforms, k = this.sparks.material.uniforms;
     b.uTime.value = c.uTime.value = k.uTime.value = time;
     b.uOpacity.value = this.look.beamA * dim * (0.85 + 0.15 * Math.sin(time * 1.3));

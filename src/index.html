@@ -54,7 +54,7 @@
           <label class="check"><input type="checkbox" id="opt-z" checked> 原子番号 Z</label>
           <label class="check"><input type="checkbox" id="opt-nh" checked> ニホニウムの強調</label>
           <label class="check"><input type="checkbox" id="opt-magic" checked> 魔法数ライン</label>
-          <label class="check"><input type="checkbox" id="opt-drip"> ドリップライン（理論予測）</label>
+          <label class="check"><input type="checkbox" id="opt-drip"> ドリップライン（存在限界の理論予想）</label>
           <label class="check" title="超重核で閉殻（Z = 114〜126, N = 184 付近）が強く束縛し、寿命の長い核があると予測される領域。KTUY05 質量公式の殻エネルギーが −6 MeV より深い核を緑に光らせます（深いほど強く）。未発見の元素 119〜126 の予測核も加わります"><input type="checkbox" id="opt-island"> 安定の島（理論予測）</label>
           <span class="sub-legend">核の分類（理研レゴ核図表の配色）</span>
           <label class="check"><input type="checkbox" data-lego="st" checked> <i class="kind-sw lego-sw" style="background:#1b1b1d"></i>安定核</label>
@@ -81,7 +81,7 @@
           <label class="check"><input type="checkbox" data-layer="0" checked> <i class="kind-sw" style="background:#e9c44a"></i>s = 0（通常核）</label>
           <label class="check"><input type="checkbox" data-layer="1" checked> <i class="kind-sw" style="background:#ff5b6e"></i>s = 1（Λ, Σ ハイパー核）</label>
           <label class="check"><input type="checkbox" data-layer="2" checked> <i class="kind-sw" style="background:#d65bd6"></i>s = 2（ΛΛ, Ξ ハイパー核）</label>
-          <span class="sub-legend">ハイパー核モードのドリップライン（理論予測）</span>
+          <span class="sub-legend">ハイパー核のドリップライン（存在限界の理論予想）</span>
           <div id="hyper-drip" class="checks-sub"></div>
         </div>
       </details>
@@ -183,7 +183,7 @@
       <button class="btn" data-drag="rotate" aria-pressed="true" title="ドラッグで回転">回転</button>
     </div>
     <span class="sep"></span>
-    <button class="btn" data-view="focus" title="選んだ核へカメラを近づける（F キー）">選択核をズーム</button>
+    <button class="btn" data-view="focus" title="選んだ核へカメラを近づける（f キー）">選択核をズーム</button>
     <span class="sep"></span>
     <button class="btn riken-btn" id="riken" aria-pressed="false" title="理研で発見された核種だけを表示">理研が発見</button>
     <button class="btn hyper-btn" id="hyper" aria-pressed="false" title="ストレンジクォークを含むハイパー核を、s クォーク数の層に重ねて表示">ハイパー核</button>
@@ -193,7 +193,7 @@
     <!-- Icons: camera and circle-help from Feather, Copyright (c) 2013-2023 Cole Bemis, MIT License; rotate-ccw from
          Lucide, Copyright (c) 2026 Lucide Icons and Contributors, ISC License. See THIRD-PARTY-NOTICES. -->
     <button class="btn icon" id="shot" title="画像として保存" aria-label="画像として保存"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
-    <button class="btn icon" id="reset" title="表示をリセット（R キー）" aria-label="表示をリセット"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+    <button class="btn icon" id="reset" title="表示をリセット（r キー）" aria-label="表示をリセット"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
     <button class="btn icon" id="help" title="チュートリアルを見る" aria-label="チュートリアルを見る"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
   </div>
 
@@ -214,6 +214,7 @@
   </div>
 
   <div id="tooltip" class="tooltip" hidden></div>
+  <div class="display-hint">画面にふれると操作できます</div>
   <div class="credit"><a href="https://github.com/ohno/sawareru-kakuzuhyo/blob/main/data/README.md" target="_blank" rel="noopener">データの出典</a> · © 2026 RIKEN</div>
   <div id="loading" class="loading"><div class="spinner"></div><p>核データを読み込み中…</p></div>
 

@@ -33,7 +33,7 @@ export const ELEMENTS = elements.elements.map((e) => [e.symbol, e.en, e.ja]);
 export const ELEMENT_DESCRIPTION = elements.elements.map((e) => e.description);
 export const ELEMENT_ISOTOPES = elements.elements.map((e) => e.isotopes);
 export const ELEMENT_DISCOVERY = elements.elements.map((e) => e.discovered);
-/** protosolar abundances: label, and per Z { num, mass, rank } (shares of all atoms and of all mass) or null */
+/** protosolar abundances: label, cite, and per Z { num, mass, rank } (shares of all atoms and of all mass) or null */
 export const ABUNDANCE = abundances;
 
 /** nuclides first identified at RIKEN [Z, A, year, reference, doi], and those credited to RIKEN only by its LEGO chart (+ note) */

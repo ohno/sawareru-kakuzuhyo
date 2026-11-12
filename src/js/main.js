@@ -164,6 +164,8 @@ async function init() {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    // a tall, narrow screen needs the camera further back to see the whole chart (the framing above relies on it)
+    controls.maxDistance = 600 * Math.max(1, 1.3 / camera.aspect);
   }
   window.addEventListener('resize', resize);
   resize();
@@ -284,7 +286,38 @@ async function init() {
     best = solve(best.pitchDeg, best.edge, 4, best);
     best = solve(best.pitchDeg, best.edge, 1, best);
     const pos = new THREE.Vector3(best.camX(best.cy), best.cy, best.cz);
-    const target = pos.clone().addScaledVector(best.f, best.cy / Math.sin(best.pitch)); // where the view centre meets the floor
+    // On a tall screen the chart fills the width and leaves height over, and the search settles against the bars:
+    // move it up or down to the middle between the panel header and the bars, as far as its outline stays clear
+    const f = best.f, r = new THREE.Vector3().crossVectors(f, camera.up).normalize(), u = new THREE.Vector3().crossVectors(r, f);
+    const span = (o) => {
+      let y0 = Infinity, y1 = -Infinity;
+      for (let k = 0; k < P.length; k += 3) {
+        const vx = P[k] - o.x, vy = P[k + 1] - o.y, vz = P[k + 2] - o.z;
+        const d = vx * f.x + vy * f.y + vz * f.z;
+        if (d < 1) return null;
+        const x = (vx * r.x + vy * r.y + vz * r.z) / (d * tanH), y = (vx * u.x + vy * u.y + vz * u.z) / (d * tanV);
+        if (x < xMin || x > xMax || y > yMax || y < yMin) return null;
+        for (const bl of blocks) if (x > bl[0] && x < bl[1] && y > bl[2] && y < bl[3]) return null;
+        y0 = Math.min(y0, y);
+        y1 = Math.max(y1, y);
+      }
+      return { y0, y1 };
+    };
+    const top = Math.min(yMax, ...blocks.filter((bl) => bl[3] > 0.5).map((bl) => bl[2]));
+    const bottom = Math.max(yMin, ...blocks.filter((bl) => bl[2] < -0.5).map((bl) => bl[3]));
+    const now = span(pos);
+    if (now && now.y1 - now.y0 < top - bottom) {
+      const shift = (top + bottom) / 2 - (now.y0 + now.y1) / 2;
+      const depth = (cx - pos.x) * f.x + (cy0 - pos.y) * f.y + (cz0 - pos.z) * f.z;
+      for (let k = 1; k > 0.05; k /= 2) {
+        const o = pos.clone().addScaledVector(u, -shift * k * depth * tanV);
+        if (o.y > 2 && span(o)) {
+          pos.copy(o);
+          break;
+        }
+      }
+    }
+    const target = pos.clone().addScaledVector(f, pos.y / Math.sin(best.pitch)); // where the view centre meets the floor
     return { target, pos };
   }
   /** camera looking along -dir at the points, as close as possible with all of them inside the free screen area */
@@ -642,15 +675,17 @@ async function init() {
   // ---------- keyboard ----------
   window.addEventListener('keydown', (e) => {
     if (e.target.matches('input, select, textarea')) return;
-    if (tutorial.active) {
-      if (e.key === 'Escape') tutorial.stop();
-      return;
+    if (display.on) {
+      e.preventDefault();
+      return setDisplay(false);
     }
+    if (tutorial.active) return tutorial.key(e);
     const cur = state.pinned >= 0 ? state.pinned : state.hover;
     if (e.key === 'Escape') return unpin();
     if (e.key === 'f' || e.key === 'F') return flyTo(VIEWS.focus());
     if (e.key === 'r' || e.key === 'R') return resetAll();
     if (e.key === 'm' || e.key === 'M') return toggleSound();
+    if (e.key === 'd' || e.key === 'D') return setDisplay(true);
     if (isHyper(cur)) return;
     const dir = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [1, 0], ArrowDown: [-1, 0] }[e.key];
     if (!dir || cur < 0) return;
@@ -1068,9 +1103,11 @@ async function init() {
     if (e.isTrusted && !chart.hyper) setHyper(true);
     applyKinds();
   }));
-  // hypernuclear drip lines, one check box per source (each draws on the layers it has numbers for)
+  // hypernuclear drip lines, one check box per paper (each draws on the layers it has numbers for, in the layer's
+  // color and the paper's dash, shown beside its name); only one is on at first
+  const DASH_SAMPLE = { solid: '', dash: '5 3.5', dot: '0.01 4' };
   $('#hyper-drip').innerHTML = HYPER_DRIP_SOURCES.map((src) => `<label class="check" title="${src.citation.replace(/"/g, '&quot;')}">
-    <input type="checkbox" data-hdrip="${src.key}"${src.on ? ' checked' : ''}> <i class="kind-sw" style="background:${src.color}"></i>${src.label}</label>`).join('');
+    <input type="checkbox" data-hdrip="${src.key}"${src.on ? ' checked' : ''}> <svg class="dash-sw" viewBox="0 0 22 6" aria-hidden="true"><line x1="2" y1="3" x2="20" y2="3" stroke-dasharray="${DASH_SAMPLE[src.dash]}"/></svg>${src.label}</label>`).join('');
   document.querySelectorAll('[data-hdrip]').forEach((cb) => cb.addEventListener('change', (e) => {
     if (e.isTrusted && cb.checked && !chart.hyper) setHyper(true);
     hyper.setDripSources(new Set([...document.querySelectorAll('[data-hdrip]')].filter((x) => x.checked).map((x) => x.dataset.hdrip)));
@@ -1144,7 +1181,7 @@ async function init() {
     const b = $('#sound');
     b.innerHTML = on ? ICON_SOUND_ON : ICON_SOUND_OFF;
     b.setAttribute('aria-pressed', String(on));
-    b.title = on ? '音を消す（M キー）' : '核を選んだときに音を鳴らす（M キー）';
+    b.title = on ? '音を消す（m キー）' : '核を選んだときに音を鳴らす（m キー）';
     b.setAttribute('aria-label', b.title);
   }
   function toggleSound() {
@@ -1214,7 +1251,7 @@ async function init() {
     stopMelody();
     for (const el of $('#controls').querySelectorAll('input, select')) {
       if (el.id === 'search') continue;
-      if (el.type === 'checkbox') {
+      if (el.type === 'checkbox' || el.type === 'radio') {
         if (el.checked === el.defaultChecked) continue;
         el.checked = el.defaultChecked;
       } else if (el.tagName === 'SELECT') {
@@ -1241,6 +1278,19 @@ async function init() {
   // ---------- tutorial: an animated introduction for first-time visitors (left panel button, ? on the toolbar) ---
   let foldBeforeTutorial = null;
   let colorBeforeTutorial = null;
+  let startBeforeTutorial = null;
+  // what the tutorial explains as the page shows it at first: the heights, and the unobserved (yellow) nuclei,
+  // which playing the discovery history switches off
+  const START_INPUTS = ['#height', '#hscale', '#hbase', '#opt-unobs'];
+  const valueOf = (el) => (el.type === 'checkbox' ? el.checked : el.value);
+  const defaultOf = (el) => (el.type === 'checkbox' ? el.defaultChecked
+    : el.tagName === 'SELECT' ? ([...el.options].find((o) => o.defaultSelected) || el.options[0]).value : el.defaultValue);
+  const setControl = (el, value) => {
+    if (valueOf(el) === value) return;
+    if (el.type === 'checkbox') el.checked = value;
+    else el.value = value;
+    el.dispatchEvent(new Event(el.type === 'range' ? 'input' : 'change', { bubbles: true }));
+  };
   const setColor = (c) => {
     if ($('#color').value === c) return;
     $('#color').value = c;
@@ -1264,10 +1314,12 @@ async function init() {
     enter() {
       resetView();
       if ($('#opt-island').checked) $('#opt-island').click();
+      startBeforeTutorial = START_INPUTS.map((s) => valueOf($(s)));
+      for (const s of START_INPUTS) setControl($(s), defaultOf($(s)));
       setDim('2d', { fly: false });
       colorBeforeTutorial = $('#color').value; // the subtitles explain the LEGO colors
       setColor('lego');
-      chart.setGuideMask({ nAxis: 0, extras: 0 }); // the bare board with the Z axis
+      chart.setGuideMask({ nAxis: 0, zAxis: 0, extras: 0 }); // the bare board
       nihonium.setEnabled(false); // its light would shine on the empty board
       controls.enabled = false;
       foldBeforeTutorial = folded.detail; // the details are shown open in the demonstration
@@ -1280,6 +1332,7 @@ async function init() {
       if (foldBeforeTutorial !== null) folded.detail = foldBeforeTutorial;
       controls.enabled = true;
       resetView();
+      if (startBeforeTutorial) START_INPUTS.forEach((s, k) => setControl($(s), startBeforeTutorial[k]));
       if (colorBeforeTutorial) setColor(colorBeforeTutorial);
       nihonium.setEnabled($('#opt-nh').checked);
       applyFold();
@@ -1298,6 +1351,85 @@ async function init() {
     },
   });
   $('#help').addEventListener('click', () => tutorial.start());
+
+  // ---------- display mode (D key), for a screen at an exhibition: the camera circles the chart, and now and then
+  // the discovery history or the removal by height plays. A click, a touch, the wheel or a key ends it. ----------
+  const display = { on: false, phase: 'orbit', t: 0, wait: 0, act: 0, guesses: [] };
+  const GUESSES = ['#opt-unobs', '#opt-unbound']; // hidden while the discovery history plays
+  const restoreGuesses = () => GUESSES.forEach((s, k) => setControl($(s), display.guesses[k]));
+  const DISPLAY_ACTS = ['year', 'height'];
+  function setDisplay(on) {
+    if (on === display.on || (on && tutorial.active)) return;
+    display.on = on;
+    document.body.classList.toggle('display', on);
+    controls.autoRotate = on;
+    controls.autoRotateSpeed = 0.6;
+    if (on) {
+      stopMelody();
+      tooltip.hidden = true;
+      setHover(-1);
+      resetView();
+      display.guesses = GUESSES.map((s) => $(s).checked);
+      display.phase = 'orbit';
+      display.t = 0;
+      display.wait = 20; // seconds of circling before the first animation
+    } else {
+      stopPlay();
+      decay.setCallouts([]);
+      if (state.timeMode !== 'year') setTimeMode('year');
+      else setYear(YEAR_MAX);
+      restoreGuesses();
+    }
+  }
+  // the nuclide an animation ends with: the last box left by the removal, or the latest discovery of the history
+  function lastOfAct() {
+    if (state.timeMode === 'height') return chart.visible.indexOf(1);
+    let best = -1;
+    nuclides.forEach((nuc, i) => {
+      if (nuc.y && chart.visible[i] && (best < 0 || nuc.y > nuclides[best].y)) best = i;
+    });
+    return best;
+  }
+  // circling (orbit) -> an animation (play) -> a zoom to the nuclide it ends with, circling it (zoom) -> circling
+  function updateDisplay(dt) {
+    if (!display.on) return;
+    controls.autoRotate = !fly;
+    if (fly) return;
+    display.t += dt;
+    if (display.phase === 'orbit' && display.t >= display.wait) {
+      const mode = DISPLAY_ACTS[display.act++ % DISPLAY_ACTS.length];
+      if (state.timeMode !== mode) setTimeMode(mode);
+      $('#play').click();
+      display.phase = 'play';
+    } else if (display.phase === 'play' && !state.playing) {
+      const i = lastOfAct();
+      if (i >= 0) {
+        const nuc = nuclides[i];
+        const text = state.timeMode === 'height' ? `最後に残った核 ${nucText(nuc)}` : `いちばん新しく見つかった核 ${nucText(nuc)}（${nuc.y} 年）`;
+        decay.setCallouts([{ idx: i, text, bg: '#d01012' }]);
+        flyTo(clearView(i, new THREE.Vector3(-6, 17, 22)), 2.2);
+      }
+      display.phase = 'zoom';
+      display.t = 0;
+    } else if (display.phase === 'zoom' && display.t >= 8) {
+      // everything back (the removal ends with one box, the history hides the guesses), and the whole chart
+      decay.setCallouts([]);
+      if (state.timeMode === 'height') setTimeMode('year');
+      restoreGuesses();
+      flyTo(VIEWS.overview(), 2);
+      display.phase = 'orbit';
+      display.t = 0;
+      display.wait = 30;
+    }
+  }
+  for (const type of ['pointerdown', 'wheel']) {
+    window.addEventListener(type, (e) => {
+      if (!display.on) return;
+      e.stopPropagation(); // the touch that ends it does nothing else
+      downAt = null;
+      setDisplay(false);
+    }, { capture: true });
+  }
 
   // ---------- Nihonium, element 113 named after Japan: gold boxes, ²⁷⁸Nh under a column of light ----------
   $('#opt-nh').addEventListener('change', (e) => nihonium.setEnabled(e.target.checked));
@@ -1375,7 +1507,7 @@ async function init() {
         stopPlay();
         // the valley floor is a single small box: go and look at it
         const floor = chart.visible.indexOf(1);
-        if (floor >= 0) flyTo(clearView(floor, new THREE.Vector3(-6, 17, 22)), 2.2);
+        if (floor >= 0 && !display.on) flyTo(clearView(floor, new THREE.Vector3(-6, 17, 22)), 2.2);
       } else setCut(last * (1 - (1 - playT) ** 2), { fromPlay: true });
     } else if (state.playing) {
       playYear += dt * 9; // years per second
@@ -1389,13 +1521,14 @@ async function init() {
     const u = chart.uniforms.uFocus;
     u.value += (focusTarget - u.value) * (1 - Math.exp(-dt * 8));
 
+    updateDisplay(dt);
     if (pointerDirty) {
       pointerDirty = false;
-      pick();
+      if (!display.on) pick();
     }
     chart.uniforms.uTarget.value.copy(controls.target);
     decay.update(t, camera, window.innerWidth, window.innerHeight);
-    nihonium.update(t, renderer.domElement.height / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)));
+    nihonium.update(t, renderer.domElement.height / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)), camera);
     island.update();
     tutorial.update(dt);
     chart.updateLabelLod(camera);
@@ -1414,9 +1547,11 @@ async function init() {
 }
 
 // What the 3D overview keeps the chart clear of: the left panel's header (open or folded, the framing stays the
-// same) and the two bars at the bottom.
+// same), the two bars at the bottom, and the tutorial's subtitles (not what the tutorial has hidden).
 function overviewBlocks() {
-  return [$('#controls .brand'), $('.toolbar'), $('.timeline')].map((el) => el.getBoundingClientRect()).filter((b) => b.width > 0);
+  return [$('#controls .brand'), $('.toolbar'), $('.timeline'), $('.tut-sub')]
+    .filter((el) => el && !el.hidden && !el.closest('.tut-hidden'))
+    .map((el) => el.getBoundingClientRect()).filter((b) => b.width > 0);
 }
 
 /** the part of the canvas not covered by the floating panels (CSS px) */

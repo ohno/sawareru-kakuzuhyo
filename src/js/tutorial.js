@@ -1,14 +1,21 @@
 // Tutorial: an animation with subtitles for first-time (high-school level) visitors. On the bare board, the periodic
-// table beside the Z axis folds into one column along it, each element jumps to the neutron number of its atomic
+// table folds into one column along the Z axis as it comes in, each element jumps to the neutron number of its atomic
 // weight as the N axis comes in, the isotopes spread out to the left and right, and the page's controls are shown
-// one by one. Each element tile has the color of the box it lands on.
+// one by one. The element tiles are white in the table and then take the color of the box they land on. The subtitles can be paused,
+// stepped back and forth (buttons, arrow keys, space or Enter) and read aloud.
 import * as THREE from 'three';
 import { ELEMENTS, cssRgb, inkFor } from './nuclear.js';
 
 const U_KEV = 931494.10242; // atomic mass unit in keV (for atomic weights from mass excesses)
-const MAJOR = [1, 8, 26, 50, 82, 92, 118]; // elements named beside the column (far enough apart not to overlap)
+const MAJOR = [1, 8, 26, 47, 82, 92, 113]; // elements named beside the column
 // the page's panels and bars, and the step from which each is shown (the detail panel with the ¹⁴C example)
 const UI_FROM = [['#info', 6], ['#controls', 8], ['.toolbar', 9], ['.timeline', 10]];
+// the lanthanides and actinides: their place in group 3 of the table (row, column 2) and their own row below it
+const F_ROWS = [
+  { from: 57, to: 71, row: 5, below: 7.5, name: 'ランタノイド', tint: '#dbe8ff' },
+  { from: 89, to: 103, row: 6, below: 8.5, name: 'アクチノイド', tint: '#ffe3c8' },
+];
+const fRow = (z) => F_ROWS.find((f) => z >= f.from && z <= f.to);
 
 // where each element sits in the 18-column periodic table: [row, column] (rows 7.5, 8.5: lanthanides, actinides)
 function tableCell(z) {
@@ -26,6 +33,8 @@ function tableCell(z) {
   }
   return [0, 0];
 }
+// the first row of each group (column) of the table, for its number above it
+const groupTop = (col) => (col === 0 || col === 17 ? 0 : col === 1 || col >= 12 ? 1 : 3);
 
 /** neutron number of each element's atomic weight (rounded), or of its longest-lived isotope when none is natural */
 function homeNeutrons(nuclides) {
@@ -53,6 +62,26 @@ function homeNeutrons(nuclides) {
   return home;
 }
 
+// ---------- reading the subtitles aloud (the browser's own speech synthesis) ----------
+const speech = typeof speechSynthesis === 'undefined' ? null : speechSynthesis;
+const SUP_DIGITS = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+/** subtitle HTML -> the words to read: no tags, ¹⁴C as 炭素14, "2D / 3D" as "2D、3D" */
+function spoken(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent
+    .replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)([A-Z][a-z]?)/g, (_, a, s) => {
+      const z = ELEMENTS.findIndex((e) => e[0] === s);
+      return `${z > 0 ? ELEMENTS[z][2] : s}${[...a].map((c) => SUP_DIGITS.indexOf(c)).join('')}`;
+    })
+    .replace(/\s*\/\s*/g, '、');
+}
+const japaneseVoice = () => speech?.getVoices().find((v) => v.lang.replace('_', '-').startsWith('ja')) || null;
+// Icons: volume-2 and volume-x from Feather, Copyright (c) 2013-2023 Cole Bemis, MIT License. See THIRD-PARTY-NOTICES.
+const speaker = (waves) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>${waves
+  ? '<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>'
+  : '<line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>'}</svg>`;
+
 export class Tutorial {
   /**
    * app: what the tutorial drives — { camera, controls, chart, nuclides, discovered, enter(), exit(), snapTop(),
@@ -61,6 +90,7 @@ export class Tutorial {
   constructor(app) {
     this.app = app;
     this.active = false;
+    this.voiceOn = false;
     this.home = homeNeutrons(app.nuclides);
     const C14 = app.find(6, 8);
     this.steps = [
@@ -81,7 +111,7 @@ export class Tutorial {
         ms: 7000, enter: () => this.spread(),
       },
       {
-        text: `これが<b>核図表</b>です。これまでに ${app.discovered.toLocaleString()} 種類の原子核が見つかっています。<span class="tut-sw" style="background:#1b1b1d"></span>黒は安定な原子核、<span class="tut-sw" style="background:#c91a09"></span>赤は不安定な（放射性の）原子核、<span class="tut-sw" style="background:#f5c400"></span>黄色はまだ見つかっていない原子核です。`,
+        text: `これが<b>核図表</b>です。これまでに ${app.discovered.toLocaleString()} 種類の原子核が見つかっています。<span class="tut-sw" style="background:#1b1b1d"></span>黒は安定な原子核、<span class="tut-sw" style="background:#c91a09"></span>赤は不安定な（放射性の）原子核、<span class="tut-sw" style="background:#f5c400"></span>黄色は存在が予想されていますが、まだ見つかっていない原子核です。`,
         ms: 9000, enter: () => this.full(),
       },
       {
@@ -117,24 +147,28 @@ export class Tutorial {
     const root = (this.root = document.createElement('div'));
     root.id = 'tutorial';
     root.hidden = true;
+    const add = (cls, html) => {
+      const el = document.createElement('div');
+      el.className = cls;
+      el.innerHTML = html;
+      root.append(el);
+      return el;
+    };
     this.tiles = [];
-    for (let z = 1; z <= 118; z++) {
-      const t = document.createElement('div');
-      t.className = 'tut-tile';
-      t.textContent = ELEMENTS[z][0];
-      root.append(t);
-      this.tiles.push(t);
-    }
-    this.labels = MAJOR.map((z) => {
-      const l = document.createElement('div');
-      l.className = 'tut-label';
-      l.innerHTML = `<b>${ELEMENTS[z][0]}</b> ${ELEMENTS[z][2]} <small>Z = ${z}</small>`;
-      root.append(l);
-      return { z, el: l };
-    });
-    // the tiles sit on the board, so they follow it when the window changes size
+    for (let z = 1; z <= 118; z++) this.tiles.push(add('tut-tile', ELEMENTS[z][0]));
+    // the table's group numbers, and where the lanthanides and actinides belong
+    this.groups = Array.from({ length: 18 }, (_, col) => add('tut-note tut-group', String(col + 1)));
+    this.fMarks = F_ROWS.map((f) => ({
+      f,
+      gap: add('tut-tile tut-gap', `${f.from}–${f.to}`),
+      name: add('tut-note tut-fname', f.name),
+    }));
+    this.labels = MAJOR.map((z) => ({ z, el: add('tut-label', `<b>${ELEMENTS[z][0]}</b> ${ELEMENTS[z][2]} <small>Z = ${z}</small>`) }));
+    // the subtitle box keeps one size, and the tiles sit on the board, so both follow the window's size
     window.addEventListener('resize', () => {
-      if (!this.active || this.k > 2) return;
+      if (!this.active) return;
+      this.fitText();
+      if (this.k > 2) return;
       this.app.snapTop();
       this.layout(this.mode, { instant: true });
     });
@@ -145,9 +179,18 @@ export class Tutorial {
     sub.setAttribute('aria-label', 'チュートリアル');
     sub.innerHTML = `<p class="tut-text" aria-live="polite"></p>
       <div class="tut-nav"><span class="tut-count"></span><span class="tut-bar"><i></i></span>
-      <button class="btn tut-end">終了</button><button class="btn tut-next">次へ ▶</button></div>`;
+      <button class="btn tut-prev" title="前へ（← キー）" aria-label="前へ">◀◀</button>
+      <button class="btn tut-pause" title="一時停止（スペース、Enter）" aria-label="一時停止">❚❚</button>
+      <button class="btn tut-next" title="次へ（→ キー）" aria-label="次へ">▶▶</button>
+      <button class="btn tut-voice" aria-pressed="false" title="字幕を音声で読み上げる" aria-label="音声">${speaker(false)}</button>
+      <button class="btn tut-end" title="終了（Esc キー）" aria-label="終了">×</button></div>`;
     sub.hidden = true;
+    this.bar = sub.querySelector('.tut-bar i');
+    sub.querySelector('.tut-prev').addEventListener('click', () => this.go(this.k - 1));
+    sub.querySelector('.tut-pause').addEventListener('click', () => this.togglePause());
     sub.querySelector('.tut-next').addEventListener('click', () => this.go(this.k + 1));
+    sub.querySelector('.tut-voice').addEventListener('click', () => this.toggleVoice());
+    sub.querySelector('.tut-voice').hidden = !speech;
     sub.querySelector('.tut-end').addEventListener('click', () => this.stop());
     document.body.append(root, sub);
   }
@@ -155,10 +198,13 @@ export class Tutorial {
   start() {
     if (this.active) return;
     this.active = true;
+    this.paused = false;
+    this.k = -1;
     this.app.enter();
     this.colorTiles();
     this.root.hidden = false;
     this.sub.hidden = false;
+    this.fitText();
     this.app.snapTop(); // fits the board above the subtitles
     document.body.classList.add('tut');
     this.layout('hidden', { instant: true });
@@ -170,10 +216,11 @@ export class Tutorial {
     if (!this.active) return;
     this.active = false;
     this.orbiting = false;
-    this.axisFade = undefined;
+    this.fadeTo = null;
     clearTimeout(this.timer);
     clearTimeout(this.timer2);
     clearInterval(this.grow);
+    this.quiet();
     this.clearHighlight();
     this.root.hidden = true;
     this.sub.hidden = true;
@@ -184,41 +231,176 @@ export class Tutorial {
   }
 
   go(k) {
-    if (!this.active) return;
+    if (!this.active || k < 0) return;
     if (k >= this.steps.length) return this.stop();
+    const back = k < this.k;
     this.k = k;
     clearTimeout(this.timer);
     clearTimeout(this.timer2);
     clearInterval(this.grow);
-    this.orbiting = false;
+    this.orbiting = this.orbitPaused = false;
     this.clearHighlight();
+    if (back) {
+      // each step goes on from the one before: going back first puts its starting view in place
+      this.app.unpin();
+      if (k <= 3) {
+        this.app.setDim('2d');
+        this.app.snapTop();
+      }
+    }
     const step = this.steps[k];
     this.sub.querySelector('.tut-text').innerHTML = step.text;
     this.sub.querySelector('.tut-count').textContent = `${k + 1} / ${this.steps.length}`;
-    this.sub.querySelector('.tut-next').textContent = k === this.steps.length - 1 ? 'はじめる' : '次へ ▶';
-    const bar = this.sub.querySelector('.tut-bar i');
-    bar.style.transition = 'none';
-    bar.style.width = '0%';
-    void bar.offsetWidth;
-    bar.style.transition = `width ${step.ms}ms linear`;
-    bar.style.width = '100%';
+    this.sub.querySelector('.tut-next').textContent = k === this.steps.length - 1 ? 'はじめる' : '▶▶';
+    this.sub.querySelector('.tut-prev').disabled = k === 0;
     // the page's panels and bars stay away until they are explained
     for (const [sel, from] of UI_FROM) document.querySelector(sel)?.classList.toggle('tut-hidden', k < from);
     document.body.classList.toggle('tut-bars', k >= 9); // the subtitles rise above the bars
-    this.app.chart.setAxisNamesInside(k >= 2 && k <= 4); // large axis names on the flat chart
+    // large axis names on the flat chart, from the column on (each comes in with its axis)
+    this.app.chart.setAxisNamesInside(k >= 1 && k <= 4);
     step.enter();
-    this.timer = setTimeout(() => this.go(k + 1), step.ms);
+    this.said = -1;
+    this.say();
+    this.startClock(step.ms);
+  }
+
+  /** the subtitle text as tall as the longest subtitle at the box's present width: the box does not change size */
+  fitText() {
+    const el = this.sub.querySelector('.tut-text');
+    const shown = el.innerHTML;
+    el.style.height = 'auto';
+    let h = 0;
+    for (const step of this.steps) {
+      el.innerHTML = step.text;
+      h = Math.max(h, el.scrollHeight);
+    }
+    el.innerHTML = shown;
+    el.style.height = `${h}px`;
+  }
+
+  // ---------- playing, pausing, the progress bar ----------
+  startClock(ms) {
+    this.remaining = ms;
+    this.timerDone = false;
+    this.bar.style.transition = 'none';
+    this.bar.style.width = '0%';
+    void this.bar.offsetWidth;
+    if (!this.paused) this.runClock();
+  }
+
+  runClock() {
+    this.deadline = performance.now() + this.remaining;
+    this.bar.style.transition = `width ${this.remaining}ms linear`;
+    this.bar.style.width = '100%';
+    this.timer = setTimeout(() => {
+      this.timerDone = true;
+      this.advance();
+    }, this.remaining);
+  }
+
+  /** on to the next step once the time is up and the reading (if any) has finished */
+  advance() {
+    if (this.active && !this.paused && this.timerDone && !this.speaking) this.go(this.k + 1);
+  }
+
+  togglePause() {
+    if (this.paused) this.resume();
+    else this.pause();
+  }
+
+  pause() {
+    if (!this.active || this.paused) return;
+    this.paused = true;
+    clearTimeout(this.timer);
+    if (!this.timerDone) {
+      this.remaining = Math.max(0, this.deadline - performance.now());
+      const frac = this.bar.getBoundingClientRect().width / this.bar.parentElement.getBoundingClientRect().width;
+      this.bar.style.transition = 'none';
+      this.bar.style.width = `${frac * 100}%`;
+    }
+    this.orbitPaused = this.orbiting;
+    this.orbiting = false;
+    if (this.speaking) speech.pause();
+    this.markPause();
+  }
+
+  resume() {
+    if (!this.active || !this.paused) return;
+    this.paused = false;
+    this.orbiting = this.orbitPaused;
+    if (this.speaking && speech.paused) speech.resume();
+    else this.say();
+    this.markPause();
+    if (this.timerDone) this.advance();
+    else this.runClock();
+  }
+
+  markPause() {
+    const btn = this.sub.querySelector('.tut-pause');
+    btn.textContent = this.paused ? '▶' : '❚❚';
+    btn.setAttribute('aria-label', this.paused ? '再生' : '一時停止');
+    btn.title = `${this.paused ? '再生' : '一時停止'}（スペース、Enter）`;
+  }
+
+  /** keys while the tutorial runs: ← → steps, space / Enter pause and play, Esc ends */
+  key(e) {
+    if (e.key === 'Escape') this.stop();
+    else if (e.key === 'ArrowRight') this.go(this.k + 1);
+    else if (e.key === 'ArrowLeft') this.go(this.k - 1);
+    else if (e.key === ' ' || e.key === 'Enter') this.togglePause();
+    else return;
+    e.preventDefault();
+  }
+
+  // ---------- reading aloud ----------
+  toggleVoice() {
+    this.voiceOn = !this.voiceOn;
+    const btn = this.sub.querySelector('.tut-voice');
+    btn.setAttribute('aria-pressed', String(this.voiceOn));
+    btn.innerHTML = speaker(this.voiceOn);
+    if (this.voiceOn) {
+      this.said = -1;
+      this.say();
+    } else {
+      this.quiet();
+      this.advance();
+    }
+  }
+
+  /** reads the current subtitle once, unless paused or switched off */
+  say() {
+    if (!this.voiceOn || !speech || this.paused || this.said === this.k) return;
+    this.quiet();
+    this.said = this.k;
+    const u = new SpeechSynthesisUtterance(spoken(this.steps[this.k].text));
+    u.lang = 'ja-JP';
+    const voice = japaneseVoice();
+    if (voice) u.voice = voice;
+    u.onend = u.onerror = () => {
+      if (this.utterance !== u) return;
+      this.utterance = null;
+      this.speaking = false;
+      this.advance();
+    };
+    this.utterance = u;
+    this.speaking = true;
+    speech.speak(u);
+  }
+
+  quiet() {
+    this.utterance = null;
+    this.speaking = false;
+    speech?.cancel();
   }
 
   // ---------- the element tiles ----------
-  /** each element in the color of the box it lands on (the tutorial shows the LEGO colors) */
+  /** the color of the box each element lands on (the tutorial shows the LEGO colors) */
   colorTiles() {
     const { chart, nuclides } = this.app;
-    this.tiles.forEach((t, k) => {
+    this.colors = this.tiles.map((t, k) => {
       const i = this.app.find(k + 1, this.home.get(k + 1));
       const rgb = i >= 0 ? chart.colorOf(nuclides[i]) : [0.8, 0.8, 0.8];
-      t.style.background = cssRgb(rgb);
-      t.style.color = inkFor(rgb);
+      return { bg: cssRgb(rgb), ink: inkFor(rgb) };
     });
   }
 
@@ -233,18 +415,21 @@ export class Tutorial {
     const top = at(0, 125.5).y, bottom = at(0, -12.5).y;
     const s1 = Math.min((right - x0) / (17 * 1.08 + 1), (bottom - top) / (8.5 * 1.08 + 1));
     const y0 = (at(0, 127).y + at(0, -15).y - (8.5 * 1.08 + 1) * s1) / 2;
+    const cellX = (col) => x0 + col * s1 * 1.08, cellY = (row) => y0 + row * s1 * 1.08;
     const COLUMN_N = -4; // the column: between the numbers of the Z axis and the first column of the board
     this.app.setFilter(() => false); // the boxes come in later
-    // the N axis comes in as the elements jump to their neutron numbers
-    this.axisFade = mode === 'chart' && !instant ? 0 : undefined;
-    this.app.chart.setGuideMask({ nAxis: mode === 'chart' && instant ? 1 : 0, extras: 0 });
+    // the axes come in with the column (Z) and as the elements jump to their neutron numbers (N)
+    const [n, z] = { table: [0, 0], hidden: [0, 0], column: [0, 1], chart: [1, 1] }[mode];
+    this.fadeTo = { nAxis: n, zAxis: z };
+    if (instant || !this.fade) this.fade = { ...this.fadeTo };
+    this.app.chart.setGuideMask({ ...this.fade, extras: 0 });
     this.tiles.forEach((t, k) => {
       const z = k + 1;
       let x, y, s, op = 1;
       if (mode === 'table' || mode === 'hidden') {
         const [row, col] = tableCell(z);
-        x = x0 + col * s1 * 1.08;
-        y = y0 + row * s1 * 1.08;
+        x = cellX(col);
+        y = cellY(row);
         s = s1;
         if (mode === 'hidden') op = 0;
       } else {
@@ -253,6 +438,10 @@ export class Tutorial {
         x = p.x - s / 2;
         y = p.y - s / 2;
       }
+      // white in the table; from the column on, the color of the box the tile lands on (white would vanish on the board)
+      const f = mode === 'table' && fRow(z), c = (mode === 'column' || mode === 'chart') && this.colors[k];
+      t.style.background = c ? c.bg : f ? f.tint : '#fff';
+      t.style.color = c ? c.ink : '#1d1d1f';
       t.style.transitionDelay = instant ? '0ms' : `${mode === 'table' ? z * 9 : mode === 'column' ? z * 6 : 200 + z * 9}ms`;
       t.style.transitionDuration = instant ? '0ms' : '';
       t.style.width = t.style.height = `${s1}px`;
@@ -260,10 +449,37 @@ export class Tutorial {
       t.style.transform = `translate(${x}px, ${y}px) scale(${s / s1})`;
       t.style.opacity = op;
     });
-    // names of some elements to the right of the column
-    for (const { z, el } of this.labels) {
+    // the table's group numbers, and the gap in group 3 that the lanthanide and actinide rows below fill
+    const inTable = mode === 'table' ? 1 : 0;
+    this.groups.forEach((el, col) => {
+      el.style.fontSize = `${s1 * 0.32}px`;
+      el.style.transform = `translate(${cellX(col) + s1 / 2}px, ${cellY(groupTop(col)) - s1 * 0.12}px) translate(-50%, -100%)`;
+      el.style.opacity = inTable;
+    });
+    for (const { f, gap, name } of this.fMarks) {
+      gap.style.width = gap.style.height = `${s1}px`;
+      gap.style.fontSize = `${s1 * 0.24}px`;
+      gap.style.background = f.tint;
+      gap.style.transform = `translate(${cellX(2)}px, ${cellY(f.row)}px)`;
+      gap.style.opacity = inTable;
+      name.style.fontSize = `${s1 * 0.3}px`;
+      name.style.transform = `translate(${cellX(3) - s1 * 0.25}px, ${cellY(f.below) + s1 / 2}px) translate(-100%, -50%)`;
+      name.style.opacity = inTable;
+    }
+    // names of some elements to the right of the column, nudged apart where neighbours would overlap
+    const placed = this.labels.map(({ z, el }) => {
       const p = at(COLUMN_N, z);
-      el.style.transform = `translate(${p.x + p.cell + 6}px, ${p.y}px) translateY(-50%)`;
+      return { el, x: p.x + p.cell + 6, y: p.y, h: el.offsetHeight || 20 };
+    }).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < placed.length; i++) {
+      const overlap = (placed[i - 1].h + placed[i].h) / 2 + 2 - (placed[i].y - placed[i - 1].y);
+      if (overlap > 0) {
+        placed[i - 1].y -= overlap / 2;
+        placed[i].y += overlap / 2;
+      }
+    }
+    for (const { el, x, y } of placed) {
+      el.style.transform = `translate(${x}px, ${y}px) translateY(-50%)`;
       el.style.opacity = mode === 'column' ? 1 : 0;
     }
     if (mode === 'chart') {
@@ -315,7 +531,7 @@ export class Tutorial {
   // every nucleus on the chart with all its guides, tiles gone
   clear() {
     this.tiles.forEach((t) => (t.style.opacity = 0));
-    this.axisFade = undefined;
+    this.fadeTo = null;
     this.app.chart.setGuideMask(null);
     this.app.setFilter(null);
   }
@@ -343,7 +559,11 @@ export class Tutorial {
     this.app.unpin();
     this.app.setDim('3d');
     this.app.flyOverview();
-    setTimeout(() => (this.orbiting = this.active && this.k === 7), 1300);
+    setTimeout(() => {
+      if (!this.active || this.k !== 7) return;
+      if (this.paused) this.orbitPaused = true;
+      else this.orbiting = true;
+    }, 1300);
   }
 
   highlight(sel) {
@@ -359,12 +579,18 @@ export class Tutorial {
     this.focused = null;
   }
 
-  /** the N axis fading in, and a slow turn around the board while the controls are explained */
+  /** the axes fading in, and a slow turn around the board while the controls are explained */
   update(dt) {
     if (!this.active) return;
-    if (this.axisFade !== undefined && this.axisFade < 1) {
-      this.axisFade = Math.min(1, this.axisFade + dt / 0.9);
-      this.app.chart.setGuideMask({ nAxis: this.axisFade, extras: 0 });
+    if (this.fadeTo) {
+      let moved = false;
+      for (const key of ['nAxis', 'zAxis']) {
+        const d = this.fadeTo[key] - this.fade[key];
+        if (!d) continue;
+        this.fade[key] += Math.sign(d) * Math.min(Math.abs(d), dt / 0.9);
+        moved = true;
+      }
+      if (moved) this.app.chart.setGuideMask({ ...this.fade, extras: 0 });
     }
     if (!this.orbiting) return;
     const { camera, controls } = this.app;

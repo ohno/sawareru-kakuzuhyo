@@ -174,7 +174,7 @@ def abundances(data):
     per_z = [None] * (max(r[0] for r in rows) + 1)
     for rank, (z, eps, mass) in enumerate(rows, 1):
         per_z[z] = {"num": float(f"{10 ** (eps - 12) / total:.4g}"), "mass": mass, "rank": rank}
-    return {"label": data["label"], "elements": per_z}
+    return {"label": data["label"], "cite": data["cite"], "elements": per_z}
 
 
 def main():

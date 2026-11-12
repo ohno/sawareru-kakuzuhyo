@@ -116,7 +116,7 @@ function buildDripLines(C) {
     return m;
   };
   group.add(mesh(bandPos, 0.16), mesh(dashPos, 0.95));
-  for (const [text, z, side] of [['中性子ドリップライン（理論予測）', 36, 'n'], ['陽子ドリップライン（理論予測）', 104, 'p']]) {
+  for (const [text, z, side] of [['中性子ドリップライン（存在限界の理論予想）', 36, 'n'], ['陽子ドリップライン（存在限界の理論予想）', 104, 'p']]) {
     const s = makeTextSprite(text, { color: C.drip, size: 2.2, weight: 700, anchor: side === 'n' ? 'left' : 'right', stroke: C.plate });
     const x = side === 'n' ? at(z, 6) + 3 : at(z, 3) - 6;
     s.position.set(x, 0.8, -z);
@@ -227,6 +227,7 @@ const fragmentShader = /* glsl */ `
   uniform float uXray;
   uniform float uGlow;
   uniform float uIsland;
+  uniform vec3 uSpot; // (N, -Z, radius) around ²⁷⁸Nh, where LABEL_ONLY draws the labels again
   varying float vGlow;
   varying float vIsland;
   varying vec3 vWorld;
@@ -268,6 +269,23 @@ const fragmentShader = /* glsl */ `
     // island of stability: lit green, more where the shells bind more
     float isl = vIsland * uIsland;
     if (isl > 0.0) base = mix(base, vec3(0.18, 0.8, 0.32), 0.55 * isl);
+  #ifdef LABEL_ONLY
+    // only the ink of the labels on the box tops near ²⁷⁸Nh (not its own, which has a label of its own), drawn
+    // after the light that would wash them out
+    float d = length(vWorld.xz - uSpot.xy);
+    if (!top || uLabels < 0.5 || vLabelA < 0.01 || d > uSpot.z || d < 0.6) discard;
+    if (uXray > 0.0 && vEmph < 0.5) {
+      vec3 ct0 = uTarget - cameraPosition;
+      float t0 = dot(vWorld - cameraPosition, ct0) / dot(ct0, ct0);
+      if (bayer4(gl_FragCoord.xy) >= 1.0 - 0.78 * uXray * (1.0 - smoothstep(0.35, 0.5, t0))) discard;
+    }
+    vec2 uv0 = vec2(vLocal.x + 0.5, vLocal.y + 0.5);
+    float ink0 = max(cellSample(vLabel.y, vec2((uv0.x - 0.08) / 0.48, (uv0.y - 0.10) / 0.24)),
+                     cellSample(vLabel.x, vec2((uv0.x - 0.06) / 0.88, (uv0.y - 0.33) / 0.44))) * vLabelA;
+    if (ink0 < 0.02) discard;
+    gl_FragColor = vec4(dot(base, vec3(0.299, 0.587, 0.114)) > 0.42 ? vec3(0.07) : vec3(0.96), ink0 * 0.92);
+    return;
+  #endif
     float lambert = max(dot(n, normalize(uLightDir)), 0.0);
     vec3 col = base * (0.62 + 0.42 * lambert);
     if (!top) {
@@ -391,11 +409,20 @@ export class NuclideChart {
       uXray: { value: 1 },
       uGlow: { value: 0 },
       uIsland: { value: 0 },
+      uSpot: { value: new THREE.Vector3() },
     };
     const mat = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: this.uniforms });
     this.mesh = new THREE.InstancedMesh(geo, mat, this.count);
     this.mesh.frustumCulled = false;
     scene.add(this.mesh);
+    // the same boxes again, drawing only the labels near ²⁷⁸Nh over its light (uSpot, set by nihonium.js)
+    this.labelsOver = new THREE.InstancedMesh(geo, new THREE.ShaderMaterial({
+      vertexShader, fragmentShader, uniforms: this.uniforms, defines: { LABEL_ONLY: 1 }, transparent: true, depthWrite: false,
+    }), this.count);
+    this.labelsOver.instanceMatrix = this.mesh.instanceMatrix;
+    this.labelsOver.frustumCulled = false;
+    this.labelsOver.renderOrder = 6;
+    scene.add(this.labelsOver);
 
     this.guides = new THREE.Group();
     scene.add(this.guides);

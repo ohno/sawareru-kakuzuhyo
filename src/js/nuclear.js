@@ -106,7 +106,7 @@ const FROM_MASSES = {
 };
 /**
  * Fills in A, the element symbol, B/A, and the separation energies and Q values (keV, from the mass excesses of
- * the nuclides in the list; `de` lists those that rest on an estimated mass). Run on the NUBASE list as loaded.
+ * the nuclides in the list; used for heights and to find the unbound nuclei). Run on the NUBASE list as loaded.
  */
 export function deriveFromMasses(nuclides) {
   const at = new Map(nuclides.map((nuc) => [`${nuc.z},${nuc.n}`, nuc]));
@@ -114,9 +114,8 @@ export function deriveFromMasses(nuclides) {
     nuc.a = nuc.z + nuc.n;
     nuc.s = ELEMENTS[nuc.z][0];
     if (nuc.me !== undefined && nuc.a > 1) nuc.ba = Math.round(((nuc.z * ME_H + nuc.n * ME_N - nuc.me) / nuc.a) * 1000) / 1000;
-    const est = [];
     for (const [key, [terms, c]] of Object.entries(FROM_MASSES)) {
-      let total = c, e = false, ok = true;
+      let total = c, ok = true;
       for (const [sign, dz, dn] of terms) {
         const r = at.get(`${nuc.z + dz},${nuc.n + dn}`);
         if (!r || r.me === undefined) {
@@ -124,13 +123,9 @@ export function deriveFromMasses(nuclides) {
           break;
         }
         total += sign * r.me;
-        e = e || !!r.mee;
       }
-      if (!ok) continue;
-      nuc[key] = Math.round(total * 100) / 100;
-      if (e) est.push(key);
+      if (ok) nuc[key] = Math.round(total * 100) / 100;
     }
-    if (est.length) nuc.de = est;
   }
 }
 
@@ -295,10 +290,6 @@ export const inkFor = (rgb) => (rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114
 
 // ---- formatting ----
 const fmtNum = (v, digits) => v.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
-export function fmtMeV(keV, est) {
-  if (keV === undefined || keV === null) return '—';
-  return `${fmtNum(keV / 1000, 3)} MeV${est ? ' #' : ''}`;
-}
 export function fmtKeV(keV, unc, est) {
   if (keV === undefined || keV === null) return '—';
   const digits = Math.abs(keV) < 100 ? 3 : 1;

@@ -2,8 +2,8 @@
 
 
 Feather (https://feathericons.com), MIT License
-Icons: camera, music, moon (src/index.html, src/js/main.js) and help-circle, through Lucide as circle-help
-(src/index.html)
+Icons: camera, music, moon (src/index.html, src/js/main.js), volume-2, volume-x (src/js/tutorial.js) and
+help-circle, through Lucide as circle-help (src/index.html)
 
 The MIT License (MIT)
 
