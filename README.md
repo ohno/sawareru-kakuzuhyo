@@ -46,6 +46,6 @@ GitHub Pages には `.github/workflows/pages.yml` が同じ手順で公開しま
 
 ## ライセンス
 
-プログラムと、このアプリのために書いた文章（元素の紹介文、特徴的な同位体、核燃料サイクルの説明）は [MIT ライセンス](LICENSE)です。そのほかのデータはそれぞれの出典の条件に従います。画面のアイコンは Lucide（ISC）と Feather（MIT）にもとづきます（[src/third-party-licenses.txt](src/third-party-licenses.txt)）。
+プログラムと、このアプリのために書いた文章（元素の紹介文、特徴的な同位体、核燃料サイクルの説明）は [MIT ライセンス](LICENSE)です。そのほかのデータはそれぞれの出典の条件に従います。画面のアイコンは Feather（MIT）と Lucide（ISC）にもとづきます（[THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES)）。
 
 LEGO®（レゴ®）はレゴグループの商標です。このアプリはレゴグループが後援・承認したものではありません。

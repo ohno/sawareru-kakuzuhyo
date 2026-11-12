@@ -18,7 +18,8 @@ THREE.ColorManagement.enabled = false;
 
 const $ = (s) => document.querySelector(s);
 const THEMES = { light: { bg: '#f6f5f1' }, dark: { bg: '#0f1115' } };
-// toolbar icons after Lucide (ISC) and Feather (MIT): see third-party-licenses.txt
+// Icons: music and moon from Feather, Copyright (c) 2013-2023 Cole Bemis, MIT License; sun from Lucide,
+// Copyright (c) 2026 Lucide Icons and Contributors, ISC License. See THIRD-PARTY-NOTICES.
 const svgIcon = (body) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 const ICON_MOON = svgIcon('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>');
 // a note, and a struck-through one while muted
