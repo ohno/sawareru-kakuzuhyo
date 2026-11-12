@@ -140,7 +140,7 @@ async function init() {
   const island = new StabilityIsland(scene, chart, islandData?.rows);
   if (!island.available) {
     $('#opt-island').disabled = true;
-    $('#opt-island').closest('label').title = '安定の島のデータ（data/island.json）がありません。python scripts/build.py で作れます';
+    $('#opt-island').closest('label').title = '安定の島のデータ（KTUY05 質量公式）は、この版には入っていません';
   }
   // selection ids: nuclide index, or HYPER_BASE + k for hypernucleus k
   const hyperOf = (id) => hyper.list[id - HYPER_BASE];
