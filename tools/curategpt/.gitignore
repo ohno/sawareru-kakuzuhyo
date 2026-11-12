@@ -1,0 +1,6 @@
+# Not kept in git: the virtual environment, the inputs made by prepare.py, CurateGPT's database, prompts and logs
+.venv/
+work/*
+!work/pred_*.jsonl
+!work/rejected.jsonl
+results/

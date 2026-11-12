@@ -1,0 +1,120 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mass_excess_keV",
+    "mass_excess_uncertainty_keV",
+    "half_life",
+    "half_life_uncertainty",
+    "spin_parity",
+    "discovery_year",
+    "natural_abundance_percent",
+    "decay_modes",
+    "isomers"
+  ],
+  "properties": {
+    "mass_excess_keV": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "mass_excess_uncertainty_keV": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "half_life": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "half_life_uncertainty": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "spin_parity": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "discovery_year": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "natural_abundance_percent": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "decay_modes": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "isomers": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "excitation_energy_keV",
+          "half_life",
+          "spin_parity",
+          "decay_modes"
+        ],
+        "properties": {
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "excitation_energy_keV": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "half_life": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "spin_parity": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "decay_modes": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# CurateGPT and two packages it imports without declaring them (tested with Python 3.11)
+curategpt==0.2.4
+setuptools<81
+psutil

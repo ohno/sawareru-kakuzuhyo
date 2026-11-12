@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "symbol",
+    "name_en",
+    "name_ja",
+    "discovery_year"
+  ],
+  "properties": {
+    "symbol": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name_en": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name_ja": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "discovery_year": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "a year such as '1898', or 'ancient'"
+    }
+  }
+}
