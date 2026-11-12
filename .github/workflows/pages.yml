@@ -1,7 +1,7 @@
 # Builds the site into dist/ (scripts/build.py) and publishes it on GitHub Pages.
 # Repository settings: Pages → Build and deployment → Source: "GitHub Actions".
 # The KTUY05-based data (yellow predicted nuclei, island of stability) is built only when the repository variable
-# USE_KTUY is "true" (Settings → Secrets and variables → Actions → Variables): reusing it needs JAEA's permission.
+# USE_KTUY is "true" (Settings → Secrets and variables → Actions → Variables).
 name: Deploy to GitHub Pages
 
 on:

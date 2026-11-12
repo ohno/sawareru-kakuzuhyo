@@ -38,7 +38,7 @@ python scripts/serve.py
 
 未発見の原子核と安定の島のデータは、`scripts/build.py` が KTUY05 の質量表を JAEA からダウンロードして作ります（不要なら `--no-ktuy` を付けます）。`src/` を直したときは再読み込みで、`data/` を直したときは `scripts/build.py` をやり直すと反映されます。
 
-GitHub Pages には `.github/workflows/pages.yml` が同じ手順で公開します（Settings → Pages の Source を「GitHub Actions」に）。KTUY05 由来のデータは公開に JAEA の許可が必要と考えられるため、リポジトリの変数 `USE_KTUY` が `true` のときだけ公開版に入れます。
+GitHub Pages には `.github/workflows/pages.yml` が同じ手順で公開します（Settings → Pages の Source を「GitHub Actions」に）。KTUY05 由来のデータは、リポジトリの変数 `USE_KTUY` が `true` のときに公開版に入ります。
 
 ## データ
 
