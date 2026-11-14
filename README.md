@@ -1,10 +1,8 @@
 # さわれる核図表
 
-[![さわれる核図表](src/ogp.png)](https://ohno.github.io/sawareru-kakuzuhyo/)
+https://ohno.github.io/sawareru-kakuzuhyo/
 
 約 3,400 種の原子核を、理研の「レゴブロックで見る核図表」の配色で立体に並べた核図表です。ブラウザで回して、近づいて、箱にふれると、半減期や崩壊のゆくえがわかります。
-
-**公開版 → https://ohno.github.io/sawareru-kakuzuhyo/**
 
 ## できること
 
@@ -15,32 +13,32 @@
 
 ## 手元で動かす
 
-Python 3 で、このフォルダから実行し、http://localhost:8000/ を開きます。
+下記コマンドを実行後にブラウザで http://localhost:8000/ を開きます。
 
 ```bash
+git clone https://github.com/ohno/sawareru-kakuzuhyo.git
+cd sawareru-kakuzuhyo
 pip install pyyaml
-python scripts/build.py    # src/ と data/ から dist/ を作る
+python scripts/build.py
 python scripts/serve.py
 ```
 
-`build.py` は、未発見の原子核と安定の島に使う KTUY05 の質量表を JAEA から取得します（不要なら `--no-ktuy`）。`src/` を直したら再読み込み、`data/` を直したら `build.py` をやり直します。main に push すると GitHub Actions が GitHub Pages に公開します（KTUY05 由来のデータは、リポジトリの変数 `USE_KTUY` が `true` のとき）。
+Python 3 を使用します。`build.py` は、未発見の原子核と安定の島に使う KTUY05 の質量表を JAEA から取得します（不要なら `--no-ktuy`）。`src/` を直したら再読み込み、`data/` を直したら `build.py` をやり直します。main に push すると GitHub Actions が GitHub Pages に公開します（KTUY05 由来のデータは、リポジトリの変数 `USE_KTUY` が `true` のとき）。
 
 ## データとライセンス
 
-データの出典は [data/README.md](data/README.md) にあります。プログラムと、このアプリのために書いた文章（元素の紹介、特徴的な同位体、核燃料サイクルの説明）は [MIT ライセンス](LICENSE)、そのほかのデータはそれぞれの出典の条件に従います。アイコンは Feather（MIT）と Lucide（ISC）にもとづきます（[THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES)）。
-
-LEGO®（レゴ®）はレゴグループの商標です。このアプリはレゴグループが後援・承認したものではありません。
+データの出典は [data/README.md](data/README.md) にあります。プログラムと、このアプリのために書いた文章（元素の紹介、特徴的な同位体、核燃料サイクルの説明）は [MIT ライセンス](LICENSE)、そのほかのデータはそれぞれの出典の条件に従います。アイコンは Feather（MIT）と Lucide（ISC）にもとづきます（[THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES)）。LEGO®（レゴ®）はレゴグループの商標です。このアプリはレゴグループが後援・承認したものではありません。
 
 ## 開発概要
 
-- **工数:** 9 物理学者・日
+- **工数:** 9 Physicist-Day
 - **開発期間:** 2026-11-10 10:30 〜 2026-11-12 14:30（日本時間）
 - **技術スタック:** HTML, CSS, JavaScript, Three.js 0.170, Web Audio API, Web Speech API, Python（PyYAML）, GitHub Actions, GitHub Pages
 - **開発ツール:** Claude Code（Claude デスクトップアプリ Windows 版）
 - **サブスクリプションプラン:** Claude Max
 - **使用モデル:** Claude Opus 5.5（effort: Extra High）
 - **修正コメント数:** 約 230 件（約 60 回の依頼に含まれる箇条書きの項目数）
-- **トークン使用量:** 約 7.6 億トークン（うちキャッシュの読み込み 約 7.5 億、出力 約 280 万）
+- **トークン使用量:** 約 7.6 億トークン（うちキャッシュの読み込み 約 7.5 億、出力 約 280 万、Maxプランの週次制限の約23%）
 
 ## 謝辞
 
