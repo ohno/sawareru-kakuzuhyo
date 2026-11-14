@@ -65,7 +65,19 @@ function homeNeutrons(nuclides) {
 // ---------- reading the subtitles aloud (the browser's own speech synthesis) ----------
 const speech = typeof speechSynthesis === 'undefined' ? null : speechSynthesis;
 const SUP_DIGITS = '⁰¹²³⁴⁵⁶⁷⁸⁹';
-/** subtitle HTML -> the words to read: no tags, ¹⁴C as 炭素14, "2D / 3D" as "2D、3D" */
+// Words the voices misread, written out for the voice only (the subtitles keep the kanji). Read through Windows'
+// Japanese voice (its phonemes), the subtitles had 周期表 as しゅうきおもて, 核子 as かくこ, 軽すぎて as けいすぎて,
+// 重すぎて as じゅうすぎて, 谷を as だにを, 谷底 as たにそこ, 2D as にディー and クォーク as ヲーク; the rest are words
+// other voices may get wrong (陽子 is also a given name, ようこ). New subtitles need the same check.
+const READINGS = [
+  ['周期表', 'しゅうきひょう'], ['核図表', 'かくずひょう'], ['核子', 'かくし'], ['陽子', 'ようし'], ['中性子', 'ちゅうせいし'],
+  ['縦軸', 'たてじく'], ['横軸', 'よこじく'], ['原子量', 'げんしりょう'], ['同位体', 'どういたい'], ['軽すぎ', 'かるすぎ'],
+  ['重すぎ', 'おもすぎ'], ['谷底', 'たにぞこ'], ['谷を', 'たにを'], ['ハイパー核', 'ハイパーかく'], ['クォーク', 'クオーク'],
+  ['2D', 'ツーディー'], ['3D', 'スリーディー'], ['≒', 'およそ'], ['+', 'たす'],
+];
+const READING_OF = new Map(READINGS);
+const READINGS_RE = new RegExp(READINGS.map(([w]) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+/** subtitle HTML -> the words to read: no tags, ¹⁴C as 炭素14, "2D / 3D" as "2D、3D", and the READINGS */
 function spoken(html) {
   const div = document.createElement('div');
   div.innerHTML = html;
@@ -74,7 +86,8 @@ function spoken(html) {
       const z = ELEMENTS.findIndex((e) => e[0] === s);
       return `${z > 0 ? ELEMENTS[z][2] : s}${[...a].map((c) => SUP_DIGITS.indexOf(c)).join('')}`;
     })
-    .replace(/\s*\/\s*/g, '、');
+    .replace(/\s*\/\s*/g, '、')
+    .replace(READINGS_RE, (w) => READING_OF.get(w));
 }
 const japaneseVoice = () => speech?.getVoices().find((v) => v.lang.replace('_', '-').startsWith('ja')) || null;
 // Icons: volume-2 and volume-x from Feather, Copyright (c) 2013-2023 Cole Bemis, MIT License. See THIRD-PARTY-NOTICES.

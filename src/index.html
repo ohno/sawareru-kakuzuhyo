@@ -5,7 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>さわれる核図表</title>
   <link rel="icon" href="data:,">
-  <meta name="description" content="NUBASE2020 の全核種を3Dで探索できるインタラクティブ核図表。ホバーで性質と崩壊先を表示。">
+  <meta name="description" content="約 3,400 種の原子核を立体に並べた核図表。回して、近づいて、箱にふれると、半減期や崩壊のゆくえがわかります。">
+  <!-- link previews: ogp.png (1200 × 630) is the chart as the app draws it, with the title -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="さわれる核図表">
+  <meta property="og:title" content="さわれる核図表">
+  <meta property="og:description" content="約 3,400 種の原子核を立体に並べた核図表。回して、近づいて、箱にふれると、半減期や崩壊のゆくえがわかります。">
+  <meta property="og:url" content="https://ohno.github.io/sawareru-kakuzuhyo/">
+  <meta property="og:image" content="https://ohno.github.io/sawareru-kakuzuhyo/ogp.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="理研レゴ核図表の配色で原子核を立体に並べた核図表と、タイトル「さわれる核図表」">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -169,6 +181,34 @@
           <label class="check"><input type="checkbox" id="opt-chain" checked> 安定核までの崩壊系列</label>
         </div>
       </details>
+
+      <!-- the same sources as data/README.md, shorter -->
+      <details class="sec" data-sec="sources">
+        <summary>データの出典</summary>
+        <div class="sec-body">
+          <dl class="sources">
+            <div><dt>核種の質量・半減期・崩壊・発見年</dt>
+              <dd>NUBASE2020: F.G. Kondev et al., Chin. Phys. C 45, 030001 (2021)、<a href="https://www-nds.iaea.org/amdc/" target="_blank" rel="noopener">IAEA AMDC</a>（CC BY 3.0）</dd></div>
+            <div><dt>未発見の原子核の質量・安定の島</dt>
+              <dd>KTUY05: H. Koura et al., Prog. Theor. Phys. 113, 305 (2005)、JAEA 核データセンターの質量表</dd></div>
+            <div><dt>理研で発見された原子核</dt>
+              <dd>FRIB Discovery of Nuclides Project, <a href="https://doi.org/10.11578/frib/2279152" target="_blank" rel="noopener">Isotope Database</a>（2026-09-25 版）</dd></div>
+            <div><dt>元素の存在量</dt>
+              <dd>K. Lodders, M. Bergemann, H. Palme, Space Sci. Rev. 221, 23 (2025)、<a href="https://doi.org/10.5281/zenodo.14988840" target="_blank" rel="noopener">表</a>（CC BY 4.0）</dd></div>
+            <div><dt>元素の発見年</dt>
+              <dd>Wikipedia “<a href="https://en.wikipedia.org/wiki/Timeline_of_chemical_element_discoveries" target="_blank" rel="noopener">Timeline of chemical element discoveries</a>”</dd></div>
+            <div><dt>²³⁵U の核分裂収率</dt>
+              <dd>JEFF-3.1.1（OECD/NEA）、<a href="https://www-nds.iaea.org/relnsd/vcharthtml/VChartHTML.html" target="_blank" rel="noopener">IAEA LiveChart of Nuclides</a></dd></div>
+            <div><dt>ドリップライン</dt>
+              <dd>J. Erler et al., Nature 486, 509 (2012) の質量表（<a href="https://massexplorer.frib.msu.edu/" target="_blank" rel="noopener">MassExplorer</a>）から計算</dd></div>
+            <div><dt>ハイパー核</dt>
+              <dd><a href="https://hypernuclei.kph.uni-mainz.de/" target="_blank" rel="noopener">Mainz Chart of Hypernuclides</a>、Ξ は E. Friedman, A. Gal, EPJ Web Conf. 271, 03002 (2022)</dd></div>
+            <div><dt>ハイパー核のドリップライン</dt>
+              <dd>C. Samanta et al., J. Phys. G 35, 065101 (2008)；P. Roy Chowdhury et al., Rom. Rep. Phys. 62, 65 (2010)；E.F. Meoto, J. Phys. Commun. 6, 125004 (2022)</dd></div>
+          </dl>
+          <p class="caption">元素の紹介、特徴的な同位体、核燃料サイクルの説明は、このアプリのために書いたものです。ライセンスの詳細は <a href="https://github.com/ohno/sawareru-kakuzuhyo/blob/main/data/README.md" target="_blank" rel="noopener">data/README.md</a> にあります。</p>
+        </div>
+      </details>
     </div>
   </aside>
 
@@ -214,7 +254,7 @@
   </div>
 
   <div id="tooltip" class="tooltip" hidden></div>
-  <div class="credit"><a href="https://github.com/ohno/sawareru-kakuzuhyo/blob/main/data/README.md" target="_blank" rel="noopener">データの出典</a> · <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">© 2026 RIKEN</a></div>
+  <div class="credit"><a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">© 2026 RIKEN</a></div>
   <div id="loading" class="loading"><div class="spinner"></div><p>核データを読み込み中…</p></div>
 
   <script type="module" src="js/main.js"></script>

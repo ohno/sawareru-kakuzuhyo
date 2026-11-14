@@ -217,6 +217,7 @@ async function init() {
     }
     for (const col of cols.values()) corners(col.lo, 0), corners(col.hi, 0);
     if (!pts.length) return { target: new THREE.Vector3(86, 0, -58), pos: new THREE.Vector3(40, 160, 110) };
+    if (camera.aspect < PORTRAIT) return portraitView(pts, rows);
     // the strip of board between the frame and the lightest nuclei carries the element names: keep it in view too
     const zs = [...rows.keys()];
     pts.push([FRAME_X, 0, 1 - Math.min(...zs)], [FRAME_X, 0, -1 - Math.max(...zs)]);
@@ -320,6 +321,40 @@ async function init() {
     const target = pos.clone().addScaledVector(f, pos.y / Math.sin(best.pitch)); // where the view centre meets the floor
     return { target, pos };
   }
+  // Overview on a portrait (phone) screen: seen from the front, the chart would be a thin strip across the width.
+  // The camera stands off the front-left corner instead and looks along the chart's diagonal, light nuclei near and
+  // heavy ones far, so that the chart runs up the screen and only the nuclei have to fit (the board may run off the
+  // sides). Of a few turns and tilts, the one that shows the chart's floor (the area its boxes stand on) largest.
+  const PORTRAIT = 0.85; // width / height below which a screen counts as portrait
+  function portraitView(pts, rows) {
+    const outline = pts.map(([x, y, z]) => new THREE.Vector3(x, y, z));
+    const zs = [...rows.keys()].sort((a, b) => a - b);
+    const floor = [
+      ...zs.map((z) => new THREE.Vector3(nuclides[rows.get(z).lo].n - 0.5, 0, -z)),
+      ...zs.reverse().map((z) => new THREE.Vector3(nuclides[rows.get(z).hi].n + 0.5, 0, -z)),
+    ];
+    const cam = camera.clone(), v = new THREE.Vector3(), deg = THREE.MathUtils.degToRad;
+    let best = null;
+    for (const yaw of [30, 38, 46, 54]) { // up to about 55°, where the diagonal is upright: light nuclei stay bottom left
+      for (const pitch of [35, 45, 55]) {
+        const dir = new THREE.Vector3(-Math.sin(deg(yaw)) * Math.cos(deg(pitch)), Math.sin(deg(pitch)), Math.cos(deg(yaw)) * Math.cos(deg(pitch)));
+        const view = fitPoints(outline, dir);
+        cam.position.copy(view.pos);
+        cam.lookAt(view.target);
+        cam.updateMatrixWorld();
+        let area = 0;
+        floor.forEach((p, k) => {
+          v.copy(p).project(cam);
+          const [x0, y0] = [v.x, v.y];
+          v.copy(floor[(k + 1) % floor.length]).project(cam);
+          area += x0 * v.y - v.x * y0;
+        });
+        area = Math.abs(area) / 2;
+        if (!best || area > best.area) best = { ...view, area, yaw, pitch };
+      }
+    }
+    return best;
+  }
   /** camera looking along -dir at the points, as close as possible with all of them inside the free screen area */
   function fitPoints(pts, dir, safe = safeRect()) {
     const cam = camera.clone();
@@ -342,7 +377,7 @@ async function init() {
     let d = 600;
     for (let pass = 0; pass < 2; pass++) {
       let lo = 5, hi = 2000;
-      for (let k = 0; k < 40; k++) {
+      for (let k = 0; k < 26; k++) { // to 1/30000 of a unit
         const mid = (lo + hi) / 2;
         if (fits(bounds(mid))) hi = mid; else lo = mid;
       }
@@ -356,6 +391,8 @@ async function init() {
     }
     return { target, pos: target.clone().addScaledVector(dir, d) };
   }
+  // after an animation, the camera goes up to the nucleus it ends with: 2.5 times as close as the f-key view
+  const CLOSE_UP = new THREE.Vector3(-6, 17, 22).multiplyScalar(0.4);
   const VIEWS = {
     overview: overviewView,
     // hypernuclei: from the front left and above, all three layers and the s axis in view
@@ -1457,7 +1494,7 @@ async function init() {
         const nuc = nuclides[i];
         const text = state.timeMode === 'height' ? `最後に残った核 ${nucText(nuc)}` : `いちばん新しく見つかった核 ${nucText(nuc)}（${nuc.y} 年）`;
         decay.setCallouts([{ idx: i, text, bg: '#d01012' }]);
-        flyTo(clearView(i, new THREE.Vector3(-6, 17, 22)), 2.2);
+        flyTo(clearView(i, CLOSE_UP), 2.2);
       }
       display.phase = 'zoom';
       display.t = 0;
@@ -1557,7 +1594,7 @@ async function init() {
         stopPlay();
         // the valley floor is a single small box: go and look at it
         const floor = chart.visible.indexOf(1);
-        if (floor >= 0 && !display.on) flyTo(clearView(floor, new THREE.Vector3(-6, 17, 22)), 2.2);
+        if (floor >= 0 && !display.on) flyTo(clearView(floor, CLOSE_UP), 2.2);
       } else setCut(last * (1 - (1 - playT) ** 2), { fromPlay: true });
     } else if (state.playing) {
       playYear += dt * 9; // years per second
@@ -1582,7 +1619,7 @@ async function init() {
     island.update();
     tutorial.update(dt);
     chart.updateLabelLod(camera);
-    chart.updateLocalAxes(camera, window.innerWidth, window.innerHeight, safeRect(), dt);
+    chart.updateLocalAxes(camera, window.innerWidth, window.innerHeight, safeRect(), dt, display.on); // none in the display mode
     renderer.render(scene, camera);
     if (first) {
       first = false;

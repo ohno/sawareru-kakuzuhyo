@@ -829,9 +829,9 @@ export class NuclideChart {
   /**
    * When zoomed in so far that the main N/Z axes are out of view, places a small axis gizmo
    * in the empty space just outside a drip line (the chart edge) near the middle of the view.
-   * `safe` is the part of the canvas not covered by panels, in CSS pixels.
+   * `safe` is the part of the canvas not covered by panels, in CSS pixels. `off` fades it out (the display mode).
    */
-  updateLocalAxes(camera, W, H, safe, dt) {
+  updateLocalAxes(camera, W, H, safe, dt, off = false) {
     const ax = this.localAxes;
     if (!ax) return;
     const v = new THREE.Vector3();
@@ -842,7 +842,7 @@ export class NuclideChart {
     };
     const inside = (p, m = 0) => p && p[0] >= safe.l + m && p[0] <= safe.r - m && p[1] >= safe.t + m && p[1] <= safe.b - m;
     const seen = (pts) => pts.reduce((c, p) => c + (inside(screen(p.x, p.y, p.z)) ? 1 : 0), 0);
-    const need = seen(this.axisTicksN) < 2 || seen(this.axisTicksZ) < 2;
+    const need = !off && (seen(this.axisTicksN) < 2 || seen(this.axisTicksZ) < 2);
 
     const cam = camera.position;
     const hidden = (x, y, z) => this.blocked(v.set(x, y, z), cam);
