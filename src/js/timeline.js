@@ -4,7 +4,6 @@
 import { METRICS, nucText, fmtSeconds } from './nuclear.js';
 import { DISPLAY_MODES } from './fuel.js';
 
-const YEAR_NOW = 2026; // the year of the data (FRIB Discovery of Nuclides Project, 2026-09): the slider's right end
 const YEARS_PER_SECOND = 9;
 const CUT_SECONDS = 18; // from all nuclides to the last one
 
@@ -21,7 +20,7 @@ export class Timeline {
     Object.assign(this, { chart, cycle, onChange, onEnd });
     this.mode = 'year';
     this.playing = false;
-    this.year = 0; // the last year shown (YEAR_NOW: everything)
+    this.year = 0; // the last year shown (yearMax: everything)
     this.cutK = 0; // tallest first: how many of the tallest are removed
     this.cutValues = []; // the height quantity of the nuclides on screen, tallest first
     this.cutKey = ''; // the quantity cutValues was made for
@@ -30,12 +29,13 @@ export class Timeline {
     this.years = chart.nuclides.filter((n) => n.y).map((n) => n.y);
     this.rikenYears = chart.nuclides.filter((n) => n.rk).map((n) => n.rk);
     this.yearMin = Math.max(1890, Math.min(...this.years));
+    this.yearMax = Math.max(...this.years); // the latest discovery in the data: the slider's right end
     this.input = $('#year');
     this.label = $('#year-label');
     this.button = $('#play');
     this.select = $('#time-mode');
     this.input.min = this.yearMin;
-    this.input.max = YEAR_NOW;
+    this.input.max = this.yearMax;
   }
 
   /** the slider was moved */
@@ -47,13 +47,13 @@ export class Timeline {
   /** every nuclide back on screen, in the animation chosen */
   showAll() {
     if (this.mode === 'height') this.setCut(0);
-    else this.setYear(YEAR_NOW);
+    else this.setYear(this.yearMax);
   }
 
   /** back to how the page opens: the discovery years, everything shown */
   reset() {
     if (this.mode !== 'year') this.setMode('year');
-    else this.setYear(YEAR_NOW);
+    else this.setYear(this.yearMax);
   }
 
   /** switches between the discovery years and the tallest-first removal */
@@ -63,7 +63,7 @@ export class Timeline {
     this.mode = mode;
     this.select.value = mode;
     this.button.setAttribute('aria-label', mode === 'height' ? '高い核から順に消す' : '発見の歴史を再生');
-    this.year = YEAR_NOW;
+    this.year = this.yearMax;
     chart.yearLimit = Infinity;
     if (mode === 'height') {
       this.rebuildCut();
@@ -71,9 +71,9 @@ export class Timeline {
     } else {
       chart.heightCut = Infinity;
       input.min = this.yearMin;
-      input.max = YEAR_NOW;
+      input.max = this.yearMax;
       input.step = 1;
-      input.value = YEAR_NOW;
+      input.value = this.yearMax;
       chart.retarget();
       this.updateLabel();
     }
@@ -90,7 +90,7 @@ export class Timeline {
     if (y === this.year) return;
     this.year = y;
     this.input.value = y;
-    this.chart.yearLimit = y >= YEAR_NOW ? Infinity : y;
+    this.chart.yearLimit = y >= this.yearMax ? Infinity : y;
     this.chart.retarget();
     if (!fromPlay) this.stop();
     this.updateLabel();
@@ -104,7 +104,7 @@ export class Timeline {
     this.label.innerHTML = chart.filter === 'riken'
       ? `<b>${year}年</b>までに理研で発見: ${found} 核種`
       : chart.filter === 'cycle'
-        ? `<b>${this.cycle().map((k) => DISPLAY_MODES[k].short).join('・')}</b> ${shown()} 核種${year < YEAR_NOW ? `（${year}年までに発見）` : ''}`
+        ? `<b>${this.cycle().map((k) => DISPLAY_MODES[k].short).join('・')}</b> ${shown()} 核種${year < this.yearMax ? `（${year}年までに発見）` : ''}`
         : `<b>${year}年</b>までに発見: ${found.toLocaleString()} 核種`;
   }
 
@@ -172,7 +172,7 @@ export class Timeline {
       this.playT = over ? 0 : 1 - Math.sqrt(1 - this.cutK / last);
       this.setCut(over ? 0 : this.cutK, { fromPlay: true });
     } else {
-      this.playYear = this.year >= YEAR_NOW ? this.yearMin : this.year;
+      this.playYear = this.year >= this.yearMax ? this.yearMin : this.year;
       this.setYear(this.playYear, { fromPlay: true });
     }
   }
@@ -194,8 +194,8 @@ export class Timeline {
       this.setCut(done ? last : last * (1 - (1 - this.playT) ** 2), { fromPlay: true }); // slower towards the valley floor
     } else {
       this.playYear += dt * YEARS_PER_SECOND;
-      done = this.playYear >= YEAR_NOW;
-      this.setYear(done ? YEAR_NOW : this.playYear, { fromPlay: true });
+      done = this.playYear >= this.yearMax;
+      this.setYear(done ? this.yearMax : this.playYear, { fromPlay: true });
     }
     if (!done) return;
     this.stop();

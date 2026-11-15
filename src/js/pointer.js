@@ -8,9 +8,9 @@ export class Pointer {
    * onHover(id, x, y): the nuclide (or hypernucleus) under the pointer changed or the pointer moved over it;
    *   id -1: none; x, y: the pointer in CSS pixels (missing when it left the canvas).
    * onClick(id): a click or tap, after onHover for the same spot.
-   * onSlide(): the viewer moved the view with a touchpad slide.
+   * onMove(): the viewer moved the view (a drag, a wheel step or a touchpad slide).
    */
-  constructor({ canvas, camera, controls, chart, hyper, onHover, onClick, onSlide }) {
+  constructor({ canvas, camera, controls, chart, hyper, onHover, onClick, onMove }) {
     Object.assign(this, { camera, controls, chart, hyper, onHover, onClick });
     this.raycaster = new THREE.Raycaster();
     this.at = new THREE.Vector2(); // where the pointer is, from -1 to 1 across the window
@@ -32,11 +32,14 @@ export class Pointer {
       return e.deltaX !== 0 || !Number.isInteger(e.deltaY) || Math.abs(e.deltaY) < 50;
     };
     canvas.addEventListener('wheel', (e) => {
-      if (!isSlide(e)) return;
+      if (!isSlide(e)) {
+        if (controls.enabled) onMove(); // OrbitControls zooms
+        return;
+      }
       e.preventDefault();
       e.stopImmediatePropagation(); // keep OrbitControls from zooming
       slideUntil = performance.now() + 250;
-      onSlide();
+      onMove();
       // move along the floor by as many world units as the slide covers on screen
       const dist = camera.position.distanceTo(controls.target);
       const perPx = (2 * dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) / window.innerHeight;
@@ -50,6 +53,7 @@ export class Pointer {
     canvas.addEventListener('pointermove', (e) => {
       this.track(e);
       if (e.buttons === 0) this.moved = true; // no hover churn while orbiting
+      else if (controls.enabled && this.strayed(e, 5)) onMove(); // a drag
     });
     canvas.addEventListener('pointerleave', () => {
       this.moved = false;
@@ -74,8 +78,8 @@ export class Pointer {
     canvas.addEventListener('pointercancel', endTouch);
     canvas.addEventListener('pointerup', (e) => {
       if (e.pointerType === 'touch' && endTouch(e)) return;
-      const down = this.downAt, slack = e.pointerType === 'touch' ? 12 : 5; // px the pointer may stray during a click
-      if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > slack || e.button !== 0) return;
+      // (a touch may stray further than a mouse during a click)
+      if (!this.downAt || this.strayed(e, e.pointerType === 'touch' ? 12 : 5) || e.button !== 0) return;
       this.downAt = null;
       this.track(e);
       onClick(this.hover());
@@ -91,6 +95,12 @@ export class Pointer {
       RIGHT: pan ? THREE.MOUSE.ROTATE : THREE.MOUSE.PAN,
     };
     this.controls.touches = { ONE: pan ? THREE.TOUCH.PAN : THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+  }
+
+  /** whether the pointer is more than `slack` px from where its button went down */
+  strayed(e, slack) {
+    const down = this.downAt;
+    return !!down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > slack;
   }
 
   track(e) {

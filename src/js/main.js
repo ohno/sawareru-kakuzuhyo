@@ -124,7 +124,7 @@ async function init() {
     canvas, camera, controls, chart, hyper,
     onHover: setHover,
     onClick: (id) => (id < 0 || id === state.pinned ? unpin() : pin(id)),
-    onSlide: () => views.cancelFlight(),
+    onMove: () => views.cancelFlight(),
   });
   function setDragMode(mode) {
     state.dragMode = mode;
@@ -313,6 +313,33 @@ async function init() {
 
   // ---------- search, and the links of the page ----------
   const parseQuery = createSearch(nuclides, (z, n) => graph.find(z, n));
+  /**
+   * Puts nuclide i on the chart when a setting keeps it off (the search asked for it): the island of stability for
+   * elements 119–126, the whole timeline, and then, only as far as needed, the display mode, the nuclides never
+   * observed, the classes of the LEGO chart and the ordinary nuclei themselves.
+   */
+  function reveal(i) {
+    const nuc = nuclides[i];
+    const steps = [
+      () => nuc.isl && setControl($('#opt-island'), true),
+      () => timeline.showAll(),
+      () => (chart.filter === 'riken' || state.cycle.length) && setModes(false, []),
+      () => {
+        if (!nuc.y) setControl($('#opt-unobs'), true);
+        if (nuc.ub) setControl($('#opt-unbound'), true);
+      },
+      () => $$('[data-lego]').forEach((cb) => setControl(cb, true)),
+      () => {
+        setControl($('[data-kind="N"]'), true);
+        setControl($('[data-layer="0"]'), true);
+      },
+    ];
+    for (const step of steps) {
+      if (chart.visible[i]) return;
+      step();
+    }
+  }
+
   /** goes to what the text names; false (with a message under the search box) when it names nothing */
   function goto(q) {
     const { i, note } = parseQuery(q);
@@ -320,9 +347,7 @@ async function init() {
     msg.textContent = i < 0 ? `「${q}」に一致する核種が見つかりません` : note || '';
     msg.classList.toggle('note', i >= 0); // not an error
     if (i < 0) return false;
-    // elements 119–126 are only there with the island of stability
-    if (nuclides[i].isl && !chart.islandOn) $('#opt-island').click();
-    if (!chart.visible[i]) timeline.showAll();
+    reveal(i);
     pin(i);
     views.flyTo(views.focus(), 1.2);
     return true;
@@ -814,8 +839,9 @@ async function init() {
 
   // ---------- tutorial: an animated introduction for first-time visitors (left panel button, ? on the toolbar) ----------
   // What it explains is the page as it opens: the settings below go back to their values in index.html while it
-  // runs (the unobserved, yellow nuclei are among them: playing the discovery history switches them off).
-  const TUTORIAL_SETTINGS = ['#height', '#hscale', '#hbase', '#opt-unobs', '#color'];
+  // runs (the unobserved, yellow nuclei are among them: playing the discovery history switches them off), and come
+  // back as the viewer had them when it ends.
+  const TUTORIAL_SETTINGS = ['#opt-island', '#height', '#hscale', '#hbase', '#opt-unobs', '#color'];
   let beforeTutorial = null; // those settings, and whether the details were folded, as the viewer had them
   const tutorial = new Tutorial({
     camera, controls, chart, nuclides,
@@ -823,7 +849,6 @@ async function init() {
     find: (z, n) => graph.find(z, n),
     enter() {
       resetView();
-      setControl($('#opt-island'), false);
       beforeTutorial = { settings: TUTORIAL_SETTINGS.map((s) => valueOf($(s))), folded: folded.detail };
       for (const s of TUTORIAL_SETTINGS) setControl($(s), defaultOf($(s)));
       setDim('2d', { fly: false });
