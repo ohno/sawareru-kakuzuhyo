@@ -2,7 +2,7 @@
 
 アプリが読むデータの原本です。直したら `python scripts/build.py` で `dist/data/*.json` を作り直します。
 
-出典はこの表だけに書いています。アプリの「データの出典」も、ビルドのときにこの表から作ります（列の名前と数は変えないでください）。
+出典はこの表だけに書いています。アプリの「データの出典」も、ビルドのときにこの表から作ります（列の名前と数は変えないでください）。最後の行は、このプロジェクトを引用するときの書き方です。
 
 | ファイル | 内容 | 出典 |
 |---|---|---|
@@ -16,5 +16,6 @@
 | `hypernuclei.yaml` | ハイパー核 | [Mainz Chart of Hypernuclides](https://hypernuclei.kph.uni-mainz.de/)（2026-08-04 のデータ）。Ξ は E. Friedman & A. Gal, *EPJ Web Conf.* **271**, 03002 (2022)（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)） |
 | `hyper-driplines.yaml` | ハイパー核のドリップライン | C. Samanta et al., *J. Phys. G* **35**, 065101 (2008)；P. Roy Chowdhury et al., *Rom. Rep. Phys.* **62**, 65 (2010)；E.F. Meoto, *J. Phys. Commun.* **6**, 125004 (2022)（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)） |
 | （`scripts/ktuy.py` がビルド時に取得） | 未発見の原子核の質量、安定の島（殻エネルギー） | H. Koura et al., *Prog. Theor. Phys.* **113**, 305 (2005)（KTUY05、JAEA 核データセンターの質量表） |
+| （このプロジェクト） | このプロジェクトの引用方法 | 2026 年度 理研 TRIP ハッカソン 元素変換チーム「さわれる核図表」、理化学研究所（2026）、[https://ohno.github.io/sawareru-kakuzuhyo/](https://ohno.github.io/sawareru-kakuzuhyo/) |
 
 出典の値は、必要なものを抜き出して YAML に書き換えています。

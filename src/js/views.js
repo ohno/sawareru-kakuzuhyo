@@ -9,6 +9,8 @@ const deg = THREE.MathUtils.degToRad;
 const PORTRAIT = 0.85; // width / height below which a screen counts as portrait
 const BOARD_CENTRE = new THREE.Vector3(86, 0, -58);
 const FRAME_X = BOARD.x0 - BOARD.frame; // outer edge of the board's black frame, where the overview stands it upright
+// from the board centre to the camera of the 2D view: a touch off the vertical, so that the board keeps its direction on screen
+const TOP_OFFSET = new THREE.Vector3(0, 255, 0.1);
 const FOCUS_OFFSET = new THREE.Vector3(-6, 17, 22); // from a nuclide to the camera that looks at it (the f key)
 const CLOSE_UP = FOCUS_OFFSET.clone().multiplyScalar(0.4); // after an animation: 2.5 times as close
 
@@ -268,8 +270,7 @@ export class Views {
   top() {
     const k = Math.max(1, (1.3 / this.camera.aspect) ** 0.8);
     const target = BOARD_CENTRE.clone();
-    // (a touch off the vertical, so that the board keeps its direction on screen)
-    return { target, pos: new THREE.Vector3(86, 255, -57.9).sub(target).multiplyScalar(k).add(target) };
+    return { target, pos: target.clone().addScaledVector(TOP_OFFSET, k) };
   }
 
   /** the whole board from straight above, in the part of the window above `bottom` (CSS pixels): the tutorial's flat steps */

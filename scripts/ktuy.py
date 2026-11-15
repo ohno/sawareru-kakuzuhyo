@@ -10,6 +10,7 @@ from it:
 
 Built without the table (--no-ktuy, or no connection), both files hold null: the app then shows neither.
 """
+import http.client
 import urllib.request
 
 FILE = "KTUY05_m246.dat"
@@ -22,19 +23,23 @@ N_RANGE = range(140, 201)
 
 
 def fetch(path):
-    """downloads the table to `path` unless it is there already; False when that fails"""
+    """downloads the table to `path` unless it is there already; False when that fails (nothing is kept then)"""
     if path.exists():
         return True
-    path.parent.mkdir(parents=True, exist_ok=True)
     try:
         req = urllib.request.Request(URL, headers={"User-Agent": "sawareru-kakuzuhyo build"})
         with urllib.request.urlopen(req, timeout=60) as r:
-            path.write_bytes(r.read())
-        print(f"downloaded {URL} -> {path}")
-        return True
-    except OSError as e:
+            table = r.read()
+    except (OSError, http.client.HTTPException) as e:
         print(f"could not download {URL} ({e})")
         return False
+    if table.split(None, len(COLUMNS))[:len(COLUMNS)] != [c.encode("ascii") for c in COLUMNS]:
+        print(f"{URL} did not send the mass table")  # an error page, for example
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(table)
+    print(f"downloaded {URL} -> {path}")
+    return True
 
 
 def build(known, write, raw):

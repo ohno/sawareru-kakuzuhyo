@@ -211,7 +211,13 @@ def main():
         path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         print(f"{path}: {path.stat().st_size / 1024:.0f} KiB")
 
-    # the folder is made anew; it may only be a site built before, never a folder with anything else in it
+    # the folder is made anew; it may only be a site built before, never the sources or a folder with anything else in it
+    dist = args.dist.resolve()
+    for keep in (SRC, DATA, Path(__file__).resolve().parent):
+        if dist == keep or dist in keep.parents or keep in dist.parents:
+            raise SystemExit(f"{args.dist} holds or lies inside {keep.name}/, which the build reads: choose another folder")
+    if args.dist.exists() and not args.dist.is_dir():
+        raise SystemExit(f"{args.dist} is a file: choose a folder")
     if args.dist.exists():
         if any(args.dist.iterdir()) and not (args.dist / "index.html").is_file():
             raise SystemExit(f"{args.dist} has files in it and is not a built site (no index.html): choose another folder")

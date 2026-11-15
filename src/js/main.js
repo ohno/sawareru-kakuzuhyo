@@ -349,12 +349,13 @@ async function init() {
   const ARROWS = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [1, 0], ArrowDown: [-1, 0] }; // (dZ, dN)
   window.addEventListener('keydown', (e) => {
     if (e.target.matches?.('input, select, textarea')) return;
+    // the browser's own shortcuts (reload, find, full screen, …) are left alone, in every mode
+    if (e.ctrlKey || e.metaKey || e.altKey || /^F\d+$/.test(e.key)) return;
     if (display.on) {
       e.preventDefault();
       return display.stop();
     }
     if (tutorial.active) return tutorial.key(e);
-    if (e.ctrlKey || e.metaKey || e.altKey) return; // the browser's own shortcuts (reload, find, …)
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (key === 'Escape') return unpin();
     if (key === 'f') return views.flyTo(views.focus());
@@ -886,7 +887,12 @@ async function init() {
   views.jumpTo({ target: start.target, pos: start.pos.clone().add(new THREE.Vector3(0, 120, 120)) });
   views.flyTo(start, 2.2);
   if (location.hash.length > 1) {
-    const { i } = parseQuery(decodeURIComponent(location.hash.slice(1)));
+    let i = -1;
+    try {
+      i = parseQuery(decodeURIComponent(location.hash.slice(1))).i;
+    } catch {
+      // a hash that cannot be decoded (a stray %) names nothing
+    }
     if (i >= 0) {
       pin(i);
       views.cancelFlight();
