@@ -1,15 +1,16 @@
 // Tutorial: an animation with subtitles for first-time (high-school level) visitors. On the bare board, the periodic
 // table folds into one column along the Z axis as it comes in, each element jumps to the neutron number of its atomic
 // weight as the N axis comes in, the isotopes spread out to the left and right, and the page's controls are shown
-// one by one. The element tiles are white in the table and then take the color of the box they land on. The subtitles can be paused,
-// stepped back and forth (buttons, arrow keys, space or Enter) and read aloud.
+// one by one. The element tiles are white in the table and then take the color of the box they land on. The
+// subtitles can be paused, stepped back and forth (buttons, arrow keys, space or Enter) and read aloud.
 import * as THREE from 'three';
-import { ELEMENTS, cssRgb, inkFor } from './nuclear.js';
+import { ELEMENTS } from './data.js';
+import { LEGO_PALETTE, SUPERSCRIPTS, cssRgb, inkFor } from './nuclear.js';
+import { icon } from './icons.js';
 
 const U_KEV = 931494.10242; // atomic mass unit in keV (for atomic weights from mass excesses)
 const MAJOR = [1, 8, 26, 47, 82, 92, 113]; // elements named beside the column
-// the page's panels and bars, and the step from which each is shown (the detail panel with the ¹⁴C example)
-const UI_FROM = [['#info', 6], ['#controls', 8], ['.toolbar', 9], ['.timeline', 10]];
+const COLUMN_N = -4; // where the column stands: between the numbers of the Z axis and the first column of the board
 // the lanthanides and actinides: their place in group 3 of the table (row, column 2) and their own row below it
 const F_ROWS = [
   { from: 57, to: 71, row: 5, below: 7.5, name: 'ランタノイド', tint: '#dbe8ff' },
@@ -64,7 +65,6 @@ function homeNeutrons(nuclides) {
 
 // ---------- reading the subtitles aloud (the browser's own speech synthesis) ----------
 const speech = typeof speechSynthesis === 'undefined' ? null : speechSynthesis;
-const SUP_DIGITS = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 // Words the voices misread, written out for the voice only (the subtitles keep the kanji). Read through Windows'
 // Japanese voice (its phonemes), the subtitles had 周期表 as しゅうきおもて, 核子 as かくこ, 軽すぎて as けいすぎて,
 // 重すぎて as じゅうすぎて, 谷を as だにを, 谷底 as たにそこ, 2D as にディー and クォーク as ヲーク; the rest are words
@@ -84,16 +84,14 @@ function spoken(html) {
   return div.textContent
     .replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)([A-Z][a-z]?)/g, (_, a, s) => {
       const z = ELEMENTS.findIndex((e) => e[0] === s);
-      return `${z > 0 ? ELEMENTS[z][2] : s}${[...a].map((c) => SUP_DIGITS.indexOf(c)).join('')}`;
+      return `${z > 0 ? ELEMENTS[z][2] : s}${[...a].map((c) => SUPERSCRIPTS.indexOf(c)).join('')}`;
     })
     .replace(/\s*\/\s*/g, '、')
     .replace(READINGS_RE, (w) => READING_OF.get(w));
 }
 const japaneseVoice = () => speech?.getVoices().find((v) => v.lang.replace('_', '-').startsWith('ja')) || null;
-// Icons: volume-2 and volume-x from Feather, Copyright (c) 2013-2023 Cole Bemis, MIT License. See THIRD-PARTY-NOTICES.
-const speaker = (waves) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>${waves
-  ? '<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>'
-  : '<line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>'}</svg>`;
+// a sample of a color of the LEGO chart, set before its name in a subtitle
+const swatch = (key) => `<span class="tut-sw" style="background:${LEGO_PALETTE.find((c) => c.key === key).color}"></span>`;
 
 export class Tutorial {
   /**
@@ -106,26 +104,30 @@ export class Tutorial {
     this.voiceOn = false;
     this.home = homeNeutrons(app.nuclides);
     const C14 = app.find(6, 8);
+    // Per step: the subtitle, how long it stays (ms), and what happens when it comes up (enter). The first steps
+    // play on the bare board seen from above: `tiles` while the element tiles are laid out on it, `flat` while that
+    // view is where the step starts from, `axisNames` while the axes are named in large letters inside the chart.
+    // `reveal`: the panel or bar of the page that comes back with this step (they stay away until explained).
     this.steps = [
       {
         text: '周期表には 118 種類の元素が並んでいます。元素の種類を決めるのは、原子の中心にある原子核の<b>陽子の数</b>（原子番号 Z）です。',
-        ms: 7500, enter: () => this.layout('table'),
+        ms: 7500, enter: () => this.layout('table'), tiles: true, flat: true,
       },
       {
         text: '核図表では、元素を陽子の数の順に、左の<b>縦軸</b>（陽子の数 Z）に沿って一列に並べます。いちばん下が水素 H（陽子 1 個）で、上にいくほど重い元素です。',
-        ms: 7500, enter: () => this.layout('column'),
+        ms: 7500, enter: () => this.layout('column'), tiles: true, flat: true, axisNames: true,
       },
       {
         text: '原子核には陽子のほかに<b>中性子</b>もあります。下の<b>横軸</b>は中性子の数 N。それぞれの元素を、原子量（≒ 陽子の数 + 中性子の数）から決まる位置へ動かします。',
-        ms: 8000, enter: () => this.layout('chart'),
+        ms: 8000, enter: () => this.layout('chart'), tiles: true, flat: true, axisNames: true,
       },
       {
         text: '同じ元素でも、中性子の数がちがう原子核があります。これを<b>同位体</b>と呼びます。同位体を左右に並べていくと…',
-        ms: 7000, enter: () => this.spread(),
+        ms: 7000, enter: () => this.spread(), flat: true, axisNames: true,
       },
       {
-        text: `これが<b>核図表</b>です。これまでに ${app.discovered.toLocaleString()} 種類の原子核が見つかっています。<span class="tut-sw" style="background:#1b1b1d"></span>黒は安定な原子核、<span class="tut-sw" style="background:#c91a09"></span>赤は不安定な（放射性の）原子核、<span class="tut-sw" style="background:#f5c400"></span>黄色は存在が予想されていますが、まだ見つかっていない原子核です。`,
-        ms: 9000, enter: () => this.full(),
+        text: `これが<b>核図表</b>です。これまでに ${app.discovered.toLocaleString()} 種類の原子核が見つかっています。${swatch('st')}黒は安定な原子核、${swatch('found')}赤は不安定な（放射性の）原子核、${swatch('unfound')}黄色は存在が予想されていますが、まだ見つかっていない原子核です。`,
+        ms: 9000, enter: () => this.full(), axisNames: true,
       },
       {
         text: '高さは<b>核子 1 個あたりの質量</b>です。軽すぎても重すぎても高くなり、鉄のあたりがいちばん低い「谷底」です。不安定な原子核は、崩壊して谷を下っていきます。',
@@ -133,25 +135,26 @@ export class Tutorial {
       },
       {
         text: '箱をクリックすると、その原子核のくわしい情報が右に出て、<b>崩壊していく先</b>が矢印で示されます。これは年代測定に使われる炭素 14 です。',
-        ms: 9000, enter: () => this.demoPin(C14),
+        ms: 9000, enter: () => this.demoPin(C14), reveal: '#info',
       },
       {
         text: '<b>ドラッグで回転</b>、右ドラッグで移動、ホイールで拡大・縮小できます。スマートフォンやタブレットでは指で操作できます。',
         ms: 8000, enter: () => this.orbit(),
       },
       {
-        text: '左上のパネルでは、<b>原子核の検索</b>や、表示・高さ・色の切り替えができます。このチュートリアルも「使い方」からいつでも見られます。',
-        ms: 7000, enter: () => this.highlight('#controls'),
+        text: '左上のパネルでは、<b>原子核の検索</b>や、表示・高さ・色の切り替えができます。このチュートリアルも、ここからいつでも見られます。',
+        ms: 7000, enter: () => this.highlight('#controls'), reveal: '#controls',
       },
       {
         text: '下のバーでは、<b>2D / 3D</b> の切り替えや、<b>理研が発見した原子核</b>、ストレンジクォークを含む<b>ハイパー核</b>の表示ができます。',
-        ms: 7000, enter: () => this.highlight('.toolbar'),
+        ms: 7000, enter: () => this.highlight('.toolbar'), reveal: '.toolbar',
       },
       {
         text: 'いちばん下のバーでは、原子核が<b>発見されてきた歴史</b>を再生できます。それでは、自由にさわってみましょう！',
-        ms: 8000, enter: () => this.highlight('.timeline'),
+        ms: 8000, enter: () => this.highlight('.timeline'), reveal: '.timeline',
       },
     ];
+    this.revealed = this.steps.map((step) => step.reveal).filter(Boolean); // every part of the page the tutorial hides at first
     this.build();
   }
 
@@ -181,7 +184,7 @@ export class Tutorial {
     window.addEventListener('resize', () => {
       if (!this.active) return;
       this.fitText();
-      if (this.k > 2) return;
+      if (!this.steps[this.k].tiles) return;
       this.app.snapTop();
       this.layout(this.mode, { instant: true });
     });
@@ -195,16 +198,20 @@ export class Tutorial {
       <button class="btn tut-prev" title="前へ（← キー）" aria-label="前へ">◀◀</button>
       <button class="btn tut-pause" title="一時停止（スペース、Enter）" aria-label="一時停止">❚❚</button>
       <button class="btn tut-next" title="次へ（→ キー）" aria-label="次へ">▶▶</button>
-      <button class="btn tut-voice" aria-pressed="false" title="字幕を音声で読み上げる" aria-label="音声">${speaker(false)}</button>
+      <button class="btn tut-voice" aria-pressed="false" title="字幕を音声で読み上げる" aria-label="音声">${icon('voiceOff')}</button>
       <button class="btn tut-end" title="終了（Esc キー）" aria-label="終了">×</button></div>`;
     sub.hidden = true;
-    this.bar = sub.querySelector('.tut-bar i');
-    sub.querySelector('.tut-prev').addEventListener('click', () => this.go(this.k - 1));
-    sub.querySelector('.tut-pause').addEventListener('click', () => this.togglePause());
-    sub.querySelector('.tut-next').addEventListener('click', () => this.go(this.k + 1));
-    sub.querySelector('.tut-voice').addEventListener('click', () => this.toggleVoice());
-    sub.querySelector('.tut-voice').hidden = !speech;
-    sub.querySelector('.tut-end').addEventListener('click', () => this.stop());
+    const part = (name) => sub.querySelector(`.tut-${name}`);
+    this.ui = {
+      text: part('text'), count: part('count'), bar: part('bar i'),
+      prev: part('prev'), pause: part('pause'), next: part('next'), voice: part('voice'),
+    };
+    this.ui.prev.addEventListener('click', () => this.go(this.k - 1));
+    this.ui.pause.addEventListener('click', () => this.togglePause());
+    this.ui.next.addEventListener('click', () => this.go(this.k + 1));
+    this.ui.voice.addEventListener('click', () => this.toggleVoice());
+    this.ui.voice.hidden = !speech;
+    part('end').addEventListener('click', () => this.stop());
     document.body.append(root, sub);
   }
 
@@ -238,7 +245,7 @@ export class Tutorial {
     this.root.hidden = true;
     this.sub.hidden = true;
     document.body.classList.remove('tut', 'tut-bars');
-    for (const [sel] of UI_FROM) document.querySelector(sel)?.classList.remove('tut-hidden');
+    for (const sel of this.revealed) document.querySelector(sel)?.classList.remove('tut-hidden');
     this.app.chart.setAxisNamesInside(false);
     this.app.exit();
   }
@@ -253,24 +260,24 @@ export class Tutorial {
     clearInterval(this.grow);
     this.orbiting = this.orbitPaused = false;
     this.clearHighlight();
+    const step = this.steps[k];
     if (back) {
       // each step goes on from the one before: going back first puts its starting view in place
       this.app.unpin();
-      if (k <= 3) {
+      if (step.flat) {
         this.app.setDim('2d');
         this.app.snapTop();
       }
     }
-    const step = this.steps[k];
-    this.sub.querySelector('.tut-text').innerHTML = step.text;
-    this.sub.querySelector('.tut-count').textContent = `${k + 1} / ${this.steps.length}`;
-    this.sub.querySelector('.tut-next').textContent = k === this.steps.length - 1 ? 'はじめる' : '▶▶';
-    this.sub.querySelector('.tut-prev').disabled = k === 0;
+    this.ui.text.innerHTML = step.text;
+    this.ui.count.textContent = `${k + 1} / ${this.steps.length}`;
+    this.ui.next.textContent = k === this.steps.length - 1 ? 'はじめる' : '▶▶';
+    this.ui.prev.disabled = k === 0;
     // the page's panels and bars stay away until they are explained
-    for (const [sel, from] of UI_FROM) document.querySelector(sel)?.classList.toggle('tut-hidden', k < from);
-    document.body.classList.toggle('tut-bars', k >= 9); // the subtitles rise above the bars
-    // large axis names on the flat chart, from the column on (each comes in with its axis)
-    this.app.chart.setAxisNamesInside(k >= 1 && k <= 4);
+    const shown = new Set(this.steps.slice(0, k + 1).map((before) => before.reveal));
+    for (const sel of this.revealed) document.querySelector(sel)?.classList.toggle('tut-hidden', !shown.has(sel));
+    document.body.classList.toggle('tut-bars', shown.has('.toolbar')); // the subtitles rise above the bars
+    this.app.chart.setAxisNamesInside(!!step.axisNames);
     step.enter();
     this.said = -1;
     this.say();
@@ -279,7 +286,7 @@ export class Tutorial {
 
   /** the subtitle text as tall as the longest subtitle at the box's present width: the box does not change size */
   fitText() {
-    const el = this.sub.querySelector('.tut-text');
+    const el = this.ui.text;
     const shown = el.innerHTML;
     el.style.height = 'auto';
     let h = 0;
@@ -293,18 +300,19 @@ export class Tutorial {
 
   // ---------- playing, pausing, the progress bar ----------
   startClock(ms) {
+    const { bar } = this.ui;
     this.remaining = ms;
     this.timerDone = false;
-    this.bar.style.transition = 'none';
-    this.bar.style.width = '0%';
-    void this.bar.offsetWidth;
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    void bar.offsetWidth; // apply the empty bar now, so that it fills from the start
     if (!this.paused) this.runClock();
   }
 
   runClock() {
     this.deadline = performance.now() + this.remaining;
-    this.bar.style.transition = `width ${this.remaining}ms linear`;
-    this.bar.style.width = '100%';
+    this.ui.bar.style.transition = `width ${this.remaining}ms linear`;
+    this.ui.bar.style.width = '100%';
     this.timer = setTimeout(() => {
       this.timerDone = true;
       this.advance();
@@ -327,9 +335,10 @@ export class Tutorial {
     clearTimeout(this.timer);
     if (!this.timerDone) {
       this.remaining = Math.max(0, this.deadline - performance.now());
-      const frac = this.bar.getBoundingClientRect().width / this.bar.parentElement.getBoundingClientRect().width;
-      this.bar.style.transition = 'none';
-      this.bar.style.width = `${frac * 100}%`;
+      const { bar } = this.ui;
+      const frac = bar.getBoundingClientRect().width / bar.parentElement.getBoundingClientRect().width;
+      bar.style.transition = 'none';
+      bar.style.width = `${frac * 100}%`;
     }
     this.orbitPaused = this.orbiting;
     this.orbiting = false;
@@ -349,7 +358,7 @@ export class Tutorial {
   }
 
   markPause() {
-    const btn = this.sub.querySelector('.tut-pause');
+    const btn = this.ui.pause;
     btn.textContent = this.paused ? '▶' : '❚❚';
     btn.setAttribute('aria-label', this.paused ? '再生' : '一時停止');
     btn.title = `${this.paused ? '再生' : '一時停止'}（スペース、Enter）`;
@@ -368,9 +377,8 @@ export class Tutorial {
   // ---------- reading aloud ----------
   toggleVoice() {
     this.voiceOn = !this.voiceOn;
-    const btn = this.sub.querySelector('.tut-voice');
-    btn.setAttribute('aria-pressed', String(this.voiceOn));
-    btn.innerHTML = speaker(this.voiceOn);
+    this.ui.voice.setAttribute('aria-pressed', String(this.voiceOn));
+    this.ui.voice.innerHTML = icon(this.voiceOn ? 'voiceOn' : 'voiceOff');
     if (this.voiceOn) {
       this.said = -1;
       this.say();
@@ -429,7 +437,6 @@ export class Tutorial {
     const s1 = Math.min((right - x0) / (17 * 1.08 + 1), (bottom - top) / (8.5 * 1.08 + 1));
     const y0 = (at(0, 127).y + at(0, -15).y - (8.5 * 1.08 + 1) * s1) / 2;
     const cellX = (col) => x0 + col * s1 * 1.08, cellY = (row) => y0 + row * s1 * 1.08;
-    const COLUMN_N = -4; // the column: between the numbers of the Z axis and the first column of the board
     this.app.setFilter(() => false); // the boxes come in later
     // the axes come in with the column (Z) and as the elements jump to their neutron numbers (N)
     const [n, z] = { table: [0, 0], hidden: [0, 0], column: [0, 1], chart: [1, 1] }[mode];
@@ -498,8 +505,9 @@ export class Tutorial {
     if (mode === 'chart') {
       // once the tiles have landed, the boxes take their place
       clearTimeout(this.timer2);
+      const k = this.k;
       this.timer2 = setTimeout(() => {
-        if (!this.active || this.k !== 2) return;
+        if (!this.active || this.k !== k) return;
         this.app.setFilter((nuc) => nuc.z >= 1 && nuc.z <= 118 && nuc.n === this.home.get(nuc.z));
         this.tiles.forEach((t) => {
           t.style.transitionDelay = '0ms';
@@ -572,8 +580,9 @@ export class Tutorial {
     this.app.unpin();
     this.app.setDim('3d');
     this.app.flyOverview();
+    const k = this.k;
     setTimeout(() => {
-      if (!this.active || this.k !== 7) return;
+      if (!this.active || this.k !== k) return;
       if (this.paused) this.orbitPaused = true;
       else this.orbiting = true;
     }, 1300);

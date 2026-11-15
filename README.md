@@ -11,6 +11,8 @@ https://ohno.github.io/sawareru-kakuzuhyo/
 - **たどる**　発見の歴史、理研が発見した原子核、ハイパー核、安定の島、核燃料サイクル
 - **聴く・見せる**　崩壊系列のメロディ、読み上げつきのチュートリアル、展示用のディスプレイモード（`d` キー）
 
+パソコンでもスマートフォンでも、WebGL 2 に対応した最近のブラウザ（Chrome、Edge、Firefox、Safari）で動きます。
+
 ## 手元で動かす
 
 下記コマンドを実行後にブラウザで http://localhost:8000/ を開きます。
@@ -18,7 +20,7 @@ https://ohno.github.io/sawareru-kakuzuhyo/
 ```bash
 git clone https://github.com/ohno/sawareru-kakuzuhyo.git
 cd sawareru-kakuzuhyo
-pip install pyyaml
+pip install -r requirements.txt
 python scripts/build.py
 python scripts/serve.py
 ```
@@ -27,7 +29,9 @@ Python 3 を使用します。`build.py` は、未発見の原子核と安定の
 
 ## データとライセンス
 
-データの出典は [data/README.md](data/README.md) にあります。プログラムと、このアプリのために書いた文章（元素の紹介、特徴的な同位体、核燃料サイクルの説明）は [MIT ライセンス](LICENSE)、そのほかのデータはそれぞれの出典の条件に従います。アイコンは Feather（MIT）と Lucide（ISC）にもとづきます（[THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES)）。LEGO®（レゴ®）はレゴグループの商標です。このアプリはレゴグループが後援・承認したものではありません。
+データの出典は [data/README.md](data/README.md) にあります（アプリの「データの出典」にも同じ表が出ます）。プログラムと、このアプリのために書いた文章（元素の紹介、特徴的な同位体、核燃料サイクルの説明）は [MIT ライセンス](LICENSE)、そのほかのデータはそれぞれの出典の条件に従います。アイコンは Feather（MIT）と Lucide（ISC）にもとづきます（[THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES)）。LEGO®（レゴ®）はレゴグループの商標です。このアプリはレゴグループが後援・承認したものではありません。
+
+誤りや不具合にお気づきのときは、[Issues](https://github.com/ohno/sawareru-kakuzuhyo/issues) でお知らせください。
 
 ## 開発概要
 
@@ -45,3 +49,7 @@ Python 3 を使用します。`build.py` は、未発見の原子核と安定の
 本プロジェクトは、2026 年度 理研 TRIP ハッカソンにおける元素変換チームの成果の一部です。開発にあたって下記ページを参考にしました。
 - 番匠カンナ「[立体核図表VRはどうやって作られたか](https://note.com/banjo_kanna/n/na083115a2c0d)」
 - 核物理懇談会「[大きく広がるフレーバーの世界](http://kakudan.rcnp.osaka-u.ac.jp/jp/overview/world/Flavor.html)」
+
+## English
+
+*Sawareru Kakuzuhyo* (“a chart of nuclides you can touch”) is an interactive 3D chart of about 3,400 nuclides in the colors of RIKEN's LEGO® chart of nuclides: rotate it, zoom in, and point at a box to see the half-life, the decay modes and where the decays lead. The interface is in Japanese. It was made at the RIKEN TRIP Hackathon of fiscal year 2026 by the 元素変換 (element transmutation) team; the code is under the [MIT License](LICENSE), and the data sources are listed in [data/README.md](data/README.md).

@@ -2,10 +2,12 @@
 
 アプリが読むデータの原本です。直したら `python scripts/build.py` で `dist/data/*.json` を作り直します。
 
+出典はこの表だけに書いています。アプリの「データの出典」も、ビルドのときにこの表から作ります（列の名前と数は変えないでください）。
+
 | ファイル | 内容 | 出典 |
 |---|---|---|
-| [`nuclides/`](nuclides/) | 核種の質量・半減期・崩壊・発見年など（元素ごとに 1 ファイル） | F.G. Kondev et al., *Chin. Phys. C* **45**, 030001 (2021)（NUBASE2020、[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)）。データは [IAEA AMDC](https://www-nds.iaea.org/amdc/) |
-| `elements.yaml` | 元素名、紹介文、特徴的な同位体、発見年 | 発見年は Wikipedia "[Timeline of chemical element discoveries](https://en.wikipedia.org/wiki/Timeline_of_chemical_element_discoveries)"、ほかはこのアプリのために作成 |
+| [`nuclides/`](nuclides/)（元素ごとに 1 ファイル） | 核種の質量・半減期・崩壊・発見年 | F.G. Kondev et al., *Chin. Phys. C* **45**, 030001 (2021)（NUBASE2020、[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)）。データは [IAEA AMDC](https://www-nds.iaea.org/amdc/) |
+| `elements.yaml` | 元素名、元素の紹介、特徴的な同位体、元素の発見年 | 発見年は Wikipedia "[Timeline of chemical element discoveries](https://en.wikipedia.org/wiki/Timeline_of_chemical_element_discoveries)"、ほかはこのアプリのために作成 |
 | `abundances.yaml` | 宇宙での元素の存在量 | K. Lodders, M. Bergemann, H. Palme, *Space Sci. Rev.* **221**, 23 (2025)、表は [doi:10.5281/zenodo.14988840](https://doi.org/10.5281/zenodo.14988840)（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)） |
 | `riken-discoveries.yaml` | 理研で発見された原子核 | FRIB Nuclear Data Group, Discovery of Nuclides Project, Isotope Database, [doi:10.11578/frib/2279152](https://doi.org/10.11578/frib/2279152)（2026-09-25 版） |
 | `fission-yields.yaml` | ²³⁵U の核分裂収率 | JEFF-3.1.1（OECD/NEA）、[IAEA LiveChart of Nuclides](https://www-nds.iaea.org/relnsd/vcharthtml/VChartHTML.html) から取得 |

@@ -2,11 +2,10 @@
 // sit on a layer above (one s quark) and ΛΛ/Ξ hypernuclei on a second one (two s quarks). Each layer is a
 // translucent plane; a vertical axis counts the s quarks. A hypernucleus is placed over its nucleon core (Z, N).
 import * as THREE from 'three';
-import { HYPERNUCLEI, HYPER_DRIP_SOURCES as DRIP_DATA } from './data.js';
-import { ELEMENTS, hexToRgb } from './nuclear.js';
-import { makeTextSprite, FOOT, MASS_OFFSET } from './chart.js';
-
-export { HYPER_SOURCE } from './data.js';
+import { ELEMENTS, HYPERNUCLEI, HYPER_DRIP_SOURCES as DRIP_DATA } from './data.js';
+import { hexToRgb } from './nuclear.js';
+import { ribbon, FOOT, MASS_OFFSET, N_EDGE } from './chart.js';
+import { makeTextSprite } from './sprites.js';
 
 // how each paper's drip lines are drawn (in the color of their layer), and the one shown at first: only one, so that
 // the lines do not lie on top of each other
@@ -59,14 +58,21 @@ export const EXPERIMENTS = {
   'KEK E176 (#10-09-06, #13-11-14)': ['KEK（E176 実験）', STOPPED_XI],
 };
 
-const LAYERS = [
-  { s: 0, label: '通常核（u, d クォークの世界）', color: '#e9c44a', ink: '#5a4500' },
-  { s: 1, label: 'Λ, Σ ハイパー核', color: '#ff5b6e', ink: '#b0102a' },
-  { s: 2, label: 'ΛΛ, Ξ ハイパー核', color: '#d65bd6', ink: '#8a1d8a' },
+/** the strangeness layers (s: number of s quarks): what lies on each, the tag on its plane, and its colors */
+export const HYPER_LAYERS = [
+  { s: 0, name: '通常核', label: '通常核（u, d クォークの世界）', color: '#e9c44a', ink: '#5a4500' },
+  { s: 1, name: 'Λ, Σ ハイパー核', label: 'Λ, Σ ハイパー核', color: '#ff5b6e', ink: '#b0102a' },
+  { s: 2, name: 'ΛΛ, Ξ ハイパー核', label: 'ΛΛ, Ξ ハイパー核', color: '#d65bd6', ink: '#8a1d8a' },
 ];
 
-const DRIP_X_MAX = 206; // right edge of the board (N)
-const DASHES = { solid: null, dash: [0.9, 1.5], dot: [0.3, 0.7] }; // [on, period] along the line
+// the translucent plane of each layer (x = N, z = -Z), and where the s-quark axis stands: at the board's front-left
+// corner, in line with the Z axis
+const PLANE = { x0: -8, x1: 204, z0: -124, z1: 6 };
+const AXIS = { x: -13.5, z: 6 };
+const planeCorners = (y) => [[PLANE.x0, PLANE.z1], [PLANE.x1, PLANE.z1], [PLANE.x1, PLANE.z0], [PLANE.x0, PLANE.z0]]
+  .map(([x, z]) => new THREE.Vector3(x, y, z));
+
+const DASHES = { solid: null, dash: [0.9, 1.5], dot: [0.3, 0.7] }; // [length, period] along the line
 
 /**
  * One drip line on a layer, as a flat ribbon at height y: a staircase along the cell edges just outside the bound
@@ -78,36 +84,11 @@ function dripRibbon(rows, side, y, dash) {
   const runs = [];
   [...rows].sort((a, b) => a[0] - b[0]).forEach(([z, n], k, all) => {
     if (!k || z !== all[k - 1][0] + 1) runs.push([]);
-    const x = Math.min(DRIP_X_MAX, n + dx);
+    const x = Math.min(N_EDGE, n + dx);
     runs[runs.length - 1].push([x, -z + 0.5], [x, -z - 0.5]);
   });
-  const pos = [];
-  const quad = (a, b, c, d) => pos.push(...a, ...b, ...c, ...a, ...c, ...d);
-  const pattern = DASHES[dash];
-  for (const pts of runs) {
-    let carry = 0;
-    for (let k = 0; k + 1 < pts.length; k++) {
-      const [px, pz] = pts[k], [qx, qz] = pts[k + 1];
-      const len = Math.hypot(qx - px, qz - pz);
-      if (!len) continue;
-      const ux = (qx - px) / len, uz = (qz - pz) / len, nx = -uz * 0.15, nz = ux * 0.15;
-      // solid lines run a little past each corner so the steps join without notches
-      const pieces = pattern ? [] : [[-0.15, len + 0.15]];
-      if (pattern) {
-        for (let d = -carry; d < len; d += pattern[1]) {
-          const a = Math.max(0, d), b = Math.min(len, d + pattern[0]);
-          if (b > a) pieces.push([a, b]);
-        }
-        carry = (carry + len) % pattern[1];
-      }
-      for (const [a, b] of pieces) {
-        const ax = px + ux * a, az = pz + uz * a, bx = px + ux * b, bz = pz + uz * b;
-        quad([ax - nx, y, az - nz], [ax + nx, y, az + nz], [bx + nx, y, bz + nz], [bx - nx, y, bz - nz]);
-      }
-    }
-  }
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(runs.flatMap((pts) => ribbon(pts, y, 0.15, DASHES[dash])), 3));
   return geo;
 }
 
@@ -144,7 +125,7 @@ export class HyperLayers {
     this.mesh.count = n;
     this.mesh.frustumCulled = false;
     this.group.add(this.mesh);
-    this.layersOn = new Set(LAYERS.map((l) => l.s)); // strangeness layers switched on (plane, its guides and its nuclei)
+    this.layersOn = new Set(HYPER_LAYERS.map((l) => l.s)); // strangeness layers switched on (plane, its guides and its nuclei)
     this.gap = LAYER_GAP; // height between layers: wide in 3D, one box pitch in the 2D view
     this.setKinds(new Set(Object.keys(HYPER_KINDS)));
     this.guides = new THREE.Group();
@@ -187,9 +168,10 @@ export class HyperLayers {
     g.clear();
     this.layerGroups.clear();
     const dark = theme === 'dark';
+    const outline = dark ? '#050506' : '#ffffff'; // round the letters that stand free
     const gap = this.gap, stacked = gap < 5; // stacked: the 2D view, layers one box apart
-    const x0 = -8, x1 = 204, z0 = -124, z1 = 6;
-    for (const layer of LAYERS) {
+    const { x0, x1, z0, z1 } = PLANE;
+    for (const layer of HYPER_LAYERS) {
       const lg = new THREE.Group();
       lg.visible = this.layersOn.has(layer.s);
       this.layerGroups.set(layer.s, lg);
@@ -208,7 +190,7 @@ export class HyperLayers {
       plane.renderOrder = 3;
       lg.add(plane);
       const edge = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints([[x0, z1], [x1, z1], [x1, z0], [x0, z0]].map(([x, z]) => new THREE.Vector3(x, y, z))),
+        new THREE.BufferGeometry().setFromPoints(planeCorners(y)),
         new THREE.LineBasicMaterial({ color: layer.color, transparent: true, opacity: 0.8 }),
       );
       lg.add(edge);
@@ -226,7 +208,7 @@ export class HyperLayers {
         const group = new THREE.Group();
         group.visible = this.dripOn.has(src.key);
         const y = +s * gap + (+s === 0 || stacked ? FOOT + 0.05 : 0.06);
-        const layer = LAYERS[+s];
+        const layer = HYPER_LAYERS[+s];
         const color = dark ? layer.color : layer.ink;
         const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthWrite: false });
         for (const side of ['neutron', 'proton']) {
@@ -236,27 +218,27 @@ export class HyperLayers {
           group.add(m);
         }
         const end = (lines.neutron || lines.proton).reduce((a, b) => (b[0] > a[0] ? b : a));
-        const t = makeTextSprite('ハイパー核のドリップライン（存在限界の理論予想）', { color, weight: 700, size: 2, anchor: 'left', stroke: dark ? '#050506' : '#ffffff' });
-        t.position.set(Math.min(DRIP_X_MAX, end[1] + 2), y + 0.8, -end[0]);
+        const t = makeTextSprite('ハイパー核のドリップライン（存在限界の理論予想）', { color, weight: 700, size: 2, anchor: 'left', stroke: outline });
+        t.position.set(Math.min(N_EDGE, end[1] + 2), y + 0.8, -end[0]);
         group.add(t);
         this.layerGroups.get(+s).add(group);
         this.dripGroups.push({ key: src.key, group });
       }
     }
-    // s-quark axis: a red arrow straight up from the board's front-left corner, ticks at each layer (not in the
-    // stacked 2D view, where it would be seen end on)
+    // s-quark axis: an arrow straight up in the red of the Z axis, ticks at each layer (not in the stacked 2D
+    // view, where it would be seen end on)
     if (stacked) return;
-    const axisX = -13.5, axisZ = 6;
+    const { x: axisX, z: axisZ } = AXIS;
     const top = 2 * gap + 12;
-    const red = dark ? '#ff3b30' : '#d01012';
+    const red = this.chart.guideColors.zAxis;
     const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, top, 12), new THREE.MeshBasicMaterial({ color: red }));
     shaft.position.set(axisX, top / 2, axisZ);
     g.add(shaft);
     const head = new THREE.Mesh(new THREE.ConeGeometry(1.1, 3, 16), new THREE.MeshBasicMaterial({ color: red }));
     head.position.set(axisX, top + 1.5, axisZ);
     g.add(head);
-    for (const layer of LAYERS) {
-      const t = makeTextSprite(String(layer.s), { color: red, weight: 700, size: 3, stroke: dark ? '#050506' : '#ffffff' });
+    for (const layer of HYPER_LAYERS) {
+      const t = makeTextSprite(String(layer.s), { color: red, weight: 700, size: 3, stroke: outline });
       t.position.set(axisX - 3, layer.s * gap + 1, axisZ);
       g.add(t);
     }
@@ -303,9 +285,6 @@ export class HyperLayers {
 
   /** corners of the three layer planes and the top of the s axis: what the hypernucleus view must show */
   framePoints() {
-    const pts = [];
-    for (const layer of LAYERS) for (const [x, z] of [[-8, 6], [204, 6], [204, -124], [-8, -124]]) pts.push(new THREE.Vector3(x, layer.s * this.gap, z));
-    pts.push(new THREE.Vector3(-13.5, 2 * this.gap + 20, 6));
-    return pts;
+    return [...HYPER_LAYERS.flatMap((layer) => planeCorners(layer.s * this.gap)), new THREE.Vector3(AXIS.x, 2 * this.gap + 20, AXIS.z)];
   }
 }

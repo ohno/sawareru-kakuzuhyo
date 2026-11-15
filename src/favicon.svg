@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 66 66">
+  <!-- boxes climbing the diagonal of the chart, in the colors of the logo (さ わ れ る) -->
+  <g stroke="#fff" stroke-width="2">
+    <rect x="0" y="42" width="22" height="22" rx="5" fill="#c91a09"/>
+    <rect x="14" y="28" width="22" height="22" rx="5" fill="#237841"/>
+    <rect x="28" y="14" width="22" height="22" rx="5" fill="#f5c400"/>
+    <rect x="42" y="0" width="22" height="22" rx="5" fill="#0055bf"/>
+  </g>
+</svg>

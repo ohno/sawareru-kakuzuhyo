@@ -3,11 +3,13 @@
 // light background); dark mode adds light.
 import * as THREE from 'three';
 import { FOOT } from './chart.js';
+import { FONT } from './sprites.js';
 
 const Z_NH = 113;
 const A_RIKEN = 278;
 const BEAM_H = 16;
 const SPARKS = 900;
+const SPOT_RADIUS = 14; // how far around the box the light reaches: there the chart draws its labels again, over it
 
 function haloTexture() {
   const c = document.createElement('canvas');
@@ -36,7 +38,7 @@ function labelTexture() {
   g.fillStyle = '#ffffff';
   g.textBaseline = 'middle';
   const write = (text, weight, size, x, y) => {
-    g.font = `${weight} ${size}px Inter, "Helvetica Neue", Arial, sans-serif`;
+    g.font = `${weight} ${size}px ${FONT}`;
     g.lineWidth = size * 0.22;
     g.strokeText(text, x, y);
     g.fillText(text, x, y);
@@ -212,11 +214,10 @@ export class NihoniumGlow {
     const chart = this.chart;
     this.group.visible = chart.visible[this.main] === 1;
     // the labels of the boxes around are drawn again over the light (chart.js, LABEL_ONLY)
-    const nh = chart.nuclides[this.main];
-    chart.uniforms.uSpot.value.set(nh.n, -nh.z, this.group.visible ? 14 : 0);
+    const nuc = chart.nuclides[this.main];
+    chart.uniforms.uSpot.value.set(nuc.n, -nuc.z, this.group.visible ? SPOT_RADIUS : 0);
     if (!this.group.visible) return;
     const dim = 1 - chart.uniforms.uFocus.value * 0.75; // fades with the rest while another nucleus is selected
-    const nuc = chart.nuclides[this.main];
     const top = Math.max(0, chart.heightOf(this.main));
     const pulse = Math.sin(time * 2.4);
     this.halo.position.set(nuc.n, top + 0.3, -nuc.z);

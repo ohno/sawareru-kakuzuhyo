@@ -4,8 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>さわれる核図表</title>
-  <link rel="icon" href="data:,">
   <meta name="description" content="約 3,400 種の原子核を立体に並べた核図表。回して、近づいて、箱にふれると、半減期や崩壊のゆくえがわかります。">
+  <meta name="theme-color" content="#f6f5f1">
+  <link rel="canonical" href="https://ohno.github.io/sawareru-kakuzuhyo/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <!-- link previews: ogp.png (1200 × 630) is the chart as the app draws it, with the title -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="さわれる核図表">
@@ -32,18 +34,19 @@
   </script>
 </head>
 <body>
-  <canvas id="scene" aria-label="3D核図表"></canvas>
+  <canvas id="scene" role="img" aria-label="3D 核図表"></canvas>
 
-  <aside id="controls" class="panel left collapsed">
+  <!-- left panel: search, tutorial and settings. The lists marked "filled by main.js" come from the tables in js/ and data/. -->
+  <aside id="controls" class="panel left collapsed" aria-label="検索と設定">
     <header class="brand">
       <h1 class="logo" aria-label="さわれる核図表"><span class="k-r">さ</span><span class="k-g">わ</span><span class="k-y">れ</span><span class="k-b">る</span>核図表</h1>
-      <button id="collapse" class="icon-btn" title="パネルを開く・たたむ" aria-expanded="false">+</button>
+      <button id="collapse" class="icon-btn" title="パネルを開く・たたむ" aria-label="パネルを開く・たたむ" aria-expanded="false">+</button>
     </header>
     <div class="panel-body">
-      <div id="intro" class="intro"></div>
+      <div id="stats" class="intro"></div><!-- filled by main.js -->
       <form id="search-form" class="search" autocomplete="off" role="search">
         <input id="search" type="search" placeholder="核種を検索（例: 238U、ウラン）" aria-label="核種を検索" title="238U、U-238、ウラン、uranium のほか、Z=50、N=82、A=208（いちばん安定な核）、Z=50 N=82（両方を満たす核）でも探せます">
-        <button type="submit" class="btn search-go" title="検索した核へ移動" aria-label="検索した核へ移動"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+        <button type="submit" class="btn search-go" title="検索した核へ移動" aria-label="検索した核へ移動" data-icon="search"></button>
       </form>
       <p id="search-msg" class="search-msg" role="status"></p>
       <p class="hint">試しに検索: <a href="#14C" data-goto="14C">¹⁴C</a> · <a href="#56Fe" data-goto="56Fe">⁵⁶Fe</a> · <a href="#137Cs" data-goto="137Cs">¹³⁷Cs</a> · <a href="#235U" data-goto="235U">²³⁵U</a> · <a href="#278Nh" data-goto="278Nh">²⁷⁸Nh</a></p>
@@ -51,7 +54,7 @@
 
       <details class="sec" data-sec="howto">
         <summary>使い方</summary>
-        <div id="howto" class="sec-body"></div>
+        <div id="howto" class="sec-body"></div><!-- filled by main.js -->
       </details>
 
       <details class="sec" data-sec="view">
@@ -69,11 +72,7 @@
           <label class="check"><input type="checkbox" id="opt-drip"> ドリップライン（存在限界の理論予想）</label>
           <label class="check" title="超重核で閉殻（Z = 114〜126, N = 184 付近）が強く束縛し、寿命の長い核があると予測される領域。KTUY05 質量公式の殻エネルギーが −6 MeV より深い核を緑に光らせます（深いほど強く）。未発見の元素 119〜126 の予測核も加わります"><input type="checkbox" id="opt-island"> 安定の島（理論予測）</label>
           <span class="sub-legend">核の分類（理研レゴ核図表の配色）</span>
-          <label class="check"><input type="checkbox" data-lego="st" checked> <i class="kind-sw lego-sw" style="background:#1b1b1d"></i>安定核</label>
-          <label class="check"><input type="checkbox" data-lego="found" checked> <i class="kind-sw lego-sw" style="background:#c91a09"></i>不安定核（発見済み）</label>
-          <label class="check"><input type="checkbox" data-lego="unfound" checked> <i class="kind-sw lego-sw" style="background:#f5c400"></i>不安定核（未発見）</label>
-          <label class="check"><input type="checkbox" data-lego="riken" checked> <i class="kind-sw lego-sw" style="background:#237841"></i>理研で発見した原子核</label>
-          <label class="check"><input type="checkbox" data-lego="rikenSH" checked> <i class="kind-sw lego-sw" style="background:#0055bf"></i>理研で発見した超重原子核</label>
+          <div id="lego-checks" class="checks-sub"></div><!-- filled by main.js -->
           <span class="sub-legend">推定値</span>
           <label class="check"><input type="checkbox" id="opt-unobs" checked> 未観測核（推定値）</label>
           <label class="check" title="NUBASE2020 に推定値だけが載っている、原子核として結合しないと見積もられた未観測の核（³Li、⁵Be、⁶B など）"><input type="checkbox" id="opt-unbound"> 未観測の非束縛核（推定値）</label>
@@ -82,19 +81,13 @@
           <label class="check"><input type="checkbox" data-mode="llfp"> 長寿命核分裂生成物（LLFP）</label>
           <label class="check"><input type="checkbox" data-mode="ma"> マイナーアクチノイド（MA）</label>
           <label class="check"><input type="checkbox" data-mode="fuel"> 使用済み燃料の主な核種</label>
-          <p id="filter-desc" class="caption"></p>
+          <p id="mode-desc" class="caption mode-desc"></p>
           <span class="sub-legend">核の種類</span>
-          <label class="check"><input type="checkbox" data-kind="N" checked> 通常核</label>
-          <label class="check"><input type="checkbox" data-kind="L" checked> <i class="kind-sw" style="background:#e8262f"></i>Λハイパー核</label>
-          <label class="check"><input type="checkbox" data-kind="S" checked> <i class="kind-sw" style="background:#f07a1a"></i>Σハイパー核</label>
-          <label class="check"><input type="checkbox" data-kind="LL" checked> <i class="kind-sw" style="background:#d23fd2"></i>ΛΛハイパー核</label>
-          <label class="check"><input type="checkbox" data-kind="X" checked> <i class="kind-sw" style="background:#8f45e6"></i>Ξハイパー核</label>
+          <div id="kind-checks" class="checks-sub"></div><!-- filled by main.js -->
           <span class="sub-legend">ハイパー核モードの平面</span>
-          <label class="check"><input type="checkbox" data-layer="0" checked> <i class="kind-sw" style="background:#e9c44a"></i>s = 0（通常核）</label>
-          <label class="check"><input type="checkbox" data-layer="1" checked> <i class="kind-sw" style="background:#ff5b6e"></i>s = 1（Λ, Σ ハイパー核）</label>
-          <label class="check"><input type="checkbox" data-layer="2" checked> <i class="kind-sw" style="background:#d65bd6"></i>s = 2（ΛΛ, Ξ ハイパー核）</label>
+          <div id="layer-checks" class="checks-sub"></div><!-- filled by main.js -->
           <span class="sub-legend">ハイパー核のドリップライン（存在限界の理論予想）</span>
-          <div id="hyper-drip" class="checks-sub"></div>
+          <div id="hyper-drip-checks" class="checks-sub"></div><!-- filled by main.js -->
         </div>
       </details>
 
@@ -182,37 +175,18 @@
         </div>
       </details>
 
-      <!-- the same sources as data/README.md, shorter -->
       <details class="sec" data-sec="sources">
         <summary>データの出典</summary>
         <div class="sec-body">
-          <dl class="sources">
-            <div><dt>核種の質量・半減期・崩壊・発見年</dt>
-              <dd>NUBASE2020: F.G. Kondev et al., Chin. Phys. C 45, 030001 (2021)、<a href="https://www-nds.iaea.org/amdc/" target="_blank" rel="noopener">IAEA AMDC</a>（CC BY 3.0）</dd></div>
-            <div><dt>未発見の原子核の質量・安定の島</dt>
-              <dd>KTUY05: H. Koura et al., Prog. Theor. Phys. 113, 305 (2005)、JAEA 核データセンターの質量表</dd></div>
-            <div><dt>理研で発見された原子核</dt>
-              <dd>FRIB Discovery of Nuclides Project, <a href="https://doi.org/10.11578/frib/2279152" target="_blank" rel="noopener">Isotope Database</a>（2026-09-25 版）</dd></div>
-            <div><dt>元素の存在量</dt>
-              <dd>K. Lodders, M. Bergemann, H. Palme, Space Sci. Rev. 221, 23 (2025)、<a href="https://doi.org/10.5281/zenodo.14988840" target="_blank" rel="noopener">表</a>（CC BY 4.0）</dd></div>
-            <div><dt>元素の発見年</dt>
-              <dd>Wikipedia “<a href="https://en.wikipedia.org/wiki/Timeline_of_chemical_element_discoveries" target="_blank" rel="noopener">Timeline of chemical element discoveries</a>”</dd></div>
-            <div><dt>²³⁵U の核分裂収率</dt>
-              <dd>JEFF-3.1.1（OECD/NEA）、<a href="https://www-nds.iaea.org/relnsd/vcharthtml/VChartHTML.html" target="_blank" rel="noopener">IAEA LiveChart of Nuclides</a></dd></div>
-            <div><dt>ドリップライン</dt>
-              <dd>J. Erler et al., Nature 486, 509 (2012) の質量表（<a href="https://massexplorer.frib.msu.edu/" target="_blank" rel="noopener">MassExplorer</a>）から計算</dd></div>
-            <div><dt>ハイパー核</dt>
-              <dd><a href="https://hypernuclei.kph.uni-mainz.de/" target="_blank" rel="noopener">Mainz Chart of Hypernuclides</a>、Ξ は E. Friedman, A. Gal, EPJ Web Conf. 271, 03002 (2022)</dd></div>
-            <div><dt>ハイパー核のドリップライン</dt>
-              <dd>C. Samanta et al., J. Phys. G 35, 065101 (2008)；P. Roy Chowdhury et al., Rom. Rep. Phys. 62, 65 (2010)；E.F. Meoto, J. Phys. Commun. 6, 125004 (2022)</dd></div>
-          </dl>
-          <p class="caption">元素の紹介、特徴的な同位体、核燃料サイクルの説明は、このアプリのために書いたものです。ライセンスの詳細は <a href="https://github.com/ohno/sawareru-kakuzuhyo/blob/main/data/README.md" target="_blank" rel="noopener">data/README.md</a> にあります。</p>
+          <dl id="sources" class="sources"></dl><!-- filled by main.js: the table of data/README.md -->
+          <p class="caption">ソースコードとライセンスは <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">GitHub</a> にあります。</p>
         </div>
       </details>
     </div>
   </aside>
 
-  <div class="toolbar" role="toolbar" aria-label="視点">
+  <!-- the icons are drawn by js/icons.js (data-icon) -->
+  <div class="toolbar" role="toolbar" aria-label="視点と表示モード">
     <div class="seg" role="group" aria-label="表示モード">
       <button class="btn" data-dim="2d" aria-pressed="false" title="平らにして真上から見る">2Dモード</button>
       <button class="btn" data-dim="3d" aria-pressed="true" title="高さを付けて斜めから見る">3Dモード</button>
@@ -223,27 +197,26 @@
       <button class="btn" data-drag="rotate" aria-pressed="true" title="ドラッグで回転">回転</button>
     </div>
     <span class="sep"></span>
-    <button class="btn" data-view="focus" title="選んだ核へカメラを近づける（f キー）">選択核をズーム</button>
+    <button class="btn" id="focus" title="選んだ核へカメラを近づける（f キー）">選択核をズーム</button>
     <span class="sep"></span>
     <button class="btn riken-btn" id="riken" aria-pressed="false" title="理研で発見された核種だけを表示">理研が発見</button>
     <button class="btn hyper-btn" id="hyper" aria-pressed="false" title="ストレンジクォークを含むハイパー核を、s クォーク数の層に重ねて表示">ハイパー核</button>
     <span class="sep"></span>
     <button class="btn icon" id="sound" aria-pressed="false"></button>
-    <button class="btn icon" id="theme" title="ダークモードにする" aria-label="ダークモードにする"></button>
-    <!-- Icons: camera and circle-help from Feather, Copyright (c) 2013-2023 Cole Bemis, MIT License; rotate-ccw from
-         Lucide, Copyright (c) 2026 Lucide Icons and Contributors, ISC License. See THIRD-PARTY-NOTICES. -->
-    <button class="btn icon" id="shot" title="画像として保存" aria-label="画像として保存"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
-    <button class="btn icon" id="reset" title="表示をリセット（r キー）" aria-label="表示をリセット"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
-    <button class="btn icon" id="help" title="チュートリアルを見る" aria-label="チュートリアルを見る"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+    <button class="btn icon" id="theme"></button>
+    <button class="btn icon" id="shot" title="画像として保存" aria-label="画像として保存" data-icon="camera"></button>
+    <button class="btn icon" id="reset" title="表示をリセット（r キー）" aria-label="表示をリセット" data-icon="reset"></button>
+    <button class="btn icon" id="help" title="チュートリアルを見る" aria-label="チュートリアルを見る" data-icon="help"></button>
   </div>
 
-  <aside id="info" class="panel right" hidden>
-    <button id="info-unpin" class="icon-btn info-unpin" title="閉じる（核をクリックするとまた開きます）" aria-label="閉じる">×</button>
-    <button id="info-toggle" class="icon-btn info-toggle" title="たたむ" aria-expanded="true">−</button>
+  <!-- right panel: the nuclide under the pointer, or the selected one -->
+  <aside id="info" class="panel right" aria-label="原子核の情報" hidden>
+    <button id="info-close" class="icon-btn info-close" title="閉じる（核をクリックするとまた開きます）" aria-label="閉じる">×</button>
+    <button id="info-toggle" class="icon-btn info-toggle" title="たたむ" aria-label="たたむ" aria-expanded="true">−</button>
     <div id="info-body" aria-live="polite"></div>
   </aside>
 
-  <div class="timeline">
+  <div class="timeline" role="group" aria-label="時間発展">
     <select id="time-mode" class="time-mode" aria-label="時間発展の種類" title="時間発展の種類">
       <option value="year" selected>発見年</option>
       <option value="height">高い順に消す</option>
@@ -256,7 +229,15 @@
   <div id="tooltip" class="tooltip" hidden></div>
   <div class="credit"><a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">© 2026 RIKEN</a></div>
   <div id="loading" class="loading"><div class="spinner"></div><p>核データを読み込み中…</p></div>
+  <noscript><div class="loading"><p>このページの表示には JavaScript が必要です。</p></div></noscript>
 
+  <script>
+    // a page opened straight from a file cannot load its scripts and data: say so instead of loading forever
+    if (location.protocol === 'file:') {
+      document.getElementById('loading').innerHTML = '<div class="load-error"><h2>このままでは開けません</h2>'
+        + '<p>ファイルを直接開くと、ブラウザがプログラムとデータを読み込めません。README の「手元で動かす」のとおり、ローカルサーバーから開いてください。</p></div>';
+    }
+  </script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
