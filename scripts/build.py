@@ -2,21 +2,24 @@
 YAML files in data/. Every file is checked on the way (keys given twice, the columns of each table, the names and
 keys of the nuclide files).
 
-Usage:  python scripts/build.py              (needs PyYAML: pip install pyyaml)
+Usage:  python scripts/build.py              (needs PyYAML: pip install -r requirements.txt)
         python scripts/build.py --no-ktuy    without the predicted nuclei and the island of stability (ktuy.py)
+        python scripts/build.py --help       the other options: where to write the site, where downloads are kept
 
-data/nuclides/092-U.yaml ... -> data/nuclides.json, with the short keys of the app:
+data/nuclides/092-U.yaml ... -> data/nuclides.json, with the short keys of the app (src/js/nuclides.js):
   file 092-U.yaml, key 238U -> z, n     ME, dME, ME_est -> me, dme, mee     Jpi -> j     Year -> y     IS -> ab
   T -> ts and t (seconds), or st (stable) / pu (particle-unbound)     dT -> dt     T_est -> te
   BR -> d, as [mode, relation, value %, NUBASE text]
   Iso -> iso: Lbl -> f, Ex -> e, Ex_est -> ee, T -> ts or st / pu, Jpi -> j, BR -> d (the texts joined by ;)
 data/abundances.yaml -> data/abundances.json, per Z, with the share of all atoms and the rank worked out.
 Any other data/<name>.yaml -> data/<name>.json as it is, each table {columns: [...], rows: [...]} becoming its rows.
+data/README.md -> data/sources.json: its table of sources, which the app shows as its own list of sources.
 """
+import argparse
+import html
 import json
 import re
 import shutil
-import sys
 from collections import Counter
 from pathlib import Path
 
@@ -25,7 +28,7 @@ import yaml
 import ktuy
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC, DATA, DIST = ROOT / "src", ROOT / "data", ROOT / "dist"
+SRC, DATA = ROOT / "src", ROOT / "data"
 
 YEAR_S = 31556926.0
 UNIT_S = {
@@ -54,13 +57,6 @@ def load(path):
     return yaml.load(path.read_text(encoding="utf-8"), Loader=Loader)
 
 
-def write(name, value):
-    path = DIST / "data" / f"{name}.json"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    print(f"{path.relative_to(ROOT)}: {path.stat().st_size / 1024:.0f} KiB")
-
-
 def parse_num(text):
     """(value, estimated) for strings like '1234.5', '2000#', ''"""
     if not text:
@@ -75,18 +71,19 @@ def seconds(ts):
     return float(NUM_RE.search(value).group()) * UNIT_S[unit.replace("μs", "us")]
 
 
+def relation(text):
+    """'B-=89.28 13' -> ('B-', '=', 89.28), 'A ?' -> ('A', '?', None); None for a text that is not of this form"""
+    m = MODE_RE.match(text)
+    if not m:
+        return None
+    rest = m.group(3).strip()
+    value = parse_num(rest.split(" ")[0])[0] if rest and not rest.startswith("?") else None
+    return m.group(1), m.group(2), value
+
+
 def modes(texts):
     """['B-=89.28 13', 'A ?'] -> [[mode, relation, value % or None, text], ...]"""
-    out = []
-    for text in texts:
-        m = MODE_RE.match(text)
-        if not m:
-            out.append([text, "?", None, text])
-            continue
-        rest = m.group(3).strip()
-        value = parse_num(rest.split(" ")[0])[0] if rest and not rest.startswith("?") else None
-        out.append([m.group(1), m.group(2), value, text])
-    return out
+    return [[*(relation(text) or (text, "?", None)), text] for text in texts]
 
 
 def half_life(rec, t):
@@ -177,10 +174,55 @@ def abundances(data):
     return {"label": data["label"], "cite": data["cite"], "elements": per_z}
 
 
+SOURCE_COLUMNS = ["ファイル", "内容", "出典"]
+
+
+def inline_html(text):
+    """the Markdown of a table cell ([text](url), **bold**, *italic*, `code`) -> HTML"""
+    text = html.escape(text, quote=False)
+    text = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', text)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+    text = re.sub(r"\*(.+?)\*", r"<i>\1</i>", text)
+    return re.sub(r"`(.+?)`", r"<code>\1</code>", text)
+
+
+def sources(readme, with_ktuy):
+    """the table of data/README.md -> [[what, where from (HTML)], ...]; without KTUY05, its row is left out"""
+    rows = [[cell.strip() for cell in line.strip().strip("|").split("|")]
+            for line in readme.read_text(encoding="utf-8").splitlines() if line.startswith("|")]
+    if not rows or rows[0] != SOURCE_COLUMNS or any(len(row) != len(SOURCE_COLUMNS) for row in rows):
+        raise SystemExit(f"{readme}: the table of sources should have the columns {' | '.join(SOURCE_COLUMNS)}")
+    return [[inline_html(what), inline_html(source)] for file, what, source in rows[2:]
+            if with_ktuy or "ktuy.py" not in file]
+
+
 def main():
-    if DIST.exists():
-        shutil.rmtree(DIST)
-    shutil.copytree(SRC, DIST)
+    parser = argparse.ArgumentParser(description="Build the site (a copy of src/ and data/*.json) from src/ and data/.")
+    parser.add_argument("--no-ktuy", action="store_true",
+                        help="leave out what is made from the KTUY05 mass table: the predicted nuclei and the island of stability")
+    parser.add_argument("--dist", type=Path, default=ROOT / "dist", help="where to write the site (default: dist/)")
+    parser.add_argument("--raw", type=Path, default=ROOT / "raw",
+                        help="where the downloaded KTUY05 mass table is kept (default: raw/)")
+    args = parser.parse_args()
+
+    def write(name, value):
+        path = args.dist / "data" / f"{name}.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        print(f"{path}: {path.stat().st_size / 1024:.0f} KiB")
+
+    # the folder is made anew; it may only be a site built before, never the sources or a folder with anything else in it
+    dist = args.dist.resolve()
+    for keep in (SRC, DATA, Path(__file__).resolve().parent):
+        if dist == keep or dist in keep.parents or keep in dist.parents:
+            raise SystemExit(f"{args.dist} holds or lies inside {keep.name}/, which the build reads: choose another folder")
+    if args.dist.exists() and not args.dist.is_dir():
+        raise SystemExit(f"{args.dist} is a file: choose a folder")
+    if args.dist.exists():
+        if any(args.dist.iterdir()) and not (args.dist / "index.html").is_file():
+            raise SystemExit(f"{args.dist} has files in it and is not a built site (no index.html): choose another folder")
+        shutil.rmtree(args.dist)
+    shutil.copytree(SRC, args.dist)
     elements = load(DATA / "elements.yaml")["elements"]
     for z, e in enumerate(elements):
         if e.get("Z") != z:
@@ -190,10 +232,12 @@ def main():
     for path in sorted(DATA.glob("*.yaml")):
         data = tables(load(path), path.name)
         write(path.stem, abundances(data) if path.stem == "abundances" else data)
-    if "--no-ktuy" in sys.argv[1:]:
-        print("--no-ktuy: no predicted nuclei, no island of stability")
-    else:
-        ktuy.build({(r["z"], r["n"]) for r in nucs}, write)
+    with_ktuy = not args.no_ktuy and ktuy.build({(r["z"], r["n"]) for r in nucs}, write, args.raw)
+    if not with_ktuy:
+        print("no predicted nuclei, no island of stability")
+        for name in ktuy.OUTPUTS:
+            write(name, None)
+    write("sources", {"sources": sources(DATA / "README.md", with_ktuy)})
 
 
 if __name__ == "__main__":

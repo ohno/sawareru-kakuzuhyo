@@ -1,11 +1,16 @@
 // The 3D chart itself: one InstancedMesh of boxes with labels baked onto the top faces,
-// plus the floor, grid, magic-number guides and element-name labels.
+// plus the board they stand on with its grid, axes, magic-number lines, drip lines and element names.
+// World coordinates: a nuclide (Z, N) stands at x = N, z = -Z; y is up, the board is at y = 0.
 import * as THREE from 'three';
-import { ELEMENTS, MAGIC, METRICS, CATEGORIES, primaryCategory, viridis, hexToRgb, halfLifeColor, legoColor, legoKey } from './nuclear.js';
-import { FUEL_GROUPS } from './fuel.js';
-import { DRIP_LINES } from './data.js';
+import { ELEMENTS, DRIP_LINES } from './data.js';
+import { MAGIC, METRICS, primaryCategory, categoryHex, viridis, hexToRgb, halfLifeColor, legoColor, legoKey } from './nuclear.js';
+import { FUEL_GROUPS, isFissionProduct } from './fuel.js';
+import { makeTextSprite, FONT } from './sprites.js';
 
 export const FOOT = 0.88; // box footprint (1 = touching neighbours)
+/** the baseplate: its edges in x (N) and z (-Z), and the width of the black frame around it */
+export const BOARD = { x0: -24, x1: 208, z0: -127, z1: 15, frame: 2.5 };
+export const N_EDGE = 206; // lines drawn on the board stop here, just inside its right edge
 const HEIGHT_GAIN = 2; // metric heights are drawn twice as tall; the height slider multiplies on top of this
 const ATLAS_COLS = 16;
 const ATLAS_ROWS = 32;
@@ -51,12 +56,39 @@ function studTexture(c) {
 }
 
 /**
+ * A line on a horizontal plane, as the triangles of a flat ribbon: along the polyline `pts` ([x, z] each) at height
+ * y, `half` wide to each side. dash = [length, period] breaks it into dashes that run on round the corners; without
+ * it the line is solid, each piece running a little past its corners so that they join without notches.
+ */
+export function ribbon(pts, y, half, dash = null) {
+  const pos = [];
+  let carry = 0;
+  for (let k = 0; k + 1 < pts.length; k++) {
+    const [px, pz] = pts[k], [qx, qz] = pts[k + 1];
+    const len = Math.hypot(qx - px, qz - pz);
+    if (!len) continue;
+    const ux = (qx - px) / len, uz = (qz - pz) / len, nx = -uz * half, nz = ux * half;
+    const pieces = dash ? [] : [[-half, len + half]];
+    if (dash) {
+      for (let d = -carry; d < len; d += dash[1]) {
+        const a = Math.max(0, d), b = Math.min(len, d + dash[0]);
+        if (b > a) pieces.push([a, b]);
+      }
+      carry = (carry + len) % dash[1];
+    }
+    for (const [a, b] of pieces) {
+      const ax = px + ux * a, az = pz + uz * a, bx = px + ux * b, bz = pz + uz * b;
+      pos.push(ax - nx, y, az - nz, ax + nx, y, az + nz, bx + nx, y, bz + nz, ax - nx, y, az - nz, bx + nx, y, bz + nz, bx - nx, y, bz - nz);
+    }
+  }
+  return pos;
+}
+
+/**
  * Predicted drip lines on the floor: a dashed violet line for the mean of the models and a pale band for their
  * spread, just outside the last bound (neutron side) and first bound (proton side) isotope of each element.
  * The model tables have even Z only; odd Z is the average of its neighbours.
  */
-const DRIP_X_MAX = 206; // right edge of the board (N)
-
 function buildDripLines(C) {
   const group = new THREE.Group();
   const rows = new Map(DRIP_LINES.map((r) => [r[0], r]));
@@ -66,24 +98,24 @@ function buildDripLines(C) {
     const a = rows.get(z - 1), b = rows.get(z + 1);
     return a && b && a[k] !== null && b[k] !== null ? (a[k] + b[k]) / 2 : null;
   };
+  // columns of DRIP_LINES: the line, and the least and largest N among the models
   const sides = [
     { line: 2, lo: 5, hi: 6, dx: 0.5 }, // neutron drip line: beyond the heaviest bound isotope
     { line: 1, lo: 3, hi: 4, dx: -0.5 }, // proton drip line: before the lightest bound isotope
   ];
   const bandPos = [], dashPos = [];
-  const quad = (out, a, b, c, d) => out.push(...a, ...b, ...c, ...a, ...c, ...d);
   for (const side of sides) {
     // the heaviest elements' neutron drip line runs past the board's right edge: stop the line there
     const pts = [];
     for (let z = zs[0]; z <= zs[zs.length - 1]; z++) {
       const x = at(z, side.line), lo = at(z, side.lo), hi = at(z, side.hi);
       if (x === null) continue;
-      const p = { z: -z, x: x + side.dx, lo: Math.min(DRIP_X_MAX, (lo ?? x) + side.dx), hi: Math.min(DRIP_X_MAX, (hi ?? x) + side.dx) };
+      const p = { z: -z, x: x + side.dx, lo: Math.min(N_EDGE, (lo ?? x) + side.dx), hi: Math.min(N_EDGE, (hi ?? x) + side.dx) };
       const prev = pts[pts.length - 1];
-      if (p.x > DRIP_X_MAX) {
-        if (prev && prev.x < DRIP_X_MAX) {
-          const f = (DRIP_X_MAX - prev.x) / (p.x - prev.x);
-          pts.push({ z: prev.z + (p.z - prev.z) * f, x: DRIP_X_MAX, lo: p.lo, hi: p.hi });
+      if (p.x > N_EDGE) {
+        if (prev && prev.x < N_EDGE) {
+          const f = (N_EDGE - prev.x) / (p.x - prev.x);
+          pts.push({ z: prev.z + (p.z - prev.z) * f, x: N_EDGE, lo: p.lo, hi: p.hi });
         }
         break;
       }
@@ -91,22 +123,9 @@ function buildDripLines(C) {
     }
     for (let k = 0; k + 1 < pts.length; k++) {
       const p = pts[k], q = pts[k + 1];
-      quad(bandPos, [p.lo, 0, p.z], [p.hi, 0, p.z], [q.hi, 0, q.z], [q.lo, 0, q.z]);
+      bandPos.push(p.lo, 0, p.z, p.hi, 0, p.z, q.hi, 0, q.z, p.lo, 0, p.z, q.hi, 0, q.z, q.lo, 0, q.z);
     }
-    // dashes of 0.9 with gaps of 0.6 along the polyline, as flat ribbons 0.32 wide
-    let carry = 0;
-    for (let k = 0; k + 1 < pts.length; k++) {
-      const p = pts[k], q = pts[k + 1];
-      const len = Math.hypot(q.x - p.x, q.z - p.z);
-      const ux = (q.x - p.x) / len, uz = (q.z - p.z) / len, nx = -uz * 0.16, nz = ux * 0.16;
-      for (let d = -carry; d < len; d += 1.5) {
-        const a = Math.max(0, d), b = Math.min(len, d + 0.9);
-        if (b <= a) continue;
-        const ax = p.x + ux * a, az = p.z + uz * a, bx = p.x + ux * b, bz = p.z + uz * b;
-        quad(dashPos, [ax - nx, 0.01, az - nz], [ax + nx, 0.01, az + nz], [bx + nx, 0.01, bz + nz], [bx - nx, 0.01, bz - nz]);
-      }
-      carry = (carry + len) % 1.5;
-    }
+    dashPos.push(...ribbon(pts.map((p) => [p.x, p.z]), 0.01, 0.16, [0.9, 1.5]));
   }
   const mesh = (pos, opacity) => {
     const geo = new THREE.BufferGeometry();
@@ -151,6 +170,7 @@ function flatArrow([x0, z0], [x1, z1], width, color, outline = null, y = 0.02) {
   return group;
 }
 
+/** the texture the box-top labels are cut from: one cell per element symbol (index Z) and per mass number */
 function buildLabelAtlas() {
   const cw = 128, ch = 64;
   const canvas = document.createElement('canvas');
@@ -163,13 +183,13 @@ function buildLabelAtlas() {
   ctx.textBaseline = 'middle';
   const cell = (i) => [(i % ATLAS_COLS) * cw, Math.floor(i / ATLAS_COLS) * ch];
   ctx.textAlign = 'center';
-  ctx.font = '600 52px Inter, "Helvetica Neue", Arial, sans-serif';
+  ctx.font = `600 52px ${FONT}`;
   ELEMENTS.forEach(([sym], z) => {
     const [x, y] = cell(z);
     ctx.fillText(sym, x + cw / 2, y + ch / 2 + 3, cw - 8);
   });
   ctx.textAlign = 'left';
-  ctx.font = '500 46px Inter, "Helvetica Neue", Arial, sans-serif';
+  ctx.font = `500 46px ${FONT}`;
   for (let a = 1; a < ATLAS_COLS * ATLAS_ROWS - MASS_OFFSET; a++) {
     const [x, y] = cell(MASS_OFFSET + a);
     ctx.fillText(String(a), x + 4, y + ch / 2 + 3, cw - 8);
@@ -184,7 +204,7 @@ function buildLabelAtlas() {
 
 const vertexShader = /* glsl */ `
   attribute vec3 aColor;
-  attribute vec2 aLabel;
+  attribute vec2 aLabel; // atlas cells of the element symbol and of the mass number
   attribute float aEmph;
   attribute float aGlow;
   attribute float aIsland;
@@ -196,7 +216,6 @@ const vertexShader = /* glsl */ `
   varying vec2 vLabel;
   varying float vEmph;
   varying float vLabelA;
-  varying float vWorldY;
   varying vec3 vWorld;
   varying float vGlow;
   varying float vIsland;
@@ -210,12 +229,12 @@ const vertexShader = /* glsl */ `
     vLocal = position.xz;
     vLabel = aLabel;
     vEmph = aEmph;
-    vWorldY = wp.y;
     vLabelA = 1.0 - smoothstep(uLabelNear, uLabelFar, distance(cameraPosition, wp.xyz));
     gl_Position = projectionMatrix * viewMatrix * wp;
   }
 `;
 
+// With LABEL_ONLY defined, the shader draws nothing but the ink of the labels around ²⁷⁸Nh (see labelsOver).
 const fragmentShader = /* glsl */ `
   uniform sampler2D uAtlas;
   uniform vec3 uLightDir;
@@ -237,7 +256,8 @@ const fragmentShader = /* glsl */ `
   varying vec2 vLabel;
   varying float vEmph;
   varying float vLabelA;
-  varying float vWorldY;
+
+  const vec3 LUMA = vec3(0.299, 0.587, 0.114);
 
   float cellSample(float idx, vec2 uv) {
     if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) return 0.0;
@@ -247,9 +267,29 @@ const fragmentShader = /* glsl */ `
     return texture2D(uAtlas, a).r;
   }
 
+  // the label on a top face: the mass number small at the far left, the symbol below it
+  float labelInk() {
+    vec2 uv = vLocal + 0.5; // y grows toward the viewer (low Z)
+    float mass = cellSample(vLabel.y, vec2((uv.x - 0.08) / 0.48, (uv.y - 0.10) / 0.24));
+    float symbol = cellSample(vLabel.x, vec2((uv.x - 0.06) / 0.88, (uv.y - 0.33) / 0.44));
+    return max(mass, symbol) * vLabelA;
+  }
+  // dark letters on a light box, light ones on a dark box
+  vec3 inkColor(vec3 base) { return dot(base, LUMA) > 0.42 ? vec3(0.07) : vec3(0.96); }
+
   // 4x4 ordered dither in [0, 1): screen-door transparency needs no depth sorting
   float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
   float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
+
+  // boxes closer to the camera than about half-way to the orbit target block the view: they are thinned out,
+  // unless they are emphasised (same rule as xrayFade() on the JS side)
+  bool thinnedOut() {
+    if (uXray <= 0.0 || vEmph >= 0.5) return false;
+    vec3 ct = uTarget - cameraPosition;
+    float t = dot(vWorld - cameraPosition, ct) / dot(ct, ct);
+    float fade = uXray * (1.0 - smoothstep(0.35, 0.5, t));
+    return bayer4(gl_FragCoord.xy) >= 1.0 - 0.78 * fade;
+  }
 
   vec3 emphColor(float e) {
     if (e < 1.5) return vec3(1.0, 0.18, 0.22);   // selected
@@ -261,8 +301,7 @@ const fragmentShader = /* glsl */ `
   }
 
   void main() {
-    vec3 n = normalize(vNormal);
-    bool top = n.y > 0.5;
+    bool top = normalize(vNormal).y > 0.5;
     vec3 base = vColor;
     float glow = vGlow * uGlow;
     if (glow > 0.0) base = mix(base, vec3(0.1, 0.72, 1.0), 0.55 * glow); // Nihonium: lit in light blue
@@ -270,82 +309,55 @@ const fragmentShader = /* glsl */ `
     float isl = vIsland * uIsland;
     if (isl > 0.0) base = mix(base, vec3(0.18, 0.8, 0.32), 0.55 * isl);
   #ifdef LABEL_ONLY
-    // only the ink of the labels on the box tops near ²⁷⁸Nh (not its own, which has a label of its own), drawn
-    // after the light that would wash them out
+    // the labels on the box tops near ²⁷⁸Nh (not its own: nihonium.js draws that one), after the light that
+    // would wash them out
     float d = length(vWorld.xz - uSpot.xy);
-    if (!top || uLabels < 0.5 || vLabelA < 0.01 || d > uSpot.z || d < 0.6) discard;
-    if (uXray > 0.0 && vEmph < 0.5) {
-      vec3 ct0 = uTarget - cameraPosition;
-      float t0 = dot(vWorld - cameraPosition, ct0) / dot(ct0, ct0);
-      if (bayer4(gl_FragCoord.xy) >= 1.0 - 0.78 * uXray * (1.0 - smoothstep(0.35, 0.5, t0))) discard;
-    }
-    vec2 uv0 = vec2(vLocal.x + 0.5, vLocal.y + 0.5);
-    float ink0 = max(cellSample(vLabel.y, vec2((uv0.x - 0.08) / 0.48, (uv0.y - 0.10) / 0.24)),
-                     cellSample(vLabel.x, vec2((uv0.x - 0.06) / 0.88, (uv0.y - 0.33) / 0.44))) * vLabelA;
-    if (ink0 < 0.02) discard;
-    gl_FragColor = vec4(dot(base, vec3(0.299, 0.587, 0.114)) > 0.42 ? vec3(0.07) : vec3(0.96), ink0 * 0.92);
-    return;
-  #endif
-    float lambert = max(dot(n, normalize(uLightDir)), 0.0);
+    if (!top || uLabels < 0.5 || vLabelA < 0.01 || d > uSpot.z || d < 0.6 || thinnedOut()) discard;
+    float ink = labelInk();
+    if (ink < 0.02) discard;
+    gl_FragColor = vec4(inkColor(base), ink * 0.92);
+  #else
+    float lambert = max(dot(normalize(vNormal), normalize(uLightDir)), 0.0);
     vec3 col = base * (0.62 + 0.42 * lambert);
+    float edge = max(abs(vLocal.x), abs(vLocal.y)) * 2.0; // on a top face: 0 at its middle, 1 at its rim
     if (!top) {
       // soft contact shadow toward the floor
-      col *= mix(0.55, 1.0, smoothstep(0.0, 1.6, vWorldY));
+      col *= mix(0.55, 1.0, smoothstep(0.0, 1.6, vWorld.y));
     } else {
-      vec2 e2 = abs(vLocal) * 2.0;
-      float edge = max(e2.x, e2.y);
       col *= 1.0 - 0.16 * smoothstep(0.80, 1.0, edge);
-      if (uLabels > 0.5 && vLabelA > 0.01) {
-        vec2 uv = vec2(vLocal.x + 0.5, vLocal.y + 0.5); // y grows toward the viewer (low Z)
-        float m = cellSample(vLabel.y, vec2((uv.x - 0.08) / 0.48, (uv.y - 0.10) / 0.24));
-        float s = cellSample(vLabel.x, vec2((uv.x - 0.06) / 0.88, (uv.y - 0.33) / 0.44));
-        float ink = max(m, s) * vLabelA;
-        float lum = dot(base, vec3(0.299, 0.587, 0.114));
-        vec3 inkCol = lum > 0.42 ? vec3(0.07) : vec3(0.96);
-        col = mix(col, inkCol, ink * 0.92);
-      }
+      if (uLabels > 0.5 && vLabelA > 0.01) col = mix(col, inkColor(base), labelInk() * 0.92);
     }
-    float emph = vEmph;
-    // boxes closer to the camera than about half-way to the orbit target block the view: thin them out
-    // (same rule as xrayFade() on the JS side)
-    if (uXray > 0.0 && emph < 0.5) {
-      vec3 ct = uTarget - cameraPosition;
-      float t = dot(vWorld - cameraPosition, ct) / dot(ct, ct);
-      float fade = uXray * (1.0 - smoothstep(0.35, 0.5, t));
-      if (bayer4(gl_FragCoord.xy) >= 1.0 - 0.78 * fade) discard;
-    }
-    if (emph > 0.5) {
-      vec3 ec = emphColor(emph);
+    if (thinnedOut()) discard;
+    if (vEmph > 0.5) {
+      vec3 ec = emphColor(vEmph);
       if (top) {
-        vec2 e2 = abs(vLocal) * 2.0;
-        float edge = max(e2.x, e2.y);
         col = mix(col, ec, smoothstep(0.66, 0.74, edge));
         // dark rim so the ring stays visible on boxes of the same color
         col = mix(col, vec3(0.08), smoothstep(0.90, 0.96, edge) * 0.85);
       } else {
         col = mix(col, ec, 0.35);
       }
-      if (emph < 1.5) col += 0.12 * (0.5 + 0.5 * sin(uTime * 5.0));
+      if (vEmph < 1.5) col += 0.12 * (0.5 + 0.5 * sin(uTime * 5.0));
     } else {
       col = mix(col, uBg, uFocus * 0.72);
     }
     if (glow > 0.0) {
       // a bright frame on the top face, a band of light sweeping over the box and a slow breathing
       float k = glow * (1.0 - uFocus * 0.7);
-      vec2 g2 = abs(vLocal) * 2.0;
-      float rim = top ? smoothstep(0.8, 0.94, max(g2.x, g2.y)) : 0.0;
+      float rim = top ? smoothstep(0.8, 0.94, edge) : 0.0;
       col = mix(col, vec3(0.8, 1.0, 1.0), rim * k);
-      float s = fract((vWorld.x - vWorld.z + vWorldY * 0.7) * 0.11 - uTime * 0.32);
+      float s = fract((vWorld.x - vWorld.z + vWorld.y * 0.7) * 0.11 - uTime * 0.32);
       float band = exp(-pow((s - 0.5) * 14.0, 2.0));
       col += k * (vec3(0.7, 0.97, 1.0) * band * 1.4 + vec3(0.1, 0.32, 0.48) * (0.5 + 0.5 * sin(uTime * 2.4)));
     }
     if (isl > 0.0) {
       // a slow wave of light across the island, and a gentle breathing
-      float s2 = fract((vWorld.x + vWorld.z * 0.6 + vWorldY * 0.5) * 0.09 + uTime * 0.25);
-      float band2 = exp(-pow((s2 - 0.5) * 12.0, 2.0));
-      col += isl * (1.0 - uFocus * 0.7) * (vec3(0.55, 1.0, 0.6) * band2 * 0.6 + vec3(0.05, 0.22, 0.06) * (0.6 + 0.4 * sin(uTime * 1.7)));
+      float s = fract((vWorld.x + vWorld.z * 0.6 + vWorld.y * 0.5) * 0.09 + uTime * 0.25);
+      float band = exp(-pow((s - 0.5) * 12.0, 2.0));
+      col += isl * (1.0 - uFocus * 0.7) * (vec3(0.55, 1.0, 0.6) * band * 0.6 + vec3(0.05, 0.22, 0.06) * (0.6 + 0.4 * sin(uTime * 1.7)));
     }
     gl_FragColor = vec4(col, 1.0);
+  #endif
   }
 `;
 
@@ -362,7 +374,7 @@ export class NuclideChart {
     this.hyper = false; // hypernucleus mode: every nucleus becomes a cube on the S = 0 layer
     this.colorMode = 'lego';
     this.theme = 'light';
-    this.yearLimit = 9999;
+    this.yearLimit = Infinity; // nuclides discovered later are hidden (the timeline)
     this.shift = 0;
     this.showUnobserved = true;
     this.showUnbound = false; // unobserved nuclides that NUBASE estimates to be unbound (flag ub)
@@ -371,9 +383,8 @@ export class NuclideChart {
     this.labelZ = true;
     this.hiddenLego = new Set(); // classes of the LEGO chart legend switched off in the 表示 section
     this.islandOn = false; // the island of stability is shown (with the predicted nuclei of elements 119–126)
-    this.filter = 'all'; // display mode: all / riken / fp / llfp / ma / fuel
-    this.filterFn = null; // which nuclides the mode shows (riken uses its own year below)
-    this.riken = new Set(); // indices of nuclides first identified at RIKEN
+    this.filter = 'all'; // display mode: 'all', 'riken' (RIKEN's discoveries) or 'cycle' (fuel-cycle groups)
+    this.filterFn = null; // which nuclides the mode shows (riken goes by its own year below)
     this.cur = new Float32Array(this.count);    // animated heights
     this.target = new Float32Array(this.count); // target heights
     this.visible = new Uint8Array(this.count).fill(1);
@@ -399,7 +410,7 @@ export class NuclideChart {
     this.uniforms = {
       uAtlas: { value: buildLabelAtlas() },
       uLightDir: { value: new THREE.Vector3(0.45, 1.0, 0.75).normalize() },
-      uBg: { value: new THREE.Color('#f6f5f1') },
+      uBg: { value: new THREE.Color() }, // the page's background (setTheme)
       uFocus: { value: 0 },
       uTime: { value: 0 },
       uLabels: { value: 1 },
@@ -455,10 +466,10 @@ export class NuclideChart {
     const nuc = this.nuclides[i];
     if (this.hiddenLego.size && this.hiddenLego.has(legoKey(nuc, this.hiddenLego))) return false;
     if (nuc.isl && !this.islandOn) return false;
-    if (this.filter === 'riken') return this.riken.has(i) && nuc.rk <= this.yearLimit;
+    if (this.filter === 'riken') return !!nuc.rk && nuc.rk <= this.yearLimit;
     if (this.filterFn && !this.filterFn(nuc)) return false;
     if (nuc.ub && !this.showUnbound) return false;
-    if (!nuc.y ? !(this.showUnobserved && this.yearLimit >= 9999) : nuc.y > this.yearLimit) return false;
+    if (!nuc.y ? !(this.showUnobserved && this.yearLimit === Infinity) : nuc.y > this.yearLimit) return false;
     if (this.heightCut < Infinity) {
       const v = METRICS[this.cutMetric()].value(nuc);
       if (v === null || v > this.heightCut) return false;
@@ -500,12 +511,11 @@ export class NuclideChart {
     }
     this.shift = this.baseShift();
     this.targetMax = this.target.reduce((m, v) => Math.max(m, v), 0) - this.shift;
-    // in the flat (2D) mode the magic-number lines are drawn on top of the boxes
     if (this.magicLines) this.magicLines.position.y = this.dripLines.position.y = this.magicLineY();
     this.animating = true;
   }
 
-  // with flat boxes (2D, cubes) the magic-number lines are drawn on top of them
+  /** height of the magic-number and drip lines: on the board, or on top of flat boxes (2D, cubes) */
   magicLineY() {
     return this.hyper ? FOOT + 0.03 : this.heightMode === 'flat' ? 0.33 : 0;
   }
@@ -559,21 +569,26 @@ export class NuclideChart {
   }
 
   // ---------- colors ----------
+  /** the quantity behind a continuous color scale: that of the color mode, or the height's ('height') */
+  colorMetric() {
+    return METRICS[this.colorMode === 'height' ? this.metric3d : this.colorMode];
+  }
+
+  /** [r, g, b] of a nuclide in the color mode and theme */
   colorOf(nuc) {
-    if (this.colorMode === 'lego') return legoColor(nuc, this.theme, this.hiddenLego);
+    const { colorMode, theme } = this;
+    if (colorMode === 'lego') return legoColor(nuc, theme, this.hiddenLego);
     const cat = primaryCategory(nuc);
-    if (this.colorMode === 'decay' || cat === 'un') {
-      const c = CATEGORIES[cat];
-      return hexToRgb(this.theme === 'dark' ? c.dark : c.light);
+    if (colorMode === 'decay' || cat === 'un') return hexToRgb(categoryHex(cat, theme));
+    if (colorMode === 'hl') return halfLifeColor(nuc);
+    const blank = categoryHex('un', theme); // no group, no value
+    if (colorMode === 'group') {
+      const group = FUEL_GROUPS[nuc.fuel] || (isFissionProduct(nuc) ? FUEL_GROUPS.fp : null);
+      return hexToRgb(group ? group.color : blank);
     }
-    if (this.colorMode === 'hl') return halfLifeColor(nuc);
-    if (this.colorMode === 'group') {
-      const g = FUEL_GROUPS[nuc.fuel] || (Math.max(nuc.fyc || 0, nuc.fyi || 0) >= 1e-8 ? FUEL_GROUPS.fp : null);
-      return hexToRgb(g ? g.color : CATEGORIES.un[this.theme]);
-    }
-    const metric = METRICS[this.colorMode === 'height' ? this.metric3d : this.colorMode];
+    const metric = this.colorMetric();
     const v = metric.value(nuc);
-    if (v === null) return hexToRgb(CATEGORIES.un[this.theme]);
+    if (v === null) return hexToRgb(blank);
     const [lo, hi] = metric.range;
     return viridis((v - lo) / (hi - lo));
   }
@@ -626,7 +641,7 @@ export class NuclideChart {
     const maxN = 200, maxZ = 120; // the predicted (KTUY) nuclides reach N = 200
 
     // baseplate in a black frame; studs sit at integer (N, Z) cell centers
-    const x0 = -24, x1 = 208, z0 = -127, z1 = 15;
+    const { x0, x1, z0, z1 } = BOARD;
     const W = x1 - x0, H = z1 - z0;
     const tex = studTexture(C);
     tex.repeat.set(W, H);
@@ -640,7 +655,7 @@ export class NuclideChart {
     floor.position.set((x0 + x1) / 2, -0.02, (z0 + z1) / 2);
     floor.renderOrder = -1;
     g.add(floor);
-    const frame = new THREE.Mesh(new THREE.PlaneGeometry(W + 5, H + 5), new THREE.MeshBasicMaterial({ color: C.frame, depthWrite: false }));
+    const frame = new THREE.Mesh(new THREE.PlaneGeometry(W + 2 * BOARD.frame, H + 2 * BOARD.frame), new THREE.MeshBasicMaterial({ color: C.frame, depthWrite: false }));
     frame.rotation.x = -Math.PI / 2;
     frame.position.set((x0 + x1) / 2, -0.06, (z0 + z1) / 2);
     frame.renderOrder = -2;
@@ -697,7 +712,7 @@ export class NuclideChart {
     g.add(this.magicLabels);
 
     // axes: a yellow N arrow along the front edge and a red Z arrow along the left edge, ticks every 10, magic numbers in green
-    parts.nAxis.add(flatArrow([-1.5, 6.5], [206, 6.5], 0.6, C.nAxis, C.outline));
+    parts.nAxis.add(flatArrow([-1.5, 6.5], [N_EDGE, 6.5], 0.6, C.nAxis, C.outline));
     parts.zAxis.add(flatArrow([-13.5, 2], [-13.5, -124], 0.6, C.zAxis, C.outline));
     this.axisTicksN = [];
     this.axisTicksZ = [];
@@ -891,94 +906,4 @@ export class NuclideChart {
     this.buildGuides(theme);
     this.recolor();
   }
-}
-
-// ---------- text sprites ----------
-// Superscript characters come from different fonts (¹²³ are Latin-1, ⁰⁴⁻⁹ are not in the loaded subset),
-// so on the canvas they are drawn as ordinary glyphs, smaller and raised.
-const SUP_CHARS = '⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻';
-const SUP_BASE = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '−'];
-function textRuns(text) {
-  const runs = [];
-  for (const ch of text) {
-    const k = SUP_CHARS.indexOf(ch);
-    const sup = k >= 0;
-    const last = runs[runs.length - 1];
-    if (last && last.sup === sup) last.t += sup ? SUP_BASE[k] : ch;
-    else runs.push({ t: sup ? SUP_BASE[k] : ch, sup });
-  }
-  return runs;
-}
-
-const spriteCache = new Map();
-export function makeTextSprite(text, { color = '#222', size = 1, weight = 500, anchor = 'center', bg = null, border = null, stroke = null } = {}) {
-  const cacheKey = [text, color, weight, bg, border, stroke].join('|');
-  let entry = spriteCache.get(cacheKey);
-  if (!entry) {
-    const px = 64;
-    const family = 'Inter, "Noto Sans JP", "Helvetica Neue", Arial, sans-serif';
-    const fontOf = (sup) => `${weight} ${sup ? Math.round(px * 0.64) : px}px ${family}`;
-    const c = document.createElement('canvas');
-    const ctx = c.getContext('2d');
-    const runs = textRuns(text);
-    for (const r of runs) {
-      ctx.font = fontOf(r.sup);
-      r.w = ctx.measureText(r.t).width;
-    }
-    const textW = runs.reduce((a, r) => a + r.w, 0);
-    const pad = bg ? 26 : stroke ? 12 : 6;
-    const w = Math.ceil(textW) + pad * 2;
-    const h = px + (bg ? 30 : 16);
-    c.width = w;
-    c.height = h;
-    if (bg) {
-      ctx.fillStyle = bg;
-      roundRect(ctx, 3, 3, w - 6, h - 6, (h - 6) / 2);
-      ctx.fill();
-      if (border) {
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = border;
-        ctx.stroke();
-      }
-    }
-    ctx.fillStyle = color;
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
-    const drawRuns = (draw) => {
-      let x = (w - textW) / 2;
-      for (const r of runs) {
-        ctx.font = fontOf(r.sup);
-        draw(r.t, x, h / 2 + 3 - (r.sup ? px * 0.27 : 0));
-        x += r.w;
-      }
-    };
-    if (stroke) {
-      ctx.lineJoin = 'round';
-      ctx.lineWidth = 10;
-      ctx.strokeStyle = stroke;
-      drawRuns((t, x, y) => ctx.strokeText(t, x, y));
-    }
-    drawRuns((t, x, y) => ctx.fillText(t, x, y));
-    const tex = new THREE.CanvasTexture(c);
-    tex.minFilter = THREE.LinearMipmapLinearFilter;
-    tex.anisotropy = 4;
-    entry = { tex, aspect: w / h };
-    spriteCache.set(cacheKey, entry);
-  }
-  const mat = new THREE.SpriteMaterial({ map: entry.tex, transparent: true, depthWrite: false });
-  const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(size * entry.aspect, size, 1);
-  if (anchor === 'right') sprite.center.set(1, 0.5);
-  if (anchor === 'left') sprite.center.set(0, 0.5);
-  return sprite;
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
 }
