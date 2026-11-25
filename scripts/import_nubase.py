@@ -2,18 +2,18 @@
 run it only to start over or to move to a new NUBASE edition.
 
 Usage:  curl -o raw/nubase_4.mas20.txt https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt
-        python scripts/import_nubase.py      (then python scripts/build.py)
+        python scripts/import_nubase.py [file]      (default: raw/nubase_4.mas20.txt; then python scripts/build.py)
 """
 import re
+import sys
 from pathlib import Path
 
 import yaml
 
-from build import MODE_RE, UNIT_S, parse_num
+from build import DATA, ROOT, UNIT_S, parse_num, relation
 
-ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "raw" / "nubase_4.mas20.txt"
-DST = ROOT / "data" / "nuclides"
+URL = "https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt"
+DST = DATA / "nuclides"
 
 # Discovery years that are evidently wrong in NUBASE2020, replaced by the FRIB Discovery of Nuclides Project
 # value: (Z, A) -> (year, note written next to it in the YAML file)
@@ -64,20 +64,20 @@ def decay(text):
     abundance, modes = None, []
     for part in text.split(";"):
         part = part.strip()
-        m = MODE_RE.match(part)
-        if m and m.group(1) == "IS":
-            rest = m.group(3).strip()
-            abundance = parse_num(rest.split(" ")[0])[0] if rest and not rest.startswith("?") else None
+        mode = relation(part)
+        if mode and mode[0] == "IS":
+            abundance = mode[2]
         elif part:
             modes.append(part)
     return abundance, modes
 
 
 def main():
-    if not SRC.exists():
-        raise SystemExit(f"{SRC} is missing: download https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt into raw/")
+    src = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "raw" / Path(URL).name
+    if not src.exists():
+        raise SystemExit(f"{src} is missing: download {URL}")
     ground, isomers, symbols = {}, {}, {}
-    for line in SRC.read_text(encoding="utf-8").splitlines():
+    for line in src.read_text(encoding="utf-8").splitlines():
         if not line or line.startswith("#"):
             continue
         line = line.ljust(209)

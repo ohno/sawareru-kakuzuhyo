@@ -1,2 +1,4 @@
 # one line ending (LF) in the repository whatever the editor uses
 * text=auto eol=lf
+# images are never text: their bytes must not be touched (a line-ending conversion breaks them)
+*.png binary

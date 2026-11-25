@@ -1,0 +1,2 @@
+# for scripts/ (the page itself needs nothing installed)
+pyyaml

@@ -1,14 +1,20 @@
 // Decay graph (daughters, parents, chains) and its 3D visualisation (animated arcs + floating tags).
 import * as THREE from 'three';
-import { modeShift, isFission, modeCategory, modeLabel, CATEGORIES, key, fmtBranch, nucText, fmtHalfLife } from './nuclear.js';
-import { makeTextSprite, EMPH } from './chart.js';
+import { modeShift, isFission, modeCategory, modeLabel, arcColor, nuclideKey, fmtBranch, nucText, fmtHalfLife } from './nuclear.js';
+import { EMPH } from './chart.js';
+import { makeTextSprite } from './sprites.js';
 
+// how thick an arrow is drawn for a branching ratio (%), on a logarithmic scale; unknown ratios in between
 const branchWeight = (val) => (val === null ? 0.35 : Math.min(1, Math.max(0.12, (Math.log10(val) + 3) / 5)));
+// of two branches, the one with the larger known ratio (the first one when neither is known)
+const larger = (best, d) => (d.val !== null && (best.val === null || d.val > best.val) ? d : best);
+// when a nucleus plays several parts in the picture, the ring it gets: the selection first, the fission region last
+const EMPH_RANK = [EMPH.fragment, EMPH.chain, EMPH.parent, EMPH.daughter, EMPH.selected];
 
 export class DecayGraph {
   constructor(nuclides) {
     this.nuclides = nuclides;
-    this.index = new Map(nuclides.map((n, i) => [key(n.z, n.n), i]));
+    this.index = new Map(nuclides.map((n, i) => [nuclideKey(n.z, n.n), i]));
     this.memo = new Map();
     this.parentIndex = new Map();
     nuclides.forEach((_, i) => {
@@ -20,8 +26,9 @@ export class DecayGraph {
     });
   }
 
+  /** index of the nuclide (Z, N), or -1 */
   find(z, n) {
-    return this.index.get(key(z, n)) ?? -1;
+    return this.index.get(nuclideKey(z, n)) ?? -1;
   }
 
   /** direct decay products of nuclide i */
@@ -33,8 +40,19 @@ export class DecayGraph {
   /** the branch with the largest known ratio (or the first listed one when none is known) */
   largest(i) {
     const all = this.daughters(i);
-    if (!all.length) return null;
-    return all.reduce((b, d) => (d.val !== null && (b.val === null || d.val > b.val) ? d : b), all[0]);
+    return all.length ? all.reduce(larger) : null;
+  }
+
+  /** the largest branch that is not fission (null when fission is all there is) */
+  largestDecay(i) {
+    const decays = this.daughters(i).filter((d) => !d.fission);
+    return decays.length ? decays.reduce(larger) : null;
+  }
+
+  /** the decay a nucleus most likely follows: its largest branch, or null when that is fission */
+  dominant(i) {
+    const best = this.largest(i);
+    return best && !best.fission ? best : null;
   }
 
   /** whether branch d of nuclide i passes the branching-ratio threshold (%); the main branch always does */
@@ -65,15 +83,6 @@ export class DecayGraph {
       out.push({ mode, op, val, cat, z, n, to: this.find(z, n), raw: m });
     }
     return out;
-  }
-
-  /** the decay branch a nucleus most likely follows */
-  dominant(i) {
-    const ds = this.daughters(i).filter((d) => !d.fission);
-    if (!ds.length) return null;
-    const all = this.daughters(i);
-    const best = all.reduce((b, d) => (d.val !== null && (b.val === null || d.val > b.val) ? d : b), all[0]);
-    return best.fission ? null : best;
   }
 
   parents(i) {
@@ -125,13 +134,6 @@ export class DecayGraph {
       frontier = next;
     }
     return { edges, nodes: genOf, truncated: false };
-  }
-
-  /** the largest branch that is not fission (null when fission is all there is) */
-  largestDecay(i) {
-    const ds = this.daughters(i).filter((d) => !d.fission);
-    if (!ds.length) return null;
-    return ds.reduce((b, d) => (d.val !== null && (b.val === null || d.val > b.val) ? d : b), ds[0]);
   }
 
   /**
@@ -271,8 +273,7 @@ export class DecayViz {
     const setE = (idx, code) => {
       if (idx < 0) return;
       const prev = emph.get(idx);
-      const rank = (c) => [0, 6, 5, 3, 4, 1, 0][c] ?? 0; // selected > daughter > parent > chain > fragment
-      if (prev === undefined || rank(code) > rank(prev)) emph.set(idx, code);
+      if (prev === undefined || EMPH_RANK.indexOf(code) > EMPH_RANK.indexOf(prev)) emph.set(idx, code);
     };
     const nuc = this.chart.nuclides[i];
     const sel = this.topOf(i);
@@ -317,7 +318,7 @@ export class DecayViz {
 
     const tagGroups = new Map(); // one tag per daughter nucleus, even if several modes lead there
     for (const d of g.shownDaughters(i, minBranch)) {
-      const color = CATEGORIES[d.cat].arc;
+      const color = arcColor(d.cat);
       const label = `${modeLabel(d.mode)} ${fmtBranch(d.raw)}`;
       if (d.fission) {
         d.fragments.forEach((f, k) => {
@@ -366,7 +367,7 @@ export class DecayViz {
     for (let k = 0; k <= 40; k++) pts.push(curve.getPoint((k / 40) * tEnd));
     const body = new THREE.CatmullRomCurve3(pts);
     const geo = new THREE.TubeGeometry(body, 48, r, 8, false);
-    const color = new THREE.Color(CATEGORIES[cat].arc || '#888');
+    const color = new THREE.Color(arcColor(cat));
     const mat = new THREE.ShaderMaterial({
       vertexShader: arcVertex,
       fragmentShader: arcFragment,
@@ -394,7 +395,7 @@ export class DecayViz {
 
     if (apexTag) {
       const mid = curve.getPoint(0.5);
-      this.addTag(apexTag, mid.add(new THREE.Vector3(0, 0.45, 0)), { px: 14, bg: CATEGORIES[cat].arc, color: '#fff', prio: 2 });
+      this.addTag(apexTag, mid.add(new THREE.Vector3(0, 0.45, 0)), { px: 14, bg: arcColor(cat), color: '#fff', prio: 2 });
     }
   }
 
@@ -405,29 +406,18 @@ export class DecayViz {
       c.material.dispose();
     }
     this.callouts = items.map(({ idx, text, bg }) => {
-      const s = makeTextSprite(text, { color: '#fff', bg, weight: 600 });
-      s.material.sizeAttenuation = false;
-      s.material.depthTest = false;
+      const s = tagSprite(text, { bg, px: 12.5, prio: 6 });
       s.renderOrder = 9;
-      s.center.set(0.5, 0);
-      s.userData = { idx, px: 12.5, prio: 6, aspect: s.scale.x / s.scale.y };
-      s.scale.set(0, 0, 1);
+      s.userData.idx = idx;
       this.calloutGroup.add(s);
       return s;
     });
   }
 
-  addTag(text, pos, { px = 14, bg = null, color = '#fff', border = null, prio = 5 }) {
-    const s = makeTextSprite(text, { color, bg, border, weight: 600 });
-    s.material.sizeAttenuation = false;
-    s.material.depthTest = false;
+  addTag(text, pos, style) {
+    const s = tagSprite(text, style);
     s.renderOrder = 10;
-    s.center.set(0.5, 0);
     s.position.copy(pos);
-    s.userData.px = px;
-    s.userData.prio = prio;
-    s.userData.aspect = s.scale.x / s.scale.y;
-    s.scale.set(0, 0, 1); // real (screen-space) size is set in update()
     this.group.add(s);
     this.tags.push(s);
   }
@@ -455,7 +445,7 @@ export class DecayViz {
     this.layoutTags(camera, viewportW, viewportH, [...this.tags, ...shown]);
   }
 
-  /** greedy screen-space de-overlap: lower-priority tags are lifted until they no longer collide */
+  /** greedy screen-space de-overlap: tags that matter less (larger prio) are lifted until they no longer collide */
   layoutTags(camera, W, H, tags) {
     const placed = [];
     const v = new THREE.Vector3();
@@ -477,4 +467,18 @@ export class DecayViz {
       placed.push(rectAt(k));
     }
   }
+}
+
+/**
+ * A name tag drawn over everything else at a fixed size on screen: px high (set each frame in update()), standing
+ * on its position. prio: its turn when tags are kept from overlapping (0 first).
+ */
+function tagSprite(text, { px = 14, bg = null, color = '#fff', border = null, prio = 5 }) {
+  const s = makeTextSprite(text, { color, bg, border, weight: 600 });
+  s.material.sizeAttenuation = false;
+  s.material.depthTest = false;
+  s.center.set(0.5, 0);
+  s.userData = { px, prio, aspect: s.scale.x / s.scale.y };
+  s.scale.set(0, 0, 1);
+  return s;
 }

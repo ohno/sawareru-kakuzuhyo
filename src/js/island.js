@@ -4,7 +4,8 @@
 // its shore over the box tops. While the island is shown, the predicted (yellow) nuclei of the undiscovered
 // elements 119–126 are added, since the island reaches them.
 import * as THREE from 'three';
-import { makeTextSprite } from './chart.js';
+import { makeTextSprite } from './sprites.js';
+import { nuclideKey } from './nuclear.js';
 
 const ISLAND_SOURCE = 'KTUY05 質量公式の殻エネルギー（Koura et al., Prog. Theor. Phys. 113, 305 (2005)）';
 
@@ -18,25 +19,30 @@ export class StabilityIsland {
     this.chart = chart;
     this.enabled = false;
     this.available = !!rows?.length;
-    const grid = new Map();
-    for (const [z, n0, ...vals] of rows || []) vals.forEach((v, k) => grid.set(`${z},${n0 + k}`, v));
-    this.depth = new Float32Array(chart.count);
+    const shell = new Map(); // shell energy (MeV) per nuclide
+    let deep = null; // the deepest point of the superheavy region: the island's name goes over it
+    for (const [z, n0, ...vals] of rows || []) {
+      vals.forEach((v, k) => {
+        shell.set(nuclideKey(z, n0 + k), v);
+        if (z >= Z_MIN && v !== null && (!deep || v < deep.v)) deep = { v, z, n: n0 + k };
+      });
+    }
+    this.depth = new Float32Array(chart.count); // how deep in the island each nuclide lies: 0 outside, up to 1
     this.members = [];
+    const at = new Map(chart.nuclides.map((nuc, i) => [nuclideKey(nuc.z, nuc.n), i]));
     chart.nuclides.forEach((nuc, i) => {
-      const e = nuc.z >= Z_MIN ? grid.get(`${nuc.z},${nuc.n}`) : null;
+      const e = nuc.z >= Z_MIN ? shell.get(nuclideKey(nuc.z, nuc.n)) : null;
       if (e === undefined || e === null || e > SHORE) return;
       this.depth[i] = 0.35 + 0.65 * Math.min(1, (SHORE - e) / (SHORE - PEAK));
       this.members.push(i);
     });
     // the shore: every cell side between a nucleus of the island and one outside it (or an empty cell)
-    const inside = new Set(this.members.map((i) => `${chart.nuclides[i].z},${chart.nuclides[i].n}`));
-    const at = new Map(chart.nuclides.map((nuc, i) => [`${nuc.z},${nuc.n}`, i]));
     this.edges = [];
     for (const i of this.members) {
       const { z, n } = chart.nuclides[i];
       for (const [dz, dn] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
-        if (inside.has(`${z + dz},${n + dn}`)) continue;
-        const j = at.get(`${z + dz},${n + dn}`) ?? -1;
+        const j = at.get(nuclideKey(z + dz, n + dn)) ?? -1;
+        if (j >= 0 && this.depth[j] > 0) continue;
         // the side's ends in (N, Z), half a cell from the centre towards the neighbour
         const ends = dn ? [[n + dn / 2, z - 0.5], [n + dn / 2, z + 0.5]] : [[n - 0.5, z + dz / 2], [n + 0.5, z + dz / 2]];
         this.edges.push({ i, j, ends, along: dn ? 'z' : 'n' });
@@ -48,12 +54,6 @@ export class StabilityIsland {
     this.shore = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: '#0f9a45', side: THREE.DoubleSide, depthWrite: false }));
     this.shore.renderOrder = 4;
     this.shore.frustumCulled = false;
-    // the name over the deepest point of the map
-    let deep = null;
-    for (const [key, v] of grid) {
-      const [z, n] = key.split(',').map(Number);
-      if (z >= Z_MIN && v !== null && (!deep || v < deep.v)) deep = { v, z, n };
-    }
     this.labelAt = deep || { n: 184, z: 114 };
     this.group = new THREE.Group();
     this.group.visible = false;
