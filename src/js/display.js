@@ -2,6 +2,7 @@
 // camera circles the chart; now and then the discovery history or the removal by height plays, and the camera goes
 // up to the nuclide it ends with. A click, a touch, the wheel or a key ends the mode, and does nothing else.
 import { nucText, LEGO_RED } from './nuclear.js';
+import { tr } from './i18n.js';
 
 const ACTS = ['year', 'height']; // the timeline's animations, played in turn
 const FIRST_WAIT = 20, WAIT = 30, LOOK = 8; // seconds of circling before the first and before each later one; of looking at the last nuclide
@@ -72,7 +73,9 @@ export class DisplayMode {
       const i = timeline.last();
       if (i >= 0) {
         const nuc = nuclides[i];
-        const text = timeline.mode === 'height' ? `最後に残った核 ${nucText(nuc)}` : `いちばん新しく見つかった核 ${nucText(nuc)}（${nuc.y} 年）`;
+        const text = timeline.mode === 'height'
+          ? tr(`最後に残った核 ${nucText(nuc)}`, `The last nucleus left: ${nucText(nuc)}`)
+          : tr(`いちばん新しく見つかった核 ${nucText(nuc)}（${nuc.y} 年）`, `The newest discovery: ${nucText(nuc)} (${nuc.y})`);
         decay.setCallouts([{ idx: i, text, bg: LEGO_RED }]);
         views.flyTo(views.closeUp(i), 2.2);
       }

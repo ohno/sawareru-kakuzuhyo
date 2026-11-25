@@ -1,6 +1,7 @@
 // Nuclear physics for the chart: decay modes, what follows from the masses, the quantities behind the heights and
 // colors, the color scales, and how values are written.
 import { ELEMENTS } from './data.js';
+import { tr, EN } from './i18n.js';
 
 export const SYMBOL_TO_Z = new Map(ELEMENTS.map((e, z) => [e[0].toLowerCase(), z]));
 export const MAGIC = [2, 8, 20, 28, 50, 82, 126];
@@ -13,19 +14,23 @@ export const SUPERSCRIPTS = '⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻';
 export const sup = (s) => String(s).replace(/[0-9+-]/g, (c) => SUPERSCRIPTS['0123456789+-'.indexOf(c)]);
 export const nucText = (nuc) => sup(nuc.a) + nuc.s;
 export const nucHtml = (nuc) => `<span class="nuc"><sup>${nuc.a}</sup>${nuc.s}</span>`;
+// an isomer of nuc (an entry of its `iso`, flagged m, n, p, …): ²³⁴ᵐPa
+const SUP_FLAG = { m: 'ᵐ', n: 'ⁿ', p: 'ᵖ' };
+export const isoText = (nuc, iso) => sup(nuc.a) + (SUP_FLAG[iso.f] ?? iso.f) + nuc.s;
+export const isoHtml = (nuc, iso) => `<span class="nuc"><sup>${nuc.a}${iso.f}</sup>${nuc.s}</span>`;
 
 // ---------- decay modes ----------
 /** the kinds of decay the legend tells apart: name, box color in each theme, and the color of the decay arrows */
 export const CATEGORIES = {
-  st: { name: '安定', light: '#232326', dark: '#e9e6dc' },
+  st: { name: tr('安定', 'Stable'), light: '#232326', dark: '#e9e6dc' },
   bm: { name: 'β⁻', light: '#78bde3', dark: '#5aa8d8', arc: '#1f86d6' },
   bp: { name: 'β⁺ / EC', light: '#f0919f', dark: '#e2768a', arc: '#e3405f' },
   a: { name: 'α', light: '#f4dc4d', dark: '#e8cc2e', arc: '#d9a400' },
-  sf: { name: '自発核分裂', light: '#74c96f', dark: '#5cba58', arc: '#25a644' },
-  p: { name: '陽子放出', light: '#f5a35a', dark: '#ef8f3e', arc: '#f07a12' },
-  n: { name: '中性子放出', light: '#a796ea', dark: '#9581e3', arc: '#7a5ee3' },
-  cl: { name: 'クラスター等', light: '#58c4b4', dark: '#3fb3a2', arc: '#109e8c' },
-  un: { name: '未観測（推定値）', light: '#dedcd5', dark: '#3d4149' },
+  sf: { name: tr('自発核分裂', 'Spontaneous fission'), light: '#74c96f', dark: '#5cba58', arc: '#25a644' },
+  p: { name: tr('陽子放出', 'Proton emission'), light: '#f5a35a', dark: '#ef8f3e', arc: '#f07a12' },
+  n: { name: tr('中性子放出', 'Neutron emission'), light: '#a796ea', dark: '#9581e3', arc: '#7a5ee3' },
+  cl: { name: tr('クラスター等', 'Cluster and other'), light: '#58c4b4', dark: '#3fb3a2', arc: '#109e8c' },
+  un: { name: tr('未観測（推定値）', 'Unobserved (estimate)'), light: '#dedcd5', dark: '#3d4149' },
 };
 export const categoryHex = (cat, theme) => CATEGORIES[cat][theme] ?? CATEGORIES[cat].light;
 export const arcColor = (cat) => CATEGORIES[cat].arc || '#888';
@@ -58,7 +63,15 @@ export function modeLabel(m) {
   return m.replace(/^2B-/, '2β⁻').replace(/^2B\+/, '2β⁺').replace(/^B-/, 'β⁻').replace(/^B\+/, 'β⁺').replace(/A$/, 'α');
 }
 
-const MODE_DESC = {
+const MODE_DESC = EN ? {
+  'B-': 'β⁻ decay', 'B+': 'β⁺ decay (including electron capture)', EC: 'Electron capture', 'e+': 'Positron emission', 'EC+B+': 'Electron capture + β⁺',
+  A: 'α decay', SF: 'Spontaneous fission', 'B-SF': 'β⁻-delayed fission', 'B+SF': 'β⁺-delayed fission',
+  p: 'Proton emission', '2p': 'Two-proton emission', '3p': 'Three-proton emission', n: 'Neutron emission', '2n': 'Two-neutron emission', '3n': 'Three-neutron emission', d: 'Deuteron emission',
+  'B-n': 'β-delayed neutron emission', 'B-2n': 'β-delayed two-neutron emission', 'B-3n': 'β-delayed three-neutron emission', 'B-4n': 'β-delayed four-neutron emission',
+  'B-p': 'β⁻-delayed proton emission', 'B-d': 'β⁻-delayed deuteron emission', 'B-t': 'β⁻-delayed triton emission', 'B-A': 'β⁻-delayed α emission',
+  'B+p': 'β-delayed proton emission', 'B+2p': 'β-delayed two-proton emission', 'B+3p': 'β-delayed three-proton emission', 'B+A': 'β-delayed α emission', 'B+pA': 'β-delayed proton and α emission',
+  '2B-': 'Double β⁻ decay', '2B+': 'Double β⁺ decay', IT: 'Isomeric transition',
+} : {
   'B-': 'β⁻崩壊', 'B+': 'β⁺崩壊（電子捕獲を含む）', EC: '電子捕獲', 'e+': '陽電子放出', 'EC+B+': '電子捕獲＋β⁺',
   A: 'α崩壊', SF: '自発核分裂', 'B-SF': 'β⁻遅発核分裂', 'B+SF': 'β⁺遅発核分裂',
   p: '陽子放出', '2p': '2陽子放出', '3p': '3陽子放出', n: '中性子放出', '2n': '2中性子放出', '3n': '3中性子放出', d: '重陽子放出',
@@ -67,7 +80,7 @@ const MODE_DESC = {
   'B+p': 'β遅発陽子放出', 'B+2p': 'β遅発2陽子放出', 'B+3p': 'β遅発3陽子放出', 'B+A': 'β遅発α放出', 'B+pA': 'β遅発陽子・α放出',
   '2B-': '二重β⁻崩壊', '2B+': '二重β⁺崩壊', IT: '核異性体転移',
 };
-export const modeDesc = (m) => MODE_DESC[m] || (CLUSTER_RE.test(m) ? 'クラスター崩壊' : m);
+export const modeDesc = (m) => MODE_DESC[m] || (CLUSTER_RE.test(m) ? tr('クラスター崩壊', 'Cluster decay') : m);
 
 /** Shift (dZ, dN) for a decay mode, or null for fission / unknown modes. */
 export function modeShift(m) {
@@ -164,37 +177,43 @@ const linear = (value, k, slider, { min = 0.15, cap = Infinity, missing = 0.2 } 
 export const METRICS = {
   // candidates for the height of the RIBF LEGO chart ("BINDING ENERGY"), all built from the mass table
   bfe: {
-    label: 'B/A の ⁵⁶Fe との差（核子1個あたり）', short: 'B/A（⁵⁶Fe 基準）',
-    note: 'B/A(⁵⁶Fe) − B/A。高いほど核子1個あたりの結合が弱い',
+    label: tr('B/A の ⁵⁶Fe との差（核子1個あたり）', 'B/A difference from ⁵⁶Fe (per nucleon)'),
+    short: tr('B/A（⁵⁶Fe 基準）', 'B/A (relative to ⁵⁶Fe)'),
+    note: tr('B/A(⁵⁶Fe) − B/A。高いほど核子1個あたりの結合が弱い', 'B/A(⁵⁶Fe) − B/A. The higher, the more weakly each nucleon is bound'),
     ...linear(feDeficit, 3.2, [3, 0.05], { cap: 36 }),
     range: [0, 2.5], unit: 'MeV',
   },
   bfeA: {
-    label: 'B/A の ⁵⁶Fe との差 × A（核全体）', short: 'ΔB（⁵⁶Fe 基準・核全体）',
-    note: 'A × (B/A(⁵⁶Fe) − B/A)。⁵⁶Fe と同じ強さで結合した場合より、核全体でどれだけ結合が弱いか',
+    label: tr('B/A の ⁵⁶Fe との差 × A（核全体）', 'B/A difference from ⁵⁶Fe × A (whole nucleus)'),
+    short: tr('ΔB（⁵⁶Fe 基準・核全体）', 'ΔB (relative to ⁵⁶Fe, whole nucleus)'),
+    note: tr('A × (B/A(⁵⁶Fe) − B/A)。⁵⁶Fe と同じ強さで結合した場合より、核全体でどれだけ結合が弱いか',
+      'A × (B/A(⁵⁶Fe) − B/A). How much more weakly the whole nucleus is bound than if it were bound as strongly as ⁵⁶Fe'),
     ...linear((n) => (feDeficit(n) === null ? null : feDeficit(n) * n.a), 0.065, [300, 5], { cap: 40 }),
     range: [0, 300], unit: 'MeV',
   },
   meA: {
-    label: '核子1個あたりの質量（⁵⁶Fe 基準）', short: '核子あたりの質量',
-    note: '核子1個あたりの質量の ⁵⁶Fe との差（理研のレゴ核図表と同じ量）。単独の中性子・陽子がいちばん高く、強く結合した ⁵⁶Fe が谷底',
+    label: tr('核子1個あたりの質量（⁵⁶Fe 基準）', 'Mass per nucleon (relative to ⁵⁶Fe)'),
+    short: tr('核子あたりの質量', 'Mass per nucleon'),
+    note: tr('核子1個あたりの質量の ⁵⁶Fe との差（理研のレゴ核図表と同じ量）。単独の中性子・陽子がいちばん高く、強く結合した ⁵⁶Fe が谷底',
+      'Mass per nucleon minus that of ⁵⁶Fe (the same quantity as RIKEN’s LEGO chart of nuclides). A lone neutron or proton is highest; tightly bound ⁵⁶Fe is the valley floor'),
     ...linear((n) => (n.me !== undefined ? (n.me / n.a - MEA_FE56) / 1000 : null), 3.2, [3, 0.05], { cap: 36 }),
     range: [0, 2.5], unit: 'MeV',
   },
   me: {
-    label: '質量超過 Δ（核全体、最小を 0）', short: '質量超過 Δ',
-    note: 'Δ − Δ(¹¹⁸Sn)。¹¹⁸Sn 付近が最も低く、重い核ほど高くなる',
+    label: tr('質量超過 Δ（核全体、最小を 0）', 'Mass excess Δ (whole nucleus, lowest = 0)'),
+    short: tr('質量超過 Δ', 'Mass excess Δ'),
+    note: tr('Δ − Δ(¹¹⁸Sn)。¹¹⁸Sn 付近が最も低く、重い核ほど高くなる', 'Δ − Δ(¹¹⁸Sn). Lowest around ¹¹⁸Sn, and higher the heavier the nucleus'),
     ...linear((n) => (n.me !== undefined ? (n.me - ME_MIN) / 1000 : null), 0.11, [150, 2], { cap: 40 }),
     range: [0, 250], unit: 'MeV',
   },
   b: {
-    label: '結合エネルギー B（核全体）', short: 'B',
-    note: '核全体の結合エネルギー。核子数にほぼ比例して増える',
+    label: tr('結合エネルギー B（核全体）', 'Binding energy B (whole nucleus)'), short: 'B',
+    note: tr('核全体の結合エネルギー。核子数にほぼ比例して増える', 'Binding energy of the whole nucleus. It grows almost in proportion to the number of nucleons'),
     ...linear((n) => (baOf(n) !== undefined ? (baOf(n) * n.a) / 1000 : null), 0.0155, [1500, 10], { cap: 40 }),
     range: [0, 2000], unit: 'MeV',
   },
   hl: {
-    label: '半減期 log₁₀(T½ / s)', short: '半減期',
+    label: tr('半減期 log₁₀(T½ / s)', 'Half-life log₁₀(T½ / s)'), short: tr('半減期', 'Half-life'),
     value: (n) => (n.st ? 22 : n.t ? log10(n.t) : n.pu ? -22 : null),
     height: (n) => {
       if (n.st) return 13;
@@ -203,42 +222,43 @@ export const METRICS = {
       const L = log10(n.t);
       return L < -9 ? 0.25 + Math.max(0, (L + 24) / 15) * 0.4 : Math.min(12, 0.65 + ((L + 9) / 31) * 11.35);
     },
-    range: [-12, 22], unit: '', ticks: ['1 ps', '1 s', '1 万年', '安定'], tickVals: [-12, 0, 11.5, 22],
+    range: [-12, 22], unit: '', ticks: ['1 ps', '1 s', tr('1 万年', '10,000 years'), tr('安定', 'stable')], tickVals: [-12, 0, 11.5, 22],
   },
   ba: {
-    label: '結合エネルギー B/A（核子1個あたり）', short: 'B/A',
-    note: '結合エネルギーを核子数で割った値。⁵⁶Fe・⁶²Ni 付近で最大（約 8.8 MeV）',
+    label: tr('結合エネルギー B/A（核子1個あたり）', 'Binding energy B/A (per nucleon)'), short: 'B/A',
+    note: tr('結合エネルギーを核子数で割った値。⁵⁶Fe・⁶²Ni 付近で最大（約 8.8 MeV）',
+      'Binding energy divided by the number of nucleons. Largest around ⁵⁶Fe and ⁶²Ni (about 8.8 MeV)'),
     ...linear((n) => (baOf(n) !== undefined ? baOf(n) / 1000 : null), 1.5, [8.5, 0.1], { missing: 0.15 }),
     range: [5, 8.8], unit: 'MeV',
   },
   s2n: {
-    label: '2中性子分離エネルギー S₂ₙ', short: 'S₂ₙ',
+    label: tr('2中性子分離エネルギー S₂ₙ', 'Two-neutron separation energy S₂ₙ'), short: 'S₂ₙ',
     ...linear((n) => (n.s2n !== undefined ? n.s2n / 1000 : null), 0.45, [20, 0.5], { min: 0.2, cap: 14 }),
     range: [0, 30], unit: 'MeV',
   },
   sn: {
-    label: '中性子分離エネルギー Sₙ', short: 'Sₙ',
+    label: tr('中性子分離エネルギー Sₙ', 'Neutron separation energy Sₙ'), short: 'Sₙ',
     ...linear((n) => (n.sn !== undefined ? n.sn / 1000 : null), 0.8, [12, 0.2], { min: 0.2, cap: 14 }),
     range: [0, 16], unit: 'MeV',
   },
   qa: {
-    label: 'α崩壊 Q 値 Qα', short: 'Qα',
+    label: tr('α崩壊 Q 値 Qα', 'α-decay Q value Qα'), short: 'Qα',
     ...linear((n) => (n.qa !== undefined ? n.qa / 1000 : null), 1.2, [10, 0.2], { min: 0.2, cap: 14 }),
     range: [0, 12], unit: 'MeV',
   },
   fy: {
-    label: '核分裂収率（²³⁵U 熱中性子・累積）', short: '核分裂収率',
+    label: tr('核分裂収率（²³⁵U 熱中性子・累積）', 'Fission yield (²³⁵U, thermal neutrons, cumulative)'), short: tr('核分裂収率', 'Fission yield'),
     value: (n) => (n.fyc ? log10(n.fyc) : null),
     height: (n) => (n.fyc ? Math.max(0.2, (log10(n.fyc) + 9) * 1.6) : 0.2),
     range: [-8, -1.1], unit: '', ticks: ['10⁻⁶ %', '10⁻⁴ %', '0.01 %', '1 %'], tickVals: [-8, -6, -4, -2],
   },
   year: {
-    label: '核種の発見年', short: '発見年',
+    label: tr('核種の発見年', 'Year of discovery of the nuclide'), short: tr('発見年', 'Year of discovery'),
     value: (n) => n.y ?? null,
     height: (n) => (n.y ? Math.min(12.5, Math.max(0.4, (n.y - 1890) / 11)) : 0.25),
-    range: [1896, 2025], unit: '年',
+    range: [1896, 2025], unit: tr('年', ''), // a year needs no unit in English
   },
-  flat: { label: 'なし（2D）', short: '2D', value: () => null, height: () => 0.3, range: [0, 1] },
+  flat: { label: tr('なし（2D）', 'None (2D)'), short: '2D', value: () => null, height: () => 0.3, range: [0, 1] },
 };
 
 // ---------- color scales ----------
@@ -280,11 +300,11 @@ export const HL_CSS = `linear-gradient(90deg, ${HL_STOPS.map(([v, c]) => `${c} $
 // The RIKEN Nishina Center LEGO chart of nuclides (exhibit legend): black = stable, red = unstable and discovered,
 // yellow = unstable and not yet discovered, green = discovered at RIKEN, blue = superheavy nucleus discovered at RIKEN
 export const LEGO_PALETTE = [
-  { key: 'st', name: '安定核', color: '#1b1b1d', dark: '#e9e6dc' }, // black would vanish on the dark board
-  { key: 'found', name: '不安定核（発見済み）', color: '#c91a09' },
-  { key: 'unfound', name: '不安定核（未発見）', color: '#f5c400' },
-  { key: 'riken', name: '理研で発見した原子核', color: '#237841' },
-  { key: 'rikenSH', name: '理研で発見した超重原子核', color: '#0055bf' },
+  { key: 'st', name: tr('安定核', 'Stable nuclei'), color: '#1b1b1d', dark: '#e9e6dc' }, // black would vanish on the dark board
+  { key: 'found', name: tr('不安定核（発見済み）', 'Unstable nuclei (discovered)'), color: '#c91a09' },
+  { key: 'unfound', name: tr('不安定核（未発見）', 'Unstable nuclei (undiscovered)'), color: '#f5c400' },
+  { key: 'riken', name: tr('理研で発見した原子核', 'Nuclei discovered at RIKEN'), color: '#237841' },
+  { key: 'rikenSH', name: tr('理研で発見した超重原子核', 'Superheavy nuclei discovered at RIKEN'), color: '#0055bf' },
 ];
 const LEGO_BY_KEY = Object.fromEntries(LEGO_PALETTE.map((c) => [c.key, c]));
 /** the red of the LEGO chart's proton-number arrow: the color of RIKEN on this page (--lego-red in style.css) */
@@ -315,10 +335,10 @@ export function fmtSeconds(t) {
   return `${m.toFixed(2)} × 10${sup(e)} s`;
 }
 export function fmtHalfLife(nuc) {
-  if (nuc.st) return '安定';
-  if (nuc.pu) return '粒子非束縛';
+  if (nuc.st) return tr('安定', 'stable');
+  if (nuc.pu) return tr('粒子非束縛', 'particle-unbound');
   if (nuc.ts) return nuc.ts + (nuc.te ? ' #' : '');
-  return '不明';
+  return tr('不明', 'unknown');
 }
 export const fmtJpi = (j) => (j ? j.replace(/\*/g, '').replace(/\s+/g, ' ') : '—');
 /** the branching ratio of a decay mode [mode, relation, value %] */
@@ -328,4 +348,10 @@ export function fmtBranch(m) {
   const pre = op === '=' ? '' : op === '~' ? '≈ ' : op + ' ';
   const v = val >= 0.1 ? +val.toPrecision(4) : val.toExponential(1);
   return `${pre}${v} %`;
+}
+/** a share (%) worked out from the data rather than given in it, with its relation: ≈ (or ≤, at most) */
+export function fmtShare(op, val) {
+  if (val === 0) return '0 %';
+  const v = val >= 10 ? String(+val.toPrecision(3)) : val >= 0.01 ? val.toPrecision(2) : val.toExponential(1);
+  return `${op === '≤' ? '≤' : '≈'} ${v} %`;
 }

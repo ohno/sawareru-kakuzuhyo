@@ -3,6 +3,7 @@
 // The same reading serves the links of the page (#238U).
 import { ELEMENTS } from './data.js';
 import { SYMBOL_TO_Z, nucText } from './nuclear.js';
+import { tr } from './i18n.js';
 
 /** Z of an element given by its symbol or its English or Japanese name, or -1 */
 function elementZ(s) {
@@ -73,7 +74,11 @@ export function createSearch(nuclides, find) {
       const keys = ['z', 'n', 'a'].filter((k) => k in c);
       if (keys.length > 1 || list.length < 2) return { i: list.length ? list[0] : -1 };
       const k = keys[0], i = mostStable(list, k === 'z' ? byAbundance : byMassPerNucleon);
-      return { i, note: `${k.toUpperCase()} = ${c[k]} の核のうち、最も安定な ${nucText(nuclides[i])} を表示しています` };
+      return {
+        i,
+        note: tr(`${k.toUpperCase()} = ${c[k]} の核のうち、最も安定な ${nucText(nuclides[i])} を表示しています`,
+          `Showing ${nucText(nuclides[i])}, the most stable nucleus with ${k.toUpperCase()} = ${c[k]}`),
+      };
     }
     // a mass number before or after an element: 238U, U-238, ウラン238
     const before = q.match(/^(\d+)\s*-?\s*(\D+)$/), after = q.match(/^(\D+?)\s*-?\s*(\d+)$/);

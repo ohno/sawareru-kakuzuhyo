@@ -63,4 +63,40 @@ export class ColumnSound {
       osc.stop(t0 + T + 0.05);
     }
   }
+
+  /** a short tone gliding from f0 to f1 (Hz) over dur seconds, starting `at` seconds from now */
+  chirp(f0, f1, dur, { type = 'sine', gain = 0.15, at = 0 } = {}) {
+    const ctx = this.context();
+    if (!ctx) return;
+    const t0 = ctx.currentTime + 0.005 + at;
+    const osc = ctx.createOscillator();
+    osc.type = type;
+    osc.frequency.setValueAtTime(f0, t0);
+    osc.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(gain, t0 + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+
+  /**
+   * The walking mode's sounds, only while the sound is on: 'step' (a tap at pitch f, each hop of the ball), 'land',
+   * 'jump' (from the ground), 'airjump' (again in the air), 'star' (a star collected) and 'stars' (the last one).
+   */
+  effect(name, f = 400) {
+    if (!this.on) return;
+    const notes = (semis, { base = 880, gap = 0.07, dur = 0.2, gain = 0.12 } = {}) => semis.forEach((s, k) => {
+      const hz = base * 2 ** (s / 12);
+      this.chirp(hz, hz * 1.002, dur, { type: 'triangle', gain, at: k * gap });
+    });
+    if (name === 'step') this.chirp(f, f * 0.55, 0.07, { type: 'triangle', gain: 0.1 });
+    else if (name === 'land') this.chirp(170, 60, 0.14, { gain: 0.25 });
+    else if (name === 'jump') this.chirp(260, 760, 0.17, { type: 'triangle', gain: 0.13 });
+    else if (name === 'airjump') this.chirp(560, 1100, 0.1, { gain: 0.09 });
+    else if (name === 'star') notes([0, 4, 7, 12]); // a rising arpeggio, A major
+    else if (name === 'stars') notes([0, 4, 7, 12, 7, 12, 16, 19, 24], { base: 660, gap: 0.11, dur: 0.3, gain: 0.13 });
+  }
 }

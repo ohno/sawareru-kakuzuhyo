@@ -6,6 +6,7 @@ import { ELEMENTS, DRIP_LINES } from './data.js';
 import { MAGIC, METRICS, primaryCategory, categoryHex, viridis, hexToRgb, halfLifeColor, legoColor, legoKey } from './nuclear.js';
 import { FUEL_GROUPS, isFissionProduct } from './fuel.js';
 import { makeTextSprite, FONT } from './sprites.js';
+import { tr, EN } from './i18n.js';
 
 export const FOOT = 0.88; // box footprint (1 = touching neighbours)
 /** the baseplate: its edges in x (N) and z (-Z), and the width of the black frame around it */
@@ -135,7 +136,10 @@ function buildDripLines(C) {
     return m;
   };
   group.add(mesh(bandPos, 0.16), mesh(dashPos, 0.95));
-  for (const [text, z, side] of [['中性子ドリップライン（存在限界の理論予想）', 36, 'n'], ['陽子ドリップライン（存在限界の理論予想）', 104, 'p']]) {
+  for (const [text, z, side] of [
+    [tr('中性子ドリップライン（存在限界の理論予想）', 'Neutron drip line (theoretical limit of existence)'), 36, 'n'],
+    [tr('陽子ドリップライン（存在限界の理論予想）', 'Proton drip line (theoretical limit of existence)'), 104, 'p'],
+  ]) {
     const s = makeTextSprite(text, { color: C.drip, size: 2.2, weight: 700, anchor: side === 'n' ? 'left' : 'right', stroke: C.plate });
     const x = side === 'n' ? at(z, 6) + 3 : at(z, 3) - 6;
     s.position.set(x, 0.8, -z);
@@ -733,18 +737,20 @@ export class NuclideChart {
       parts.zAxis.add(s);
       this.axisTicksZ.push(s.position);
     }
-    const nAxis = makeTextSprite('中性子数 N', { color: C.nAxis, size: 3.0, weight: 700, stroke: C.outline });
+    const nAxis = makeTextSprite(tr('中性子数 N', 'Neutron number N'), { color: C.nAxis, size: 3.0, weight: 700, stroke: C.outline });
     nAxis.position.set(100, 0.9, 10.5);
     parts.nAxis.add(nAxis);
-    const zAxis = makeTextSprite('陽子数 Z', { color: C.zAxis, size: 3.0, weight: 700, stroke: C.outline });
+    const zAxis = makeTextSprite(tr('陽子数 Z', 'Proton number Z'), { color: C.zAxis, size: 3.0, weight: 700, stroke: C.outline });
     zAxis.position.set(-19, 0.9, -64);
+    // the English name is twice as long as the strip between the board's edge and the arrow: it runs up the axis
+    if (EN) zAxis.material.rotation = Math.PI / 2;
     parts.zAxis.add(zAxis);
     // larger names inside the chart, in its empty lower right and upper left (the tutorial's flat steps)
-    const nInside = makeTextSprite('中性子数 N →', { color: C.nAxis, size: 7, weight: 700, stroke: C.outline });
+    const nInside = makeTextSprite(tr('中性子数 N →', 'Neutron number N →'), { color: C.nAxis, size: 7, weight: 700, stroke: C.outline });
     nInside.position.set(150, 0.9, -12);
     parts.nAxis.add(nInside);
-    const zInside = makeTextSprite('↑ 陽子数 Z', { color: C.zAxis, size: 7, weight: 700, stroke: C.outline });
-    zInside.position.set(24, 0.9, -104);
+    const zInside = makeTextSprite(tr('↑ 陽子数 Z', '↑ Proton number Z'), { color: C.zAxis, size: 7, weight: 700, stroke: C.outline });
+    zInside.position.set(EN ? 30 : 24, 0.9, -104); // the longer English name clear of the tutorial's column of tiles
     parts.zAxis.add(zInside);
     this.axisNames = { outside: [nAxis, zAxis], inside: [nInside, zInside] };
 
@@ -768,9 +774,9 @@ export class NuclideChart {
     const ax = new THREE.Group();
     ax.add(flatArrow([0, 0], [1, 0], 0.09, C.nAxis, null, 0.03));
     ax.add(flatArrow([0, 0], [0, -1], 0.09, C.zAxis, null, 0.03));
-    const ln = makeTextSprite('中性子数 N', { color: C.nAxis, size: 0.2, weight: 700, anchor: 'left', stroke: C.outline });
+    const ln = makeTextSprite(tr('中性子数 N', 'Neutron number N'), { color: C.nAxis, size: 0.2, weight: 700, anchor: 'left', stroke: C.outline });
     ln.position.set(1.1, 0.06, 0);
-    const lz = makeTextSprite('陽子数 Z', { color: C.zAxis, size: 0.2, weight: 700, anchor: 'left', stroke: C.outline });
+    const lz = makeTextSprite(tr('陽子数 Z', 'Proton number Z'), { color: C.zAxis, size: 0.2, weight: 700, anchor: 'left', stroke: C.outline });
     lz.position.set(0.12, 0.06, -1.0);
     for (const s of [ln, lz]) {
       s.material.depthTest = false;
@@ -814,7 +820,8 @@ export class NuclideChart {
     this.elementLabels = [];
     if (!this.labelName && !this.labelZ) return;
     // Japanese names; the rows of elements not yet discovered only while the island of stability is shown
-    ELEMENTS.forEach(([, , name], z) => {
+    ELEMENTS.forEach(([, en, ja], z) => {
+      const name = EN ? en : ja;
       if (!this.rowStart.has(z) || (z > 118 && !this.islandOn)) return;
       const text = [this.labelName ? name : '', this.labelZ ? `Z=${z}` : ''].filter(Boolean).join('  ');
       const s = makeTextSprite(text, { color: this.guideColors.element, size: 0.85, weight: 600, anchor: 'right' });
@@ -871,7 +878,8 @@ export class NuclideChart {
         // neutron side: gizmo in front of the column end; proton side: left of the row start
         const ox = side === 'n' ? edgeX + 0.6 : edgeX - 0.9 - L;
         const oz = side === 'n' ? edgeZ + 0.9 + L : edgeZ - 0.6;
-        const o = screen(ox, 0, oz), e1 = screen(ox + L * 2.2, 0, oz), e2 = screen(ox + L * 0.9, 0, oz - L * 1.1); // incl. labels
+        const [w1, w2] = EN ? [2.8, 1.6] : [2.2, 0.9]; // how far the labels reach (the English names are longer)
+        const o = screen(ox, 0, oz), e1 = screen(ox + L * w1, 0, oz), e2 = screen(ox + L * w2, 0, oz - L * 1.1); // incl. labels
         if (!inside(o, 24) || !inside(e1, 12) || !inside(e2, 12)) return;
         const c = screen(ox + L / 2, 0, oz - L / 2);
         let score = Math.hypot(c[0] - cx, c[1] - cy) * (side === 'p' ? 1.2 : 1);

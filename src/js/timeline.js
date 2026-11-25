@@ -3,11 +3,14 @@
 // down until the valley floor is left.
 import { METRICS, nucText, fmtSeconds } from './nuclear.js';
 import { DISPLAY_MODES } from './fuel.js';
+import { tr, EN } from './i18n.js';
 
 const YEARS_PER_SECOND = 9;
 const CUT_SECONDS = 18; // from all nuclides to the last one
 
 const $ = (s) => document.querySelector(s);
+/** "1,234 nuclides" (English): k nuclides, the number written as `text` */
+const nuclidesEn = (k, text = String(k)) => `${text} ${k === 1 ? 'nuclide' : 'nuclides'}`;
 
 export class Timeline {
   /**
@@ -62,7 +65,7 @@ export class Timeline {
     this.stop();
     this.mode = mode;
     this.select.value = mode;
-    this.button.setAttribute('aria-label', mode === 'height' ? '高い核から順に消す' : '発見の歴史を再生');
+    this.button.setAttribute('aria-label', mode === 'height' ? tr('高い核から順に消す', 'Remove the tallest first') : tr('発見の歴史を再生', 'Play the history of discovery'));
     this.year = this.yearMax;
     chart.yearLimit = Infinity;
     if (mode === 'height') {
@@ -101,6 +104,14 @@ export class Timeline {
     const { chart, year } = this;
     const found = (chart.filter === 'riken' ? this.rikenYears : this.years).filter((v) => v <= year).length;
     const shown = () => chart.visible.reduce((a, v) => a + v, 0);
+    if (EN) {
+      this.label.innerHTML = chart.filter === 'riken'
+        ? `Discovered at RIKEN by <b>${year}</b>: ${nuclidesEn(found)}`
+        : chart.filter === 'cycle'
+          ? `<b>${this.cycle().map((k) => DISPLAY_MODES[k].short).join(', ')}</b> ${nuclidesEn(shown())}${year < this.yearMax ? ` (discovered by ${year})` : ''}`
+          : `Discovered by <b>${year}</b>: ${nuclidesEn(found, found.toLocaleString())}`;
+      return;
+    }
     this.label.innerHTML = chart.filter === 'riken'
       ? `<b>${year}年</b>までに理研で発見: ${found} 核種`
       : chart.filter === 'cycle'
@@ -143,9 +154,11 @@ export class Timeline {
     const key = chart.cutMetric();
     const left = [];
     chart.visible.forEach((v, i) => v && left.push(i));
-    const level = chart.heightCut === Infinity ? 'すべて' : `${METRICS[key].short} ≤ ${cutText(key, chart.heightCut)}`;
-    const names = left.length <= 3 ? `（${left.map((i) => nucText(chart.nuclides[i])).join('、')}）` : '';
-    this.label.innerHTML = `<b>${level}</b>：${left.length.toLocaleString()} 核種${names}`;
+    const level = chart.heightCut === Infinity ? tr('すべて', 'All') : `${METRICS[key].short} ≤ ${cutText(key, chart.heightCut)}`;
+    const list = () => left.map((i) => nucText(chart.nuclides[i]));
+    const names = left.length <= 3 ? tr(`（${list().join('、')}）`, ` (${list().join(', ')})`) : '';
+    this.label.innerHTML = tr(`<b>${level}</b>：${left.length.toLocaleString()} 核種${names}`,
+      `<b>${level}</b>: ${nuclidesEn(left.length, left.length.toLocaleString())}${names}`);
   }
 
   /** what is on screen changed: the removal starts over from the new set */
@@ -216,8 +229,8 @@ export class Timeline {
 
 /** a value of the height quantity `key`, as the label writes it */
 function cutText(key, v) {
-  if (key === 'hl') return v >= 22 ? '安定' : v <= -22 ? '非束縛' : fmtSeconds(10 ** v);
+  if (key === 'hl') return v >= 22 ? tr('安定', 'stable') : v <= -22 ? tr('非束縛', 'unbound') : fmtSeconds(10 ** v);
   if (key === 'fy') return `${+(10 ** v * 100).toPrecision(2)} %`;
-  if (key === 'year') return `${v}年`;
+  if (key === 'year') return tr(`${v}年`, `${v}`);
   return `${+v.toFixed(Math.abs(v) < 10 ? 3 : 0)} ${METRICS[key].unit}`;
 }

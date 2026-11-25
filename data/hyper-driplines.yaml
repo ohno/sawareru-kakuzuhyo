@@ -4,6 +4,7 @@ sources:
   - key: samanta2008
     short: Samanta 2008
     label: Samanta ら 2008（液滴模型 BWMH）
+    label_en: Samanta et al. 2008 (liquid-drop model BWMH)
     citation: 'C. Samanta, P. Roy Chowdhury, D. N. Basu, "Lambda hyperonic effect on the normal drip lines", J. Phys. G: Nucl. Part. Phys. 35, 065101 (2008)'
     layers:
       0:
@@ -69,6 +70,7 @@ sources:
   - key: roychowdhury2010
     short: Roy Chowdhury 2010（Ξ⁻）
     label: Roy Chowdhury ら 2010（Ξ⁻、液滴模型 BWMH）
+    label_en: Roy Chowdhury et al. 2010 (Ξ⁻, liquid-drop model BWMH)
     citation: P. Roy Chowdhury, C. Samanta, D. N. Basu, "Charged and neutral hyperonic effects on the driplines", Rom. Rep. Phys. 62, 65-98 (2010) [arXiv:nucl-th/0605005, 2006]
     layers:
       2:
@@ -94,6 +96,7 @@ sources:
   - key: meoto2022
     short: Meoto 2022（2n）
     label: Meoto 2022（1Λ の 2 中性子ドリップ、Z = 6–25）
+    label_en: Meoto 2022 (two-neutron drip line of single-Λ hypernuclei, Z = 6–25)
     citation: E. F. Meoto, "Two-neutron drip lines of a few single lambda hypernuclei", J. Phys. Commun. 6, 125004 (2022)
     layers:
       1:

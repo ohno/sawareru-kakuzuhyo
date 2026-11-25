@@ -7,14 +7,15 @@ import * as THREE from 'three';
 import { ELEMENTS } from './data.js';
 import { LEGO_PALETTE, SUPERSCRIPTS, cssRgb, inkFor } from './nuclear.js';
 import { icon } from './icons.js';
+import { tr, EN } from './i18n.js';
 
 const U_KEV = 931494.10242; // atomic mass unit in keV (for atomic weights from mass excesses)
 const MAJOR = [1, 8, 26, 47, 82, 92, 113]; // elements named beside the column
 const COLUMN_N = -4; // where the column stands: between the numbers of the Z axis and the first column of the board
 // the lanthanides and actinides: their place in group 3 of the table (row, column 2) and their own row below it
 const F_ROWS = [
-  { from: 57, to: 71, row: 5, below: 7.5, name: 'ランタノイド', tint: '#dbe8ff' },
-  { from: 89, to: 103, row: 6, below: 8.5, name: 'アクチノイド', tint: '#ffe3c8' },
+  { from: 57, to: 71, row: 5, below: 7.5, name: tr('ランタノイド', 'Lanthanides'), tint: '#dbe8ff' },
+  { from: 89, to: 103, row: 6, below: 8.5, name: tr('アクチノイド', 'Actinides'), tint: '#ffe3c8' },
 ];
 const fRow = (z) => F_ROWS.find((f) => z >= f.from && z <= f.to);
 
@@ -79,17 +80,26 @@ const READING_OF = new Map(READINGS);
 const READINGS_RE = new RegExp(READINGS.map(([w]) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
 /** subtitle HTML -> the words to read: no tags, ¹⁴C as 炭素14, "2D / 3D" as "2D、3D", and the READINGS */
 function spoken(html) {
+  // in English: ¹⁴C as "Carbon 14", "2D, 3D", no READINGS (they are for Japanese voices), and RIKEN as a word
+  // (English voices may spell it out letter by letter)
   const div = document.createElement('div');
   div.innerHTML = html;
-  return div.textContent
+  const text = div.textContent
     .replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)([A-Z][a-z]?)/g, (_, a, s) => {
       const z = ELEMENTS.findIndex((e) => e[0] === s);
-      return `${z > 0 ? ELEMENTS[z][2] : s}${[...a].map((c) => SUPERSCRIPTS.indexOf(c)).join('')}`;
+      const mass = [...a].map((c) => SUPERSCRIPTS.indexOf(c)).join('');
+      return EN ? `${z > 0 ? ELEMENTS[z][1] : s} ${mass}` : `${z > 0 ? ELEMENTS[z][2] : s}${mass}`;
     })
-    .replace(/\s*\/\s*/g, '、')
-    .replace(READINGS_RE, (w) => READING_OF.get(w));
+    .replace(/\s*\/\s*/g, EN ? ', ' : '、');
+  return EN ? text.replace(/\bRIKEN\b/g, 'Riken') : text.replace(READINGS_RE, (w) => READING_OF.get(w));
 }
-const japaneseVoice = () => speech?.getVoices().find((v) => v.lang.replace('_', '-').startsWith('ja')) || null;
+/** a voice in the page's language: Japanese, or English (American English first) */
+function pageVoice() {
+  if (!EN) return speech?.getVoices().find((v) => v.lang.replace('_', '-').startsWith('ja')) || null;
+  const voices = speech?.getVoices() || [];
+  const lang = (v) => v.lang.replace('_', '-').toLowerCase();
+  return voices.find((v) => lang(v) === 'en-us') || voices.find((v) => lang(v).startsWith('en')) || null;
+}
 // a sample of a color of the LEGO chart, set before its name in a subtitle
 const swatch = (key) => `<span class="tut-sw" style="background:${LEGO_PALETTE.find((c) => c.key === key).color}"></span>`;
 
@@ -110,47 +120,58 @@ export class Tutorial {
     // `reveal`: the panel or bar of the page that comes back with this step (they stay away until explained).
     this.steps = [
       {
-        text: '周期表には 118 種類の元素が並んでいます。元素の種類を決めるのは、原子の中心にある原子核の<b>陽子の数</b>（原子番号 Z）です。',
+        text: tr('周期表には 118 種類の元素が並んでいます。元素の種類を決めるのは、原子の中心にある原子核の<b>陽子の数</b>（原子番号 Z）です。',
+          'The periodic table lists 118 elements. What sets each element apart is the <b>number of protons</b> in the nucleus, at the center of the atom. This is the atomic number, Z.'),
         ms: 7500, enter: () => this.layout('table'), tiles: true, flat: true,
       },
       {
-        text: '核図表では、元素を陽子の数の順に、左の<b>縦軸</b>（陽子の数 Z）に沿って一列に並べます。いちばん下が水素 H（陽子 1 個）で、上にいくほど重い元素です。',
+        text: tr('核図表では、元素を陽子の数の順に、左の<b>縦軸</b>（陽子の数 Z）に沿って一列に並べます。いちばん下が水素 H（陽子 1 個）で、上にいくほど重い元素です。',
+          'On the chart of nuclides, the elements stand in one column, in order of proton number, along the <b>vertical axis</b> on the left. This axis is the proton number, Z. Hydrogen, with one proton, is at the bottom, and the elements get heavier as you go up.'),
         ms: 7500, enter: () => this.layout('column'), tiles: true, flat: true, axisNames: true,
       },
       {
-        text: '原子核には陽子のほかに<b>中性子</b>もあります。下の<b>横軸</b>は中性子の数 N。それぞれの元素を、原子量（≒ 陽子の数 + 中性子の数）から決まる位置へ動かします。',
+        text: tr('原子核には陽子のほかに<b>中性子</b>もあります。下の<b>横軸</b>は中性子の数 N。それぞれの元素を、原子量（≒ 陽子の数 + 中性子の数）から決まる位置へ動かします。',
+          'Besides protons, a nucleus also holds <b>neutrons</b>. The <b>horizontal axis</b> at the bottom is the neutron number, N. Each element now moves to the place set by its atomic weight, which is roughly the number of protons plus the number of neutrons.'),
         ms: 8000, enter: () => this.layout('chart'), tiles: true, flat: true, axisNames: true,
       },
       {
-        text: '同じ元素でも、中性子の数がちがう原子核があります。これを<b>同位体</b>と呼びます。同位体を左右に並べていくと…',
+        text: tr('同じ元素でも、中性子の数がちがう原子核があります。これを<b>同位体</b>と呼びます。同位体を左右に並べていくと…',
+          'Nuclei of the same element can have different numbers of neutrons. These are called <b>isotopes</b>. If we line up the isotopes to the left and right…'),
         ms: 7000, enter: () => this.spread(), flat: true, axisNames: true,
       },
       {
-        text: `これが<b>核図表</b>です。これまでに ${app.discovered.toLocaleString()} 種類の原子核が見つかっています。${swatch('st')}黒は安定な原子核、${swatch('found')}赤は不安定な（放射性の）原子核、${swatch('unfound')}黄色は存在が予想されていますが、まだ見つかっていない原子核です。`,
+        text: tr(`これが<b>核図表</b>です。これまでに ${app.discovered.toLocaleString()} 種類の原子核が見つかっています。${swatch('st')}黒は安定な原子核、${swatch('found')}赤は不安定な（放射性の）原子核、${swatch('unfound')}黄色は存在が予想されていますが、まだ見つかっていない原子核です。`,
+          `This is the <b>chart of nuclides</b>. So far, ${app.discovered.toLocaleString()} different nuclei have been found. ${swatch('st')}Black shows stable nuclei, ${swatch('found')}red shows unstable, or radioactive, nuclei, and ${swatch('unfound')}yellow shows nuclei that are predicted to exist but have not been found yet.`),
         ms: 9000, enter: () => this.full(), axisNames: true,
       },
       {
-        text: '高さは<b>核子 1 個あたりの質量</b>です。軽すぎても重すぎても高くなり、鉄のあたりがいちばん低い「谷底」です。不安定な原子核は、崩壊して谷を下っていきます。',
+        text: tr('高さは<b>核子 1 個あたりの質量</b>です。軽すぎても重すぎても高くなり、鉄のあたりがいちばん低い「谷底」です。不安定な原子核は、崩壊して谷を下っていきます。',
+          'The height shows the <b>mass per nucleon</b>. Nuclei that are too light or too heavy stand taller. The lowest point, the "valley floor", is around iron. Unstable nuclei decay and make their way down the valley.'),
         ms: 9000, enter: () => this.to3d(),
       },
       {
-        text: '箱をクリックすると、その原子核のくわしい情報が右に出て、<b>崩壊していく先</b>が矢印で示されます。これは年代測定に使われる炭素 14 です。',
+        text: tr('箱をクリックすると、その原子核のくわしい情報が右に出て、<b>崩壊していく先</b>が矢印で示されます。これは年代測定に使われる炭素 14 です。',
+          'Click a box to see details about that nucleus on the right. Arrows show <b>what it decays into</b>. This is carbon-14, which is used to find out how old things are.'),
         ms: 9000, enter: () => this.demoPin(C14), reveal: '#info',
       },
       {
-        text: '<b>ドラッグで回転</b>、右ドラッグで移動、ホイールで拡大・縮小できます。スマートフォンやタブレットでは指で操作できます。',
+        text: tr('<b>ドラッグで回転</b>、右ドラッグで移動、ホイールで拡大・縮小できます。スマートフォンやタブレットでは指で操作できます。',
+          '<b>Drag to rotate</b>, right-drag to move, and scroll the wheel to zoom in and out. On phones and tablets, use your fingers.'),
         ms: 8000, enter: () => this.orbit(),
       },
       {
-        text: '左上のパネルでは、<b>原子核の検索</b>や、表示・高さ・色の切り替えができます。このチュートリアルも、ここからいつでも見られます。',
+        text: tr('左上のパネルでは、<b>原子核の検索</b>や、表示・高さ・色の切り替えができます。このチュートリアルも、ここからいつでも見られます。',
+          'The panel at the top left lets you <b>search for a nucleus</b> and change the display, the heights and the colors. You can also watch this tutorial again from there at any time.'),
         ms: 7000, enter: () => this.highlight('#controls'), reveal: '#controls',
       },
       {
-        text: '下のバーでは、<b>2D / 3D</b> の切り替えや、<b>理研が発見した原子核</b>、ストレンジクォークを含む<b>ハイパー核</b>の表示ができます。',
+        text: tr('下のバーでは、<b>2D / 3D</b> の切り替えや、<b>理研が発見した原子核</b>、ストレンジクォークを含む<b>ハイパー核</b>の表示ができます。',
+          'The bar below lets you switch between <b>2D and 3D</b>, and show the <b>nuclei discovered at RIKEN</b> and the <b>hypernuclei</b>, which contain strange quarks.'),
         ms: 7000, enter: () => this.highlight('.toolbar'), reveal: '.toolbar',
       },
       {
-        text: 'いちばん下のバーでは、原子核が<b>発見されてきた歴史</b>を再生できます。それでは、自由にさわってみましょう！',
+        text: tr('いちばん下のバーでは、原子核が<b>発見されてきた歴史</b>を再生できます。それでは、自由にさわってみましょう！',
+          'The bar at the very bottom plays back the <b>history of discovery</b> of the nuclei. Now, go ahead and explore on your own!'),
         ms: 8000, enter: () => this.highlight('.timeline'), reveal: '.timeline',
       },
     ];
@@ -179,7 +200,7 @@ export class Tutorial {
       gap: add('tut-tile tut-gap', `${f.from}–${f.to}`),
       name: add('tut-note tut-fname', f.name),
     }));
-    this.labels = MAJOR.map((z) => ({ z, el: add('tut-label', `<b>${ELEMENTS[z][0]}</b> ${ELEMENTS[z][2]} <small>Z = ${z}</small>`) }));
+    this.labels = MAJOR.map((z) => ({ z, el: add('tut-label', `<b>${ELEMENTS[z][0]}</b> ${ELEMENTS[z][EN ? 1 : 2]} <small>Z = ${z}</small>`) }));
     // the subtitle box keeps one size, and the tiles sit on the board, so both follow the window's size
     window.addEventListener('resize', () => {
       if (!this.active) return;
@@ -192,14 +213,14 @@ export class Tutorial {
     const sub = (this.sub = document.createElement('div'));
     sub.className = 'tut-sub';
     sub.setAttribute('role', 'dialog');
-    sub.setAttribute('aria-label', 'チュートリアル');
+    sub.setAttribute('aria-label', tr('チュートリアル', 'Tutorial'));
     sub.innerHTML = `<p class="tut-text" aria-live="polite"></p>
       <div class="tut-nav"><span class="tut-count"></span><span class="tut-bar"><i></i></span>
-      <button class="btn tut-prev" title="前へ（← キー）" aria-label="前へ">◀◀</button>
-      <button class="btn tut-pause" title="一時停止（スペース、Enter）" aria-label="一時停止">❚❚</button>
-      <button class="btn tut-next" title="次へ（→ キー）" aria-label="次へ">▶▶</button>
-      <button class="btn tut-voice" aria-pressed="false" title="字幕を音声で読み上げる" aria-label="音声">${icon('voiceOff')}</button>
-      <button class="btn tut-end" title="終了（Esc キー）" aria-label="終了">×</button></div>`;
+      <button class="btn tut-prev" title="${tr('前へ（← キー）', 'Back (← key)')}" aria-label="${tr('前へ', 'Back')}">◀◀</button>
+      <button class="btn tut-pause" title="${tr('一時停止（スペース、Enter）', 'Pause (Space, Enter)')}" aria-label="${tr('一時停止', 'Pause')}">❚❚</button>
+      <button class="btn tut-next" title="${tr('次へ（→ キー）', 'Next (→ key)')}" aria-label="${tr('次へ', 'Next')}">▶▶</button>
+      <button class="btn tut-voice" aria-pressed="false" title="${tr('字幕を音声で読み上げる', 'Read the subtitles aloud')}" aria-label="${tr('音声', 'Voice')}">${icon('voiceOff')}</button>
+      <button class="btn tut-end" title="${tr('終了（Esc キー）', 'End (Esc key)')}" aria-label="${tr('終了', 'End')}">×</button></div>`;
     sub.hidden = true;
     const part = (name) => sub.querySelector(`.tut-${name}`);
     this.ui = {
@@ -271,7 +292,7 @@ export class Tutorial {
     }
     this.ui.text.innerHTML = step.text;
     this.ui.count.textContent = `${k + 1} / ${this.steps.length}`;
-    this.ui.next.textContent = k === this.steps.length - 1 ? 'はじめる' : '▶▶';
+    this.ui.next.textContent = k === this.steps.length - 1 ? tr('はじめる', 'Start') : '▶▶';
     this.ui.prev.disabled = k === 0;
     // the page's panels and bars stay away until they are explained
     const shown = new Set(this.steps.slice(0, k + 1).map((before) => before.reveal));
@@ -360,8 +381,9 @@ export class Tutorial {
   markPause() {
     const btn = this.ui.pause;
     btn.textContent = this.paused ? '▶' : '❚❚';
-    btn.setAttribute('aria-label', this.paused ? '再生' : '一時停止');
-    btn.title = `${this.paused ? '再生' : '一時停止'}（スペース、Enter）`;
+    const name = this.paused ? tr('再生', 'Play') : tr('一時停止', 'Pause');
+    btn.setAttribute('aria-label', name);
+    btn.title = tr(`${name}（スペース、Enter）`, `${name} (Space, Enter)`);
   }
 
   /** keys while the tutorial runs: ← → steps, space / Enter pause and play, Esc ends */
@@ -394,8 +416,8 @@ export class Tutorial {
     this.quiet();
     this.said = this.k;
     const u = new SpeechSynthesisUtterance(spoken(this.steps[this.k].text));
-    u.lang = 'ja-JP';
-    const voice = japaneseVoice();
+    u.lang = EN ? 'en-US' : 'ja-JP';
+    const voice = pageVoice();
     if (voice) u.voice = voice;
     u.onend = u.onerror = () => {
       if (this.utterance !== u) return;
