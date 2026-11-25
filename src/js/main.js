@@ -31,7 +31,7 @@ THREE.ColorManagement.enabled = false;
 
 // the page's own words in its language, at once (the JA / EN buttons on the toolbar switch it)
 translatePage();
-if (EN) document.title = 'RIKEN Touchable Periodic Table';
+if (EN) document.title = 'RIKEN Touchable Nuclide Chart';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];

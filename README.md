@@ -1,4 +1,4 @@
-# RIKENさわれる周期表
+# RIKENさわれる核図表
 
 https://ohno.github.io/sawareru-kakuzuhyo/
 
@@ -53,4 +53,4 @@ Python 3 を使用します。`build.py` は、未発見の原子核と安定の
 
 ## English
 
-The *RIKEN Touchable Periodic Table* (RIKENさわれる周期表) is an interactive 3D chart of about 3,400 nuclides in the colors of RIKEN's LEGO® chart of nuclides: rotate it, zoom in, and point at a box to see the half-life, the decay modes and where the decays lead. The interface is in Japanese and English (chosen from the browser's language; the button at the right end of the toolbar switches it), and a walking mode (`w` key) lets you roll and jump across the chart as a little ball (press jump again and again to fly), collecting stars over the doubly magic nuclei. It was made at the RIKEN TRIP Hackathon of fiscal year 2026 by the 元素変換 (element transmutation) team; the code is under the [MIT License](LICENSE), and the data sources are listed in [data/README.md](data/README.md).
+The *RIKEN Touchable Nuclide Chart* (RIKENさわれる核図表) is an interactive 3D chart of about 3,400 nuclides in the colors of RIKEN's LEGO® chart of nuclides: rotate it, zoom in, and point at a box to see the half-life, the decay modes and where the decays lead. The interface is in Japanese and English (chosen from the browser's language; the button at the right end of the toolbar switches it), and a walking mode (`w` key) lets you roll and jump across the chart as a little ball (press jump again and again to fly), collecting stars over the doubly magic nuclei. It was made at the RIKEN TRIP Hackathon of fiscal year 2026 by the 元素変換 (element transmutation) team; the code is under the [MIT License](LICENSE), and the data sources are listed in [data/README.md](data/README.md).

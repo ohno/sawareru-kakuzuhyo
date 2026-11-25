@@ -16,7 +16,7 @@
 | `hypernuclei.yaml` | ハイパー核 | [Mainz Chart of Hypernuclides](https://hypernuclei.kph.uni-mainz.de/)（2026-08-04 のデータ）。Ξ は E. Friedman & A. Gal, *EPJ Web Conf.* **271**, 03002 (2022)（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)） |
 | `hyper-driplines.yaml` | ハイパー核のドリップライン | C. Samanta et al., *J. Phys. G* **35**, 065101 (2008)；P. Roy Chowdhury et al., *Rom. Rep. Phys.* **62**, 65 (2010)；E.F. Meoto, *J. Phys. Commun.* **6**, 125004 (2022)（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)） |
 | （`scripts/ktuy.py` がビルド時に取得） | 未発見の原子核の質量、安定の島（殻エネルギー） | H. Koura et al., *Prog. Theor. Phys.* **113**, 305 (2005)（KTUY05、JAEA 核データセンターの質量表） |
-| （このプロジェクト） | このプロジェクトの引用方法 | 理化学研究所『RIKENさわれる周期表』(2026) |
+| （このプロジェクト） | このプロジェクトの引用方法 | 理化学研究所『RIKENさわれる核図表』(2026) |
 
 出典の値は、必要なものを抜き出して YAML に書き換えています。
 
@@ -36,4 +36,4 @@ The same table in English, shown by the app in English mode (same rows, in the s
 | `hypernuclei.yaml` | Hypernuclei | [Mainz Chart of Hypernuclides](https://hypernuclei.kph.uni-mainz.de/) (data of 2026-08-04); Ξ from E. Friedman & A. Gal, *EPJ Web Conf.* **271**, 03002 (2022) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) |
 | `hyper-driplines.yaml` | Drip lines of hypernuclei | C. Samanta et al., *J. Phys. G* **35**, 065101 (2008); P. Roy Chowdhury et al., *Rom. Rep. Phys.* **62**, 65 (2010); E.F. Meoto, *J. Phys. Commun.* **6**, 125004 (2022) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) |
 | (fetched by `scripts/ktuy.py` at build time) | Masses of undiscovered nuclei, the island of stability (shell energies) | H. Koura et al., *Prog. Theor. Phys.* **113**, 305 (2005) (KTUY05, mass table of the JAEA Nuclear Data Center) |
-| (this project) | How to cite this project | RIKEN, *RIKEN Touchable Periodic Table* (2026) |
+| (this project) | How to cite this project | RIKEN, *RIKEN Touchable Nuclide Chart* (2026) |
