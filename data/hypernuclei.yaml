@@ -2,6 +2,7 @@
 # B: hyperon binding energy (MeV, null if unknown); for L, S, LL the world average of the Mainz chart (data of
 # 2026-08-04), for X the 1p Ξ⁻ state of Friedman & Gal. year, experiment, reference: the earliest publication.
 source: Mainz Chart of Hypernuclides（2026年8月版）、Friedman & Gal, arXiv:2212.12283（Ξ）
+source_en: Mainz Chart of Hypernuclides (August 2026); Friedman & Gal, arXiv:2212.12283 (Ξ)
 hypernuclei:
   columns: [kind, A, nameZ, coreZ, coreN, B, year, experiment, reference, doi]
   rows:

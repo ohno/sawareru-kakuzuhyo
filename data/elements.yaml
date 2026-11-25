@@ -1,6 +1,6 @@
 # Elements by Z (0 = the neutron; 119–126 have their systematic names only).
 #   discovered  the "Observed" year of Wikipedia "Timeline of chemical element discoveries" (oldid=1384258232)
-#   description, isotopes [A, note]  written for this app
+#   description, isotopes [A, note]  written for this app; description_en and the last item of each isotope, their English
 elements:
   - Z: 0
     symbol: 'n'
@@ -8,8 +8,9 @@ elements:
     ja: 中性子
     discovered: 1932
     description: 陽子とともに原子核をつくる電気を帯びない粒子で、1932年にイギリスのチャドウィックが発見しました。原子核の外に出た自由な中性子は不安定で、半減期約10分で陽子・電子・反ニュートリノに崩壊します。
+    description_en: "A particle with no electric charge that, together with protons, makes up atomic nuclei. It was discovered in 1932 by the British physicist James Chadwick. A free neutron outside the nucleus is unstable and decays with a half-life of about 10 minutes into a proton, an electron and an antineutrino."
     isotopes:
-      - [1, '自由中性子・半減期約10分']
+      - [1, '自由中性子・半減期約10分', "Free neutron; half-life about 10 minutes"]
 
   - Z: 1
     symbol: H
@@ -17,10 +18,11 @@ elements:
     ja: 水素
     discovered: 1671
     description: 宇宙で最も多く存在する元素で、恒星は水素の核融合によって輝いています。名前はギリシャ語の「水を生むもの」に由来し、燃料電池などのクリーンなエネルギー源としても注目されています。
+    description_en: "The most abundant element in the universe; stars shine through the nuclear fusion of hydrogen. Its name comes from the Greek for \"water-former\", and it is also attracting attention as a clean energy source, for example in fuel cells."
     isotopes:
-      - [1, '軽水素・天然の約99.99%']
-      - [2, '重水素・核融合の燃料']
-      - [3, '三重水素・半減期約12年']
+      - [1, '軽水素・天然の約99.99%', "Protium; about 99.99% of natural hydrogen"]
+      - [2, '重水素・核融合の燃料', "Deuterium; fuel for nuclear fusion"]
+      - [3, '三重水素・半減期約12年', "Tritium; half-life about 12 years"]
 
   - Z: 2
     symbol: He
@@ -28,10 +30,11 @@ elements:
     ja: ヘリウム
     discovered: 1868
     description: 1868年の日食の観測で太陽光のスペクトルから見つかり、ギリシャ語の太陽「ヘリオス」にちなんで名付けられました。軽く燃えないため風船に使われ、液体ヘリウムはMRIの超伝導磁石の冷却に欠かせません。
+    description_en: "Found in 1868 in the spectrum of sunlight during observations of a solar eclipse, and named after \"helios\", the Greek word for the Sun. Being light and non-flammable, it is used in balloons, and liquid helium is essential for cooling the superconducting magnets of MRI scanners."
     isotopes:
-      - [4, 'α粒子・二重魔法数の核']
-      - [3, '希少・極低温の冷却に']
-      - [6, '中性子ハロー核']
+      - [4, 'α粒子・二重魔法数の核', "α particle; doubly magic nucleus"]
+      - [3, '希少・極低温の冷却に', "Rare; used for cooling to ultra-low temperatures"]
+      - [6, '中性子ハロー核', "Neutron halo nucleus"]
 
   - Z: 3
     symbol: Li
@@ -39,10 +42,11 @@ elements:
     ja: リチウム
     discovered: 1817
     description: 1817年にスウェーデンのアルフェドソンが発見し、ギリシャ語の「石（リトス）」が名前の由来です。最も軽い金属で、スマートフォンや電気自動車のリチウムイオン電池に欠かせません。
+    description_en: "Discovered in 1817 by the Swedish chemist Arfwedson; its name comes from the Greek word for \"stone\" (lithos). It is the lightest metal and is essential to the lithium-ion batteries in smartphones and electric vehicles."
     isotopes:
-      - [7, '天然の約95%']
-      - [6, '核融合炉でトリチウム生産']
-      - [11, '中性子ハロー核の代表例']
+      - [7, '天然の約95%', "About 95% of natural lithium"]
+      - [6, '核融合炉でトリチウム生産', "Used to produce tritium in fusion reactors"]
+      - [11, '中性子ハロー核の代表例', "A classic example of a neutron halo nucleus"]
 
   - Z: 4
     symbol: Be
@@ -50,10 +54,11 @@ elements:
     ja: ベリリウム
     discovered: 1798
     description: 宝石の緑柱石（ベリル）が名前の由来で、1798年にフランスのボークランが発見しました。軽くて硬くX線を通しやすいため、X線装置の窓や宇宙望遠鏡の鏡に使われますが、粉じんには強い毒性があります。
+    description_en: "Named after the gemstone beryl, it was discovered in 1798 by the French chemist Vauquelin. Light, hard and easily penetrated by X-rays, it is used for the windows of X-ray equipment and the mirrors of space telescopes, but its dust is highly toxic."
     isotopes:
-      - [9, '唯一の安定同位体']
-      - [10, '宇宙線で生成・約139万年']
-      - [11, '中性子ハロー核']
+      - [9, '唯一の安定同位体', "The only stable isotope"]
+      - [10, '宇宙線で生成・約139万年', "Produced by cosmic rays; about 1.39 million years"]
+      - [11, '中性子ハロー核', "Neutron halo nucleus"]
 
   - Z: 5
     symbol: B
@@ -61,10 +66,11 @@ elements:
     ja: ホウ素
     discovered: 1787
     description: 鉱物のホウ砂（ボラックス）が名前の由来で、1808年にゲイ＝リュサックらとデービーがそれぞれ単離しました。耐熱ガラスや半導体に使われ、ホウ素10は中性子をよく吸収するため原子炉の制御にも役立ちます。
+    description_en: "Named after the mineral borax, it was isolated in 1808 independently by Gay-Lussac and colleagues and by Davy. It is used in heat-resistant glass and semiconductors, and because boron-10 absorbs neutrons well, it also helps control nuclear reactors."
     isotopes:
-      - [11, '天然の約80%']
-      - [10, '中性子を吸収・がん治療にも']
-      - [8, '太陽ニュートリノの源']
+      - [11, '天然の約80%', "About 80% of natural boron"]
+      - [10, '中性子を吸収・がん治療にも', "Absorbs neutrons; also used in cancer therapy"]
+      - [8, '太陽ニュートリノの源', "Source of solar neutrinos"]
 
   - Z: 6
     symbol: C
@@ -72,10 +78,11 @@ elements:
     ja: 炭素
     discovered: ancient
     description: ラテン語の「木炭（カルボ）」が名前の由来で、ダイヤモンドや黒鉛など性質の大きく異なる姿をとります。すべての生物の体をつくる基本元素で、放射性の炭素14は遺跡や遺物の年代測定に使われます。
+    description_en: "Its name comes from the Latin for \"charcoal\" (carbo), and it takes forms with very different properties, such as diamond and graphite. It is the basic element that makes up the bodies of all living things, and radioactive carbon-14 is used to date archaeological sites and artifacts."
     isotopes:
-      - [12, '原子質量の基準・天然の約99%']
-      - [14, '年代測定・半減期約5700年']
-      - [11, 'PET検査に利用']
+      - [12, '原子質量の基準・天然の約99%', "Standard for atomic mass; about 99% of natural carbon"]
+      - [14, '年代測定・半減期約5700年', "Used for dating; half-life about 5,700 years"]
+      - [11, 'PET検査に利用', "Used in PET scans"]
 
   - Z: 7
     symbol: 'N'
@@ -83,10 +90,11 @@ elements:
     ja: 窒素
     discovered: 1772
     description: 空気の約8割を占める気体で、1772年にスコットランドのダニエル・ラザフォードが発見しました。タンパク質やDNAに欠かせない元素で、アンモニアを経て化学肥料の原料として大量に使われています。
+    description_en: "A gas that makes up about 80% of the air, discovered in 1772 by the Scottish chemist Daniel Rutherford. It is essential to proteins and DNA, and, by way of ammonia, it is used in huge amounts as a raw material for chemical fertilizers."
     isotopes:
-      - [14, '天然の約99.6%']
-      - [15, '安定・窒素循環の追跡に']
-      - [13, 'PET検査に利用']
+      - [14, '天然の約99.6%', "About 99.6% of natural nitrogen"]
+      - [15, '安定・窒素循環の追跡に', "Stable; used to trace the nitrogen cycle"]
+      - [13, 'PET検査に利用', "Used in PET scans"]
 
   - Z: 8
     symbol: O
@@ -94,10 +102,11 @@ elements:
     ja: 酸素
     discovered: 1771
     description: 1770年代にシェーレとプリーストリーがそれぞれ発見し、ラボアジエが「酸を生むもの」という意味で命名しました。地殻の中で最も多い元素で、私たちの呼吸や物が燃えることに欠かせません。
+    description_en: "Discovered independently by Scheele and Priestley in the 1770s, and named by Lavoisier with a word meaning \"acid-former\". It is the most abundant element in the Earth's crust and is essential for our breathing and for things to burn."
     isotopes:
-      - [16, '二重魔法数・天然の約99.8%']
-      - [18, '古気温の指標・PET原料']
-      - [28, '理研RIBFで初観測']
+      - [16, '二重魔法数・天然の約99.8%', "Doubly magic; about 99.8% of natural oxygen"]
+      - [18, '古気温の指標・PET原料', "Indicator of past temperatures; raw material for PET tracers"]
+      - [28, '理研RIBFで初観測', "First observed at RIKEN RIBF"]
 
   - Z: 9
     symbol: F
@@ -105,9 +114,10 @@ elements:
     ja: フッ素
     discovered: 1771
     description: 鉱物の蛍石（フローライト）が名前の由来で、1886年にフランスのモアッサンが単体の分離に成功しました。非常に反応しやすい元素で、虫歯予防の歯みがき粉やフライパンのフッ素樹脂加工に利用されています。
+    description_en: "Named after the mineral fluorite, it was first isolated as a pure element in 1886 by the French chemist Henri Moissan. It is an extremely reactive element, used in toothpaste to prevent tooth decay and in the fluoropolymer coating on frying pans."
     isotopes:
-      - [19, '唯一の安定同位体']
-      - [18, 'PET検査の定番・約110分']
+      - [19, '唯一の安定同位体', "The only stable isotope"]
+      - [18, 'PET検査の定番・約110分', "The standard for PET scans; about 110 minutes"]
 
   - Z: 10
     symbol: Ne
@@ -115,9 +125,10 @@ elements:
     ja: ネオン
     discovered: 1898
     description: ギリシャ語の「新しい」が名前の由来で、1898年にラムゼーとトラバースが液体空気から発見しました。放電させると鮮やかな赤橙色に光り、ネオンサインとして街を彩ってきました。
+    description_en: "Its name comes from the Greek word for \"new\", and it was discovered in liquid air in 1898 by Ramsay and Travers. When an electric discharge passes through it, it glows a vivid reddish orange, and as neon signs it has long brightened city streets."
     isotopes:
-      - [20, '天然の約90%']
-      - [22, '天然の約9%']
+      - [20, '天然の約90%', "About 90% of natural neon"]
+      - [22, '天然の約9%', "About 9% of natural neon"]
 
   - Z: 11
     symbol: Na
@@ -125,9 +136,10 @@ elements:
     ja: ナトリウム
     discovered: 1702
     description: 食塩（塩化ナトリウム）の成分で、1807年にイギリスのデービーが電気分解によって初めて単離しました。元素記号Naはラテン語名ナトリウムに由来し、黄色く光るナトリウムランプはトンネルの照明などに使われてきました。
+    description_en: "A component of table salt (sodium chloride), it was first isolated by electrolysis in 1807 by the British chemist Humphry Davy. Its symbol Na comes from its Latin name, natrium, and sodium lamps, which glow yellow, have been used to light tunnels and other places."
     isotopes:
-      - [23, '唯一の安定同位体']
-      - [22, '陽電子源・半減期約2.6年']
+      - [23, '唯一の安定同位体', "The only stable isotope"]
+      - [22, '陽電子源・半減期約2.6年', "Positron source; half-life about 2.6 years"]
 
   - Z: 12
     symbol: Mg
@@ -135,10 +147,11 @@ elements:
     ja: マグネシウム
     discovered: 1755
     description: ギリシャのマグネシア地方が名前の由来で、1808年にデービーが単離しました。軽くて丈夫な合金としてノートパソコンや自動車に使われ、植物の葉緑素の中心にも含まれています。
+    description_en: "Named after the Magnesia region of Greece, it was isolated by Davy in 1808. Its light, strong alloys are used in laptop computers and cars, and it sits at the center of chlorophyll in plant leaves."
     isotopes:
-      - [24, '天然の約79%']
-      - [32, '「逆転の島」・理研で研究']
-      - [40, '理研で励起状態を初観測']
+      - [24, '天然の約79%', "About 79% of natural magnesium"]
+      - [32, '「逆転の島」・理研で研究', "\"Island of inversion\"; studied at RIKEN"]
+      - [40, '理研で励起状態を初観測', "Excited state first observed at RIKEN"]
 
   - Z: 13
     symbol: Al
@@ -146,9 +159,10 @@ elements:
     ja: アルミニウム
     discovered: 1746
     description: 地殻に最も多く含まれる金属で、ミョウバン（アルム）が名前の由来です。軽くてさびにくいため、1円玉や飲料缶、航空機の材料など身近なところで広く使われています。
+    description_en: "The most abundant metal in the Earth's crust; its name comes from alum. Light and resistant to corrosion, it is widely used in everyday things such as 1-yen coins, drink cans and aircraft materials."
     isotopes:
-      - [27, '唯一の安定同位体']
-      - [26, '銀河のγ線源・約72万年']
+      - [27, '唯一の安定同位体', "The only stable isotope"]
+      - [26, '銀河のγ線源・約72万年', "Source of γ-rays in the Galaxy; about 720,000 years"]
 
   - Z: 14
     symbol: Si
@@ -156,9 +170,10 @@ elements:
     ja: ケイ素
     discovered: 1739
     description: 酸素に次いで地殻に多い元素で、ラテン語の「火打ち石（シレックス）」が名前の由来です。コンピューターの半導体チップや太陽電池の材料として、現代のエレクトロニクスを支えています。
+    description_en: "The second most abundant element in the Earth's crust after oxygen; its name comes from the Latin for \"flint\" (silex). As the material for computer semiconductor chips and solar cells, it underpins modern electronics."
     isotopes:
-      - [28, '天然の約92%・kg再定義に']
-      - [32, '宇宙線で生成・約157年']
+      - [28, '天然の約92%・kg再定義に', "About 92% of natural silicon; used to redefine the kilogram"]
+      - [32, '宇宙線で生成・約157年', "Produced by cosmic rays; about 157 years"]
 
   - Z: 15
     symbol: P
@@ -166,9 +181,10 @@ elements:
     ja: リン
     discovered: 1669
     description: 1669年にドイツのブラントが尿から発見し、ギリシャ語の「光を運ぶもの」が名前の由来です。白リンは暗い所で青白く光ることで知られ、DNAや骨、エネルギー分子ATPに欠かせない元素です。
+    description_en: "Discovered in urine in 1669 by the German alchemist Hennig Brand; its name comes from the Greek for \"light-bearer\". White phosphorus is known for glowing pale blue in the dark, and the element is essential to DNA, bones and the energy molecule ATP."
     isotopes:
-      - [31, '唯一の安定同位体']
-      - [32, '生化学の標識・約14日']
+      - [31, '唯一の安定同位体', "The only stable isotope"]
+      - [32, '生化学の標識・約14日', "Tracer in biochemistry; about 14 days"]
 
   - Z: 16
     symbol: S
@@ -176,9 +192,10 @@ elements:
     ja: 硫黄
     discovered: ancient
     description: 古代から知られる元素で、火山の噴気孔の近くなどで黄色い結晶として見つかります。ゴムを丈夫にする加硫や硫酸の製造に使われ、温泉の独特なにおいは硫化水素によるものです。
+    description_en: "An element known since ancient times, found as yellow crystals near volcanic vents and similar places. It is used in vulcanization, which makes rubber tough, and in making sulfuric acid, and the distinctive smell of hot springs comes from hydrogen sulfide."
     isotopes:
-      - [32, '天然の約95%']
-      - [35, '標識に利用・約87日']
+      - [32, '天然の約95%', "About 95% of natural sulfur"]
+      - [35, '標識に利用・約87日', "Used as a tracer; about 87 days"]
 
   - Z: 17
     symbol: Cl
@@ -186,10 +203,11 @@ elements:
     ja: 塩素
     discovered: 1774
     description: 1774年にシェーレが発見し、黄緑色の気体であることからギリシャ語の「黄緑」にちなんで名付けられました。強い殺菌作用があり、水道水やプールの消毒、塩化ビニルの原料などに使われます。
+    description_en: "Discovered by Scheele in 1774 and named after the Greek word for \"yellow-green\" because it is a yellow-green gas. It is a strong disinfectant, used to treat tap water and swimming pools, and is also a raw material for PVC (polyvinyl chloride)."
     isotopes:
-      - [35, '天然の約76%']
-      - [37, '太陽ニュートリノ検出に']
-      - [36, '地下水の年代測定・約30万年']
+      - [35, '天然の約76%', "About 76% of natural chlorine"]
+      - [37, '太陽ニュートリノ検出に', "Used to detect solar neutrinos"]
+      - [36, '地下水の年代測定・約30万年', "Dating groundwater; about 300,000 years"]
 
   - Z: 18
     symbol: Ar
@@ -197,9 +215,10 @@ elements:
     ja: アルゴン
     discovered: 1894
     description: 空気中に約1%含まれる気体で、1894年にレイリーとラムゼーが発見しました。ギリシャ語の「怠け者」が名前の由来で、ほとんど反応しない性質を生かして溶接や電球の封入ガスに使われます。
+    description_en: "A gas that makes up about 1% of the air, discovered in 1894 by Rayleigh and Ramsay. Its name comes from the Greek for \"lazy\", and because it hardly reacts at all, it is used in welding and as the fill gas in light bulbs."
     isotopes:
-      - [40, '天然の約99.6%・K崩壊由来']
-      - [39, '地下水の年代測定・約270年']
+      - [40, '天然の約99.6%・K崩壊由来', "About 99.6% of natural argon; produced by the decay of K"]
+      - [39, '地下水の年代測定・約270年', "Dating groundwater; about 270 years"]
 
   - Z: 19
     symbol: K
@@ -207,10 +226,11 @@ elements:
     ja: カリウム
     discovered: 1702
     description: 1807年にデービーが電気分解で単離し、草木の灰（ポタッシュ）が英語名の由来です。元素記号Kはカリウム（Kalium）という名前に由来し、植物の三大栄養素の一つとして肥料にも使われます。
+    description_en: "Isolated by Davy by electrolysis in 1807; its English name comes from potash, the ash of plants. Its symbol K comes from the name kalium, and as one of the three major plant nutrients it is also used in fertilizers."
     isotopes:
-      - [39, '天然の約93%']
-      - [40, '体内の放射能・年代測定']
-      - [41, '天然の約7%']
+      - [39, '天然の約93%', "About 93% of natural potassium"]
+      - [40, '体内の放射能・年代測定', "Radioactivity in our bodies; used for dating"]
+      - [41, '天然の約7%', "About 7% of natural potassium"]
 
   - Z: 20
     symbol: Ca
@@ -218,10 +238,11 @@ elements:
     ja: カルシウム
     discovered: 1739
     description: ラテン語の「石灰（カルクス）」が名前の由来で、1808年にデービーが単離しました。骨や歯の主成分であり、石灰石やセメント、チョークなど身近な材料にも含まれています。
+    description_en: "Its name comes from the Latin for \"lime\" (calx), and it was isolated by Davy in 1808. It is the main component of bones and teeth, and is also found in familiar materials such as limestone, cement and chalk."
     isotopes:
-      - [40, '二重魔法数・天然の約97%']
-      - [48, '二重魔法数・超重元素合成に']
-      - [54, '新魔法数34の証拠・理研']
+      - [40, '二重魔法数・天然の約97%', "Doubly magic; about 97% of natural calcium"]
+      - [48, '二重魔法数・超重元素合成に', "Doubly magic; used to make superheavy elements"]
+      - [54, '新魔法数34の証拠・理研', "Evidence for the new magic number 34; RIKEN"]
 
   - Z: 21
     symbol: Sc
@@ -229,9 +250,10 @@ elements:
     ja: スカンジウム
     discovered: 1879
     description: 1879年にスウェーデンのニルソンが発見し、スカンジナビアにちなんで名付けられました。メンデレーエフが存在を予言した「エカホウ素」にあたり、アルミニウム合金の強化などに使われます。
+    description_en: "Discovered in 1879 by the Swedish chemist Nilson and named after Scandinavia. It is the \"eka-boron\" whose existence Mendeleev had predicted, and it is used to strengthen aluminium alloys, among other things."
     isotopes:
-      - [45, '唯一の安定同位体']
-      - [44, 'PET用に研究中']
+      - [45, '唯一の安定同位体', "The only stable isotope"]
+      - [44, 'PET用に研究中', "Being studied for PET"]
 
   - Z: 22
     symbol: Ti
@@ -239,9 +261,10 @@ elements:
     ja: チタン
     discovered: 1791
     description: ギリシャ神話の巨人族タイタンにちなんで名付けられた金属です。軽くて強く、さびにくく人体にもなじみやすいため、航空機やメガネのフレーム、人工関節などに使われます。
+    description_en: "A metal named after the Titans, the race of giants in Greek mythology. Light, strong, resistant to corrosion and well tolerated by the human body, it is used in aircraft, eyeglass frames and artificial joints."
     isotopes:
-      - [48, '天然の約74%']
-      - [44, '超新星で生成・約59年']
+      - [48, '天然の約74%', "About 74% of natural titanium"]
+      - [44, '超新星で生成・約59年', "Made in supernovae; about 59 years"]
 
   - Z: 23
     symbol: V
@@ -249,9 +272,10 @@ elements:
     ja: バナジウム
     discovered: 1801
     description: 化合物が美しく多彩な色を示すことから、北欧神話の美の女神ヴァナディースにちなんで名付けられました。鉄に少し加えると強い鋼ができ、工具や自動車部品に使われます。
+    description_en: "Because its compounds show beautiful and varied colors, it was named after Vanadís, the goddess of beauty in Norse mythology. Adding a little to iron makes a strong steel, which is used in tools and car parts."
     isotopes:
-      - [51, '天然の99.75%']
-      - [50, 'ごく長寿命の天然放射性核']
+      - [51, '天然の99.75%', "99.75% of natural vanadium"]
+      - [50, 'ごく長寿命の天然放射性核', "Extremely long-lived natural radioactive nucleus"]
 
   - Z: 24
     symbol: Cr
@@ -259,9 +283,10 @@ elements:
     ja: クロム
     discovered: 1797
     description: 化合物がさまざまな色を示すことから、ギリシャ語の「色（クロマ）」にちなんで名付けられました。さびにくく光沢があるためめっきやステンレス鋼に使われ、ルビーの赤色もクロムによるものです。
+    description_en: "Because its compounds show many different colors, it was named after the Greek word for \"color\" (chroma). Being resistant to corrosion and shiny, it is used for plating and in stainless steel, and the red of rubies also comes from chromium."
     isotopes:
-      - [52, '天然の約84%']
-      - [51, '赤血球の標識・約28日']
+      - [52, '天然の約84%', "About 84% of natural chromium"]
+      - [51, '赤血球の標識・約28日', "Labeling red blood cells; about 28 days"]
 
   - Z: 25
     symbol: Mn
@@ -269,9 +294,10 @@ elements:
     ja: マンガン
     discovered: 1770
     description: 1774年にスウェーデンのガーンが単離した金属です。鋼を強くする添加元素として製鉄に欠かせず、乾電池の材料としても身近な元素です。
+    description_en: "A metal isolated in 1774 by the Swedish chemist Gahn. As an additive that makes steel stronger, it is indispensable in steelmaking, and it is also a familiar element as a material in dry-cell batteries."
     isotopes:
-      - [55, '唯一の安定同位体']
-      - [53, '隕石の年代測定・約370万年']
+      - [55, '唯一の安定同位体', "The only stable isotope"]
+      - [53, '隕石の年代測定・約370万年', "Dating meteorites; about 3.7 million years"]
 
   - Z: 26
     symbol: Fe
@@ -279,10 +305,11 @@ elements:
     ja: 鉄
     discovered: ancient
     description: 古代から使われてきた金属で、建物や乗り物など現代文明を支える鉄鋼の主成分です。原子核は核子1個あたりの結合エネルギーが特に大きく、恒星の核融合による元素合成は鉄のあたりで止まります。
+    description_en: "A metal used since ancient times and the main component of steel, which supports modern civilization in buildings, vehicles and more. Its nucleus has an especially large binding energy per nucleon, and the making of elements by nuclear fusion in stars stops at around iron."
     isotopes:
-      - [56, '天然の約92%・結合が非常に強い']
-      - [57, 'メスバウアー分光に利用']
-      - [60, '超新星の痕跡・約262万年']
+      - [56, '天然の約92%・結合が非常に強い', "About 92% of natural iron; very tightly bound"]
+      - [57, 'メスバウアー分光に利用', "Used in Mössbauer spectroscopy"]
+      - [60, '超新星の痕跡・約262万年', "Trace of supernovae; about 2.62 million years"]
 
   - Z: 27
     symbol: Co
@@ -290,9 +317,10 @@ elements:
     ja: コバルト
     discovered: 1735
     description: ドイツの鉱山の妖精「コボルト」が名前の由来で、1735年頃にスウェーデンのブラントが発見しました。青い顔料や磁石、電池の材料に使われ、コバルト60はがん治療や滅菌の放射線源になります。
+    description_en: "Its name comes from the \"kobold\", a goblin of German mines, and it was discovered around 1735 by the Swedish chemist Georg Brandt. It is used in blue pigments, magnets and battery materials, and cobalt-60 is a radiation source for cancer therapy and sterilization."
     isotopes:
-      - [59, '唯一の安定同位体']
-      - [60, 'γ線源・半減期約5.3年']
+      - [59, '唯一の安定同位体', "The only stable isotope"]
+      - [60, 'γ線源・半減期約5.3年', "γ-ray source; half-life about 5.3 years"]
 
   - Z: 28
     symbol: Ni
@@ -300,10 +328,11 @@ elements:
     ja: ニッケル
     discovered: 1751
     description: ドイツ語で「銅の悪魔」を意味する鉱石の呼び名が由来で、1751年にスウェーデンのクロンステットが単離しました。さびにくく、ステンレス鋼や50円・100円硬貨の白銅、充電池などに使われます。
+    description_en: "Its name comes from a German name for its ore meaning \"copper devil\", and it was isolated in 1751 by the Swedish chemist Cronstedt. Resistant to corrosion, it is used in stainless steel, in the cupronickel of 50-yen and 100-yen coins, and in rechargeable batteries."
     isotopes:
-      - [62, '核子あたり結合エネルギー最大']
-      - [56, '二重魔法数・超新星の輝きの源']
-      - [78, '二重魔法数・理研RIBFで研究']
+      - [62, '核子あたり結合エネルギー最大', "Highest binding energy per nucleon"]
+      - [56, '二重魔法数・超新星の輝きの源', "Doubly magic; the source of supernova light"]
+      - [78, '二重魔法数・理研RIBFで研究', "Doubly magic; studied at RIKEN RIBF"]
 
   - Z: 29
     symbol: Cu
@@ -311,10 +340,11 @@ elements:
     ja: 銅
     discovered: ancient
     description: 人類が古くから使ってきた金属で、名前は産地のキプロス島に由来するラテン語にちなみます。電気をよく通すため電線に広く使われ、10円玉も主に銅でできています。
+    description_en: "A metal people have used since ancient times; its name comes from a Latin word derived from Cyprus, where it was mined. Because it conducts electricity well, it is widely used in electric wires, and the 10-yen coin is also made mainly of copper."
     isotopes:
-      - [63, '天然の約69%']
-      - [65, '天然の約31%']
-      - [64, 'PET検査・約13時間']
+      - [63, '天然の約69%', "About 69% of natural copper"]
+      - [65, '天然の約31%', "About 31% of natural copper"]
+      - [64, 'PET検査・約13時間', "PET scans; about 13 hours"]
 
   - Z: 30
     symbol: Zn
@@ -322,9 +352,10 @@ elements:
     ja: 亜鉛
     discovered: ancient
     description: 銅との合金は真ちゅうになり、鉄をさびから守るめっきにも使われる身近な金属です。理研でのニホニウム合成では、亜鉛70のビームを標的のビスマスに衝突させました。
+    description_en: "A familiar metal that forms brass when alloyed with copper and is also used as plating to protect iron from rust. In the synthesis of nihonium at RIKEN, a beam of zinc-70 was fired at a bismuth target."
     isotopes:
-      - [64, '天然の約49%']
-      - [70, 'ニホニウム合成のビーム']
+      - [64, '天然の約49%', "About 49% of natural zinc"]
+      - [70, 'ニホニウム合成のビーム', "Beam used to make nihonium"]
 
   - Z: 31
     symbol: Ga
@@ -332,10 +363,11 @@ elements:
     ja: ガリウム
     discovered: 1875
     description: 1875年にフランスのボアボードランが発見し、フランスの古名ガリアにちなんで名付けられました。手のひらの上で溶けるほど融点が低く、青色LEDの材料となる窒化ガリウムにも使われます。
+    description_en: "Discovered in 1875 by the French chemist Lecoq de Boisbaudran and named after Gallia, the old name for France. Its melting point is so low that it melts in the palm of your hand, and it is used in gallium nitride, the material of blue LEDs."
     isotopes:
-      - [69, '天然の約60%']
-      - [71, '太陽ニュートリノ検出に']
-      - [68, 'PET検査・がん診断に']
+      - [69, '天然の約60%', "About 60% of natural gallium"]
+      - [71, '太陽ニュートリノ検出に', "Used to detect solar neutrinos"]
+      - [68, 'PET検査・がん診断に', "PET scans; cancer diagnosis"]
 
   - Z: 32
     symbol: Ge
@@ -343,10 +375,11 @@ elements:
     ja: ゲルマニウム
     discovered: 1886
     description: 1886年にドイツのヴィンクラーが発見し、ドイツにちなんで名付けられました。メンデレーエフが予言した「エカケイ素」にあたり、初期のトランジスタや高性能な放射線検出器に使われます。
+    description_en: "Discovered in 1886 by the German chemist Winkler and named after Germany. It is the \"eka-silicon\" predicted by Mendeleev, and it was used in early transistors and is used in high-performance radiation detectors."
     isotopes:
-      - [74, '天然の約37%']
-      - [76, '二重β崩壊・ニュートリノ研究']
-      - [68, 'PET用ガリウムの親核']
+      - [74, '天然の約37%', "About 37% of natural germanium"]
+      - [76, '二重β崩壊・ニュートリノ研究', "Double β decay; neutrino research"]
+      - [68, 'PET用ガリウムの親核', "Parent of the gallium used in PET"]
 
   - Z: 33
     symbol: As
@@ -354,8 +387,9 @@ elements:
     ja: ヒ素
     discovered: ancient
     description: 古くから毒として知られる元素で、多くの化合物は強い毒性を持ちます。一方でガリウムヒ素は高速で動作する半導体として、通信機器の部品などに使われています。
+    description_en: "An element long known as a poison, and many of its compounds are highly toxic. On the other hand, gallium arsenide is used as a fast-operating semiconductor, for example in parts for communication equipment."
     isotopes:
-      - [75, '唯一の安定同位体']
+      - [75, '唯一の安定同位体', "The only stable isotope"]
 
   - Z: 34
     symbol: Se
@@ -363,10 +397,11 @@ elements:
     ja: セレン
     discovered: 1817
     description: 1817年にスウェーデンのベルセリウスが発見し、ギリシャ語の「月（セレネ）」にちなんで名付けられました。光が当たると電気を通しやすくなる性質があり、かつてはコピー機の感光体に使われました。
+    description_en: "Discovered in 1817 by the Swedish chemist Berzelius and named after the Greek word for \"moon\" (selene). It conducts electricity more easily when light shines on it, and it was once used in the photoreceptors of photocopiers."
     isotopes:
-      - [80, '天然の約50%']
-      - [82, '二重β崩壊する天然核']
-      - [79, '核分裂生成物・約33万年']
+      - [80, '天然の約50%', "About 50% of natural selenium"]
+      - [82, '二重β崩壊する天然核', "Natural nucleus that undergoes double β decay"]
+      - [79, '核分裂生成物・約33万年', "Fission product; about 330,000 years"]
 
   - Z: 35
     symbol: Br
@@ -374,9 +409,10 @@ elements:
     ja: 臭素
     discovered: 1825
     description: 常温で液体である数少ない元素の一つで、赤褐色の液体です。強い刺激臭からギリシャ語の「悪臭」が名前の由来となり、1825〜26年にドイツのレーヴィヒとフランスのバラールがそれぞれ発見しました。
+    description_en: "One of the few elements that are liquid at room temperature, it is a reddish-brown liquid. Its name comes from the Greek word for \"stench\" because of its strong, irritating smell, and it was discovered independently in 1825–26 by Löwig in Germany and Balard in France."
     isotopes:
-      - [79, '天然の約51%']
-      - [81, '天然の約49%']
+      - [79, '天然の約51%', "About 51% of natural bromine"]
+      - [81, '天然の約49%', "About 49% of natural bromine"]
 
   - Z: 36
     symbol: Kr
@@ -384,10 +420,11 @@ elements:
     ja: クリプトン
     discovered: 1898
     description: 1898年にラムゼーとトラバースが発見し、ギリシャ語の「隠されたもの」が名前の由来です。高性能な電球や写真撮影用のフラッシュ、レーザーなどに使われます。
+    description_en: "Discovered in 1898 by Ramsay and Travers; its name comes from the Greek for \"hidden one\". It is used in high-performance light bulbs, flashes for photography and lasers."
     isotopes:
-      - [84, '天然の約57%']
-      - [86, '旧メートル定義の光源']
-      - [85, '核分裂生成物・約11年']
+      - [84, '天然の約57%', "About 57% of natural krypton"]
+      - [86, '旧メートル定義の光源', "Light source for the old definition of the meter"]
+      - [85, '核分裂生成物・約11年', "Fission product; about 11 years"]
 
   - Z: 37
     symbol: Rb
@@ -395,9 +432,10 @@ elements:
     ja: ルビジウム
     discovered: 1861
     description: 1861年にブンゼンとキルヒホフが分光分析で発見し、スペクトルの赤い線からラテン語の「深紅」にちなんで名付けられました。原子時計や、岩石の年代測定に使われています。
+    description_en: "Discovered in 1861 by Bunsen and Kirchhoff using spectroscopy, and named after the Latin word for \"deep red\" because of the red lines in its spectrum. It is used in atomic clocks and for dating rocks."
     isotopes:
-      - [85, '天然の約72%']
-      - [87, '岩石の年代測定・約497億年']
+      - [85, '天然の約72%', "About 72% of natural rubidium"]
+      - [87, '岩石の年代測定・約497億年', "Dating rocks; about 49.7 billion years"]
 
   - Z: 38
     symbol: Sr
@@ -405,10 +443,11 @@ elements:
     ja: ストロンチウム
     discovered: 1790
     description: スコットランドのストロンチアン村で見つかった鉱物が名前の由来です。炎色反応で鮮やかな赤色を示すため花火や発炎筒に使われ、ストロンチウム90は核分裂で生じる放射性同位体として知られます。
+    description_en: "Its name comes from a mineral found near the village of Strontian in Scotland. Because it colors flames a vivid red, it is used in fireworks and emergency flares, and strontium-90 is known as a radioactive isotope produced by nuclear fission."
     isotopes:
-      - [88, '天然の約83%']
-      - [87, '光格子時計に利用']
-      - [90, '核分裂生成物・約29年']
+      - [88, '天然の約83%', "About 83% of natural strontium"]
+      - [87, '光格子時計に利用', "Used in optical lattice clocks"]
+      - [90, '核分裂生成物・約29年', "Fission product; about 29 years"]
 
   - Z: 39
     symbol: 'Y'
@@ -416,9 +455,10 @@ elements:
     ja: イットリウム
     discovered: 1794
     description: スウェーデンのイッテルビー村にちなむ4つの元素の一つで、1794年にガドリンが鉱石から酸化物を発見しました。白色LEDの蛍光体や高温超伝導体、レーザーの材料などに使われます。
+    description_en: "One of four elements named after the Swedish village of Ytterby; in 1794 Gadolin discovered its oxide in a mineral. It is used in phosphors for white LEDs, high-temperature superconductors and laser materials."
     isotopes:
-      - [89, '唯一の安定同位体']
-      - [90, 'がん治療に使うβ線源']
+      - [89, '唯一の安定同位体', "The only stable isotope"]
+      - [90, 'がん治療に使うβ線源', "β-ray source used in cancer therapy"]
 
   - Z: 40
     symbol: Zr
@@ -426,10 +466,11 @@ elements:
     ja: ジルコニウム
     discovered: 1789
     description: 宝石のジルコンが名前の由来で、1789年にドイツのクラプロートが発見しました。中性子をほとんど吸収しないため原子炉の燃料被覆管に使われ、酸化物のジルコニアはセラミック包丁などに利用されます。
+    description_en: "Named after the gemstone zircon, it was discovered in 1789 by the German chemist Klaproth. Because it absorbs almost no neutrons, it is used for the fuel cladding tubes of nuclear reactors, and its oxide, zirconia, is used in ceramic knives and other products."
     isotopes:
-      - [90, '天然の約51%・魔法数50']
-      - [93, '核分裂生成物・約161万年']
-      - [96, '二重β崩壊する天然核']
+      - [90, '天然の約51%・魔法数50', "About 51% of natural zirconium; magic number 50"]
+      - [93, '核分裂生成物・約161万年', "Fission product; about 1.61 million years"]
+      - [96, '二重β崩壊する天然核', "Natural nucleus that undergoes double β decay"]
 
   - Z: 41
     symbol: Nb
@@ -437,9 +478,10 @@ elements:
     ja: ニオブ
     discovered: 1801
     description: タンタルとよく似ていることから、ギリシャ神話のタンタロスの娘ニオベにちなんで名付けられました。ニオブを使った超伝導材料は、MRIの磁石や加速器の加速空洞に欠かせません。
+    description_en: "Because it closely resembles tantalum, it was named after Niobe, the daughter of Tantalus in Greek mythology. Superconducting materials made with niobium are essential for MRI magnets and the accelerating cavities of particle accelerators."
     isotopes:
-      - [93, '唯一の安定同位体']
-      - [95, '核分裂生成物・約35日']
+      - [93, '唯一の安定同位体', "The only stable isotope"]
+      - [95, '核分裂生成物・約35日', "Fission product; about 35 days"]
 
   - Z: 42
     symbol: Mo
@@ -447,10 +489,11 @@ elements:
     ja: モリブデン
     discovered: 1778
     description: 鉛の鉱石と間違えられたことからギリシャ語の「鉛」にちなんで名付けられ、1778年にシェーレが別の元素だと見分けました。鋼を強くするほか、モリブデン99は医療用テクネチウムの元になります。
+    description_en: "Because it was mistaken for a lead ore, it was named after the Greek word for \"lead\", and in 1778 Scheele recognized it as a separate element. Besides strengthening steel, it supplies molybdenum-99, the source of technetium for medical use."
     isotopes:
-      - [98, '天然の約24%']
-      - [99, '医療用テクネチウムの親核']
-      - [100, '二重β崩壊する天然核']
+      - [98, '天然の約24%', "About 24% of natural molybdenum"]
+      - [99, '医療用テクネチウムの親核', "Parent of medical technetium"]
+      - [100, '二重β崩壊する天然核', "Natural nucleus that undergoes double β decay"]
 
   - Z: 43
     symbol: Tc
@@ -458,9 +501,10 @@ elements:
     ja: テクネチウム
     discovered: 1937
     description: 1937年にペリエとセグレがサイクロトロンで照射されたモリブデンから発見した、初めて人工的に作られた元素です。安定同位体がなく、ギリシャ語の「人工」が名前の由来で、テクネチウム99mは画像診断に広く使われます。
+    description_en: "The first element to be made artificially, discovered in 1937 by Perrier and Segrè in molybdenum that had been irradiated in a cyclotron. It has no stable isotopes, its name comes from the Greek word for \"artificial\", and technetium-99m is widely used in medical imaging."
     isotopes:
-      - [99, '準安定状態が画像診断に活躍']
-      - [97, '最長寿命級・約421万年']
+      - [99, '準安定状態が画像診断に活躍', "Its metastable state is widely used in medical imaging"]
+      - [97, '最長寿命級・約421万年', "Among the longest-lived; about 4.21 million years"]
 
   - Z: 44
     symbol: Ru
@@ -468,9 +512,10 @@ elements:
     ja: ルテニウム
     discovered: 1844
     description: ロシアのラテン語名ルテニアにちなんで名付けられ、1844年にクラウスが発見した白金族の金属です。硬く腐食に強く、電子部品や、野依良治が開発した不斉合成の触媒などに使われます。
+    description_en: "A platinum-group metal named after Ruthenia, the Latin name for Russia, and discovered by Claus in 1844. Hard and highly resistant to corrosion, it is used in electronic components and in catalysts such as the one for asymmetric synthesis developed by Ryoji Noyori."
     isotopes:
-      - [102, '天然の約32%']
-      - [106, '核分裂生成物・約1年']
+      - [102, '天然の約32%', "About 32% of natural ruthenium"]
+      - [106, '核分裂生成物・約1年', "Fission product; about 1 year"]
 
   - Z: 45
     symbol: Rh
@@ -478,8 +523,9 @@ elements:
     ja: ロジウム
     discovered: 1804
     description: 塩が美しいバラ色を示すことから、ギリシャ語の「バラ」にちなんで名付けられました。1803年にウォラストンが発見し、1804年に発表しました。自動車の排ガス浄化触媒や宝飾品のめっきに使われます。
+    description_en: "Named after the Greek word for \"rose\" because its salts are a beautiful rose color. It was discovered by Wollaston in 1803 and announced in 1804. It is used in catalysts that clean car exhaust and for plating jewelry."
     isotopes:
-      - [103, '唯一の安定同位体']
+      - [103, '唯一の安定同位体', "The only stable isotope"]
 
   - Z: 46
     symbol: Pd
@@ -487,10 +533,11 @@ elements:
     ja: パラジウム
     discovered: 1802
     description: 1802年にウォラストンが発見し、同じ年に見つかった小惑星パラスにちなんで名付けられました。排ガス浄化触媒や、鈴木章らがノーベル化学賞を受賞したクロスカップリング反応の触媒として活躍しています。
+    description_en: "Discovered by Wollaston in 1802 and named after the asteroid Pallas, found in the same year. It plays a key role in catalysts that clean exhaust gases and as the catalyst for cross-coupling reactions, for which Akira Suzuki and others won the Nobel Prize in Chemistry."
     isotopes:
-      - [106, '天然の約27%']
-      - [103, 'がんの密封小線源治療']
-      - [107, '核分裂生成物・約650万年']
+      - [106, '天然の約27%', "About 27% of natural palladium"]
+      - [103, 'がんの密封小線源治療', "Sealed-source radiation therapy for cancer"]
+      - [107, '核分裂生成物・約650万年', "Fission product; about 6.5 million years"]
 
   - Z: 47
     symbol: Ag
@@ -498,9 +545,10 @@ elements:
     ja: 銀
     discovered: ancient
     description: 古代から貨幣や装飾品に使われてきた貴金属で、元素記号Agはラテン語の「アルゲントゥム」に由来します。すべての金属の中で電気を最もよく通し、写真フィルムや抗菌剤にも利用されてきました。
+    description_en: "A precious metal used since ancient times for coins and ornaments; its symbol Ag comes from the Latin \"argentum\". It conducts electricity better than any other metal, and has also been used in photographic film and antibacterial agents."
     isotopes:
-      - [107, '天然の約52%']
-      - [109, '天然の約48%']
+      - [107, '天然の約52%', "About 52% of natural silver"]
+      - [109, '天然の約48%', "About 48% of natural silver"]
 
   - Z: 48
     symbol: Cd
@@ -508,10 +556,11 @@ elements:
     ja: カドミウム
     discovered: 1817
     description: 亜鉛の鉱石から見つかり、1817年にドイツのシュトロマイヤーが発見しました。電池や顔料に使われてきましたが、イタイイタイ病の原因となった有害な元素としても知られます。
+    description_en: "Found in zinc ore, it was discovered in 1817 by the German chemist Stromeyer. It has been used in batteries and pigments, but it is also known as a harmful element that caused itai-itai disease."
     isotopes:
-      - [114, '天然の約29%']
-      - [113, '中性子を強く吸収・制御棒に']
-      - [116, '二重β崩壊する天然核']
+      - [114, '天然の約29%', "About 29% of natural cadmium"]
+      - [113, '中性子を強く吸収・制御棒に', "Strong neutron absorber; used in control rods"]
+      - [116, '二重β崩壊する天然核', "Natural nucleus that undergoes double β decay"]
 
   - Z: 49
     symbol: In
@@ -519,10 +568,11 @@ elements:
     ja: インジウム
     discovered: 1863
     description: 1863年にライヒとリヒターが分光分析で発見し、スペクトルの藍色（インディゴ）の線から名付けられました。酸化インジウムスズ（ITO）は透明な電極として、液晶ディスプレイやタッチパネルに欠かせません。
+    description_en: "Discovered in 1863 by Reich and Richter using spectroscopy, and named after the indigo line in its spectrum. Indium tin oxide (ITO) is essential as a transparent electrode in liquid crystal displays and touch panels."
     isotopes:
-      - [115, '天然の約96%・弱い放射能']
-      - [113, '天然の約4%']
-      - [111, '画像診断に利用']
+      - [115, '天然の約96%・弱い放射能', "About 96% of natural indium; weakly radioactive"]
+      - [113, '天然の約4%', "About 4% of natural indium"]
+      - [111, '画像診断に利用', "Used in medical imaging"]
 
   - Z: 50
     symbol: Sn
@@ -530,10 +580,11 @@ elements:
     ja: スズ
     discovered: ancient
     description: 古代から使われてきた金属で、銅との合金の青銅は人類の歴史を大きく変え、今もはんだやブリキに使われています。陽子数50は魔法数にあたり、安定同位体を10種類もつのは全元素の中で最多です。
+    description_en: "A metal used since ancient times; bronze, its alloy with copper, greatly changed human history, and tin is still used today in solder and tinplate. Its proton number, 50, is a magic number, and its ten stable isotopes are the most of any element."
     isotopes:
-      - [120, '天然の約33%']
-      - [100, '二重魔法数・陽子過剰']
-      - [132, '二重魔法数・中性子過剰']
+      - [120, '天然の約33%', "About 33% of natural tin"]
+      - [100, '二重魔法数・陽子過剰', "Doubly magic; proton-rich"]
+      - [132, '二重魔法数・中性子過剰', "Doubly magic; neutron-rich"]
 
   - Z: 51
     symbol: Sb
@@ -541,10 +592,11 @@ elements:
     ja: アンチモン
     discovered: ancient
     description: 古代エジプトではアイシャドウの原料として使われ、元素記号Sbはラテン語名スチビウムに由来します。現在は燃えにくくする難燃剤や、鉛蓄電池の電極を硬くする合金に使われています。
+    description_en: "In ancient Egypt it was used to make eye shadow, and its symbol Sb comes from its Latin name, stibium. Today it is used in flame retardants that make things harder to burn and in alloys that harden the electrodes of lead-acid batteries."
     isotopes:
-      - [121, '天然の約57%']
-      - [123, '天然の約43%']
-      - [125, '核分裂生成物・約2.8年']
+      - [121, '天然の約57%', "About 57% of natural antimony"]
+      - [123, '天然の約43%', "About 43% of natural antimony"]
+      - [125, '核分裂生成物・約2.8年', "Fission product; about 2.8 years"]
 
   - Z: 52
     symbol: Te
@@ -552,9 +604,10 @@ elements:
     ja: テルル
     discovered: 1782
     description: 1782年に金鉱石から発見され、クラプロートがラテン語の「地球（テルス）」にちなんで命名しました。テルル化カドミウム太陽電池や、書き換え型の光ディスクの記録材料に使われます。
+    description_en: "Discovered in gold ore in 1782, it was named by Klaproth after the Latin word for \"Earth\" (tellus). It is used in cadmium telluride solar cells and as the recording material in rewritable optical discs."
     isotopes:
-      - [130, '天然の約34%・二重β崩壊']
-      - [128, '既知で最も長い半減期']
+      - [130, '天然の約34%・二重β崩壊', "About 34% of natural tellurium; double β decay"]
+      - [128, '既知で最も長い半減期', "Longest known half-life"]
 
   - Z: 53
     symbol: I
@@ -562,10 +615,11 @@ elements:
     ja: ヨウ素
     discovered: 1811
     description: 1811年にフランスのクールトアが海藻の灰から発見し、蒸気の紫色からギリシャ語の「紫」にちなんで名付けられました。甲状腺ホルモンに欠かせない元素で、日本は世界有数のヨウ素生産国です。
+    description_en: "Discovered in 1811 by the French chemist Courtois in the ash of seaweed, it was named after the Greek word for \"violet\" because of the color of its vapor. It is essential for thyroid hormones, and Japan is one of the world's leading producers of iodine."
     isotopes:
-      - [127, '唯一の安定同位体']
-      - [131, '甲状腺の治療・約8日']
-      - [129, '核分裂生成物・約1600万年']
+      - [127, '唯一の安定同位体', "The only stable isotope"]
+      - [131, '甲状腺の治療・約8日', "Thyroid treatment; about 8 days"]
+      - [129, '核分裂生成物・約1600万年', "Fission product; about 16 million years"]
 
   - Z: 54
     symbol: Xe
@@ -573,10 +627,11 @@ elements:
     ja: キセノン
     discovered: 1898
     description: 1898年にラムゼーとトラバースが発見し、ギリシャ語の「見知らぬもの」が名前の由来です。車のヘッドライトや人工衛星のイオンエンジンに使われ、貴ガスも化合物をつくることを初めて示した元素です。
+    description_en: "Discovered in 1898 by Ramsay and Travers; its name comes from the Greek for \"stranger\". It is used in car headlights and the ion engines of satellites, and it was the first element to show that noble gases can also form compounds."
     isotopes:
-      - [132, '天然の約27%']
-      - [136, '二重β崩壊・ニュートリノ研究']
-      - [135, '中性子を最もよく吸収する核']
+      - [132, '天然の約27%', "About 27% of natural xenon"]
+      - [136, '二重β崩壊・ニュートリノ研究', "Double β decay; neutrino research"]
+      - [135, '中性子を最もよく吸収する核', "The nucleus that absorbs neutrons most strongly"]
 
   - Z: 55
     symbol: Cs
@@ -584,10 +639,11 @@ elements:
     ja: セシウム
     discovered: 1860
     description: 1860年にブンゼンとキルヒホフが分光分析で発見し、スペクトルの青い線からラテン語の「空色」にちなんで名付けられました。セシウム133の原子の振動が「1秒」の定義に使われ、原子時計の基準になっています。
+    description_en: "Discovered in 1860 by Bunsen and Kirchhoff using spectroscopy, and named after the Latin word for \"sky blue\" because of the blue lines in its spectrum. The vibrations of caesium-133 atoms are used to define \"one second\", and they are the standard for atomic clocks."
     isotopes:
-      - [133, '唯一の安定同位体・秒の定義']
-      - [137, '核分裂生成物・約30年']
-      - [134, '原発事故で放出・約2年']
+      - [133, '唯一の安定同位体・秒の定義', "The only stable isotope; defines the second"]
+      - [137, '核分裂生成物・約30年', "Fission product; about 30 years"]
+      - [134, '原発事故で放出・約2年', "Released in nuclear power plant accidents; about 2 years"]
 
   - Z: 56
     symbol: Ba
@@ -595,10 +651,11 @@ elements:
     ja: バリウム
     discovered: 1772
     description: 重晶石から見つかり、ギリシャ語の「重い」が名前の由来です。X線を通しにくい硫酸バリウムは胃のX線検査の造影剤に使われ、花火の緑色もバリウムによるものです。
+    description_en: "Found in barite (heavy spar), and its name comes from the Greek word for \"heavy\". Barium sulfate, which X-rays pass through poorly, is used as a contrast agent for stomach X-ray exams, and the green color of fireworks also comes from barium."
     isotopes:
-      - [138, '天然の約72%']
-      - [137, '安定・セシウムの崩壊先']
-      - [133, 'γ線の校正用線源']
+      - [138, '天然の約72%', "About 72% of natural barium"]
+      - [137, '安定・セシウムの崩壊先', "Stable; decay product of caesium"]
+      - [133, 'γ線の校正用線源', "Calibration source for γ-rays"]
 
   - Z: 57
     symbol: La
@@ -606,9 +663,10 @@ elements:
     ja: ランタン
     discovered: 1838
     description: スウェーデンのモサンデルが発見し、1839年に発表されました。名前はギリシャ語の「隠れる」に由来します。ランタノイドの先頭の元素で、ハイブリッド車の電池やカメラの高性能レンズに使われます。
+    description_en: "Discovered by the Swedish chemist Mosander and announced in 1839. Its name comes from the Greek for \"to lie hidden\". It is the first element of the lanthanides and is used in the batteries of hybrid cars and in high-performance camera lenses."
     isotopes:
-      - [139, '天然の約99.9%']
-      - [138, '天然の放射性核・約1000億年']
+      - [139, '天然の約99.9%', "About 99.9% of natural lanthanum"]
+      - [138, '天然の放射性核・約1000億年', "Natural radioactive nucleus; about 100 billion years"]
 
   - Z: 58
     symbol: Ce
@@ -616,9 +674,10 @@ elements:
     ja: セリウム
     discovered: 1803
     description: 1803年に発見され、その2年前に見つかった準惑星ケレスにちなんで名付けられました。希土類の中では特に多く存在し、ガラスの研磨剤やライターの発火石、排ガス浄化触媒に使われます。
+    description_en: "Discovered in 1803 and named after the dwarf planet Ceres, found two years earlier. It is especially abundant among the rare earths and is used in glass-polishing powders, lighter flints and catalysts that clean exhaust gases."
     isotopes:
-      - [140, '天然の約88%・魔法数82']
-      - [144, '核分裂生成物・約285日']
+      - [140, '天然の約88%・魔法数82', "About 88% of natural cerium; magic number 82"]
+      - [144, '核分裂生成物・約285日', "Fission product; about 285 days"]
 
   - Z: 59
     symbol: Pr
@@ -626,8 +685,9 @@ elements:
     ja: プラセオジム
     discovered: 1885
     description: 1885年にオーストリアのアウアー・フォン・ヴェルスバッハが分離し、ギリシャ語の「緑の双子」が名前の由来です。ガラスや陶磁器に黄緑色をつけるほか、強力な磁石や溶接用ゴーグルに使われます。
+    description_en: "Separated in 1885 by the Austrian chemist Carl Auer von Welsbach; its name comes from the Greek for \"green twin\". Besides giving a yellow-green color to glass and ceramics, it is used in powerful magnets and welding goggles."
     isotopes:
-      - [141, '唯一の安定同位体']
+      - [141, '唯一の安定同位体', "The only stable isotope"]
 
   - Z: 60
     symbol: Nd
@@ -635,10 +695,11 @@ elements:
     ja: ネオジム
     discovered: 1841
     description: 1885年にアウアー・フォン・ヴェルスバッハが分離し、ギリシャ語の「新しい双子」が名前の由来です。日本の佐川眞人らが開発したネオジム磁石は非常に強力で、電気自動車のモーターやスピーカーに欠かせません。
+    description_en: "Carl Auer von Welsbach separated it in 1885, and its name comes from the Greek for \"new twin.\" Neodymium magnets, developed by Masato Sagawa of Japan and his colleagues, are extremely strong and are essential for electric-vehicle motors and speakers."
     isotopes:
-      - [142, '天然の約27%・魔法数82']
-      - [144, '天然の放射性核・α崩壊']
-      - [150, '二重β崩壊する天然核']
+      - [142, '天然の約27%・魔法数82', "About 27% of natural neodymium; magic number 82"]
+      - [144, '天然の放射性核・α崩壊', "Naturally occurring radioactive nucleus; α decay"]
+      - [150, '二重β崩壊する天然核', "Natural nucleus that undergoes double β decay"]
 
   - Z: 61
     symbol: Pm
@@ -646,9 +707,10 @@ elements:
     ja: プロメチウム
     discovered: 1945
     description: 安定同位体をもたない放射性元素で、1945年にアメリカで核分裂生成物の中から確認されました。人類に火をもたらしたギリシャ神話のプロメテウスにちなんで名付けられました。
+    description_en: "A radioactive element with no stable isotopes, it was identified in 1945 in the United States among the products of nuclear fission. It is named after Prometheus, the figure in Greek mythology who brought fire to humankind."
     isotopes:
-      - [145, '最も長寿命・約18年']
-      - [147, '夜光塗料や原子力電池に']
+      - [145, '最も長寿命・約18年', "Longest-lived isotope; about 18 years"]
+      - [147, '夜光塗料や原子力電池に', "Used in luminous paint and nuclear batteries"]
 
   - Z: 62
     symbol: Sm
@@ -656,10 +718,11 @@ elements:
     ja: サマリウム
     discovered: 1879
     description: 鉱物サマルスキー石が名前の由来で、この鉱物が人名にちなむことから、間接的に人名に由来する最初の元素とされます。サマリウム・コバルト磁石は高温に強く、モーターや精密機器に使われます。
+    description_en: "Its name comes from the mineral samarskite, and because that mineral is named after a person, samarium is considered the first element named, indirectly, after a person. Samarium–cobalt magnets hold up well at high temperatures and are used in motors and precision instruments."
     isotopes:
-      - [152, '天然の約27%']
-      - [147, '天然の放射性・年代測定']
-      - [153, '骨転移の痛みの治療']
+      - [152, '天然の約27%', "About 27% of natural samarium"]
+      - [147, '天然の放射性・年代測定', "Naturally radioactive; used for dating"]
+      - [153, '骨転移の痛みの治療', "Treats pain from cancer that has spread to the bones"]
 
   - Z: 63
     symbol: Eu
@@ -667,10 +730,11 @@ elements:
     ja: ユウロピウム
     discovered: 1896
     description: 1896年にフランスのドマルセが存在に気づき、1901年に確かめてヨーロッパにちなんで名付けました。赤色や青色に光る蛍光体の材料として、ディスプレイや照明に使われています。
+    description_en: "In 1896 Demarçay of France noticed signs of it, and in 1901 he confirmed it and named it after Europe. It is used in phosphors that glow red or blue, for displays and lighting."
     isotopes:
-      - [153, '天然の約52%']
-      - [151, '天然の約48%・α崩壊']
-      - [152, 'γ線の校正用線源']
+      - [153, '天然の約52%', "About 52% of natural europium"]
+      - [151, '天然の約48%・α崩壊', "About 48% of natural europium; α decay"]
+      - [152, 'γ線の校正用線源', "γ-ray calibration source"]
 
   - Z: 64
     symbol: Gd
@@ -678,9 +742,10 @@ elements:
     ja: ガドリニウム
     discovered: 1880
     description: 希土類研究の先駆者であるフィンランドのガドリンにちなんで名付けられました。MRI検査の造影剤に使われるほか、中性子を非常によく吸収するため原子炉の制御にも利用されます。
+    description_en: "It is named after Johan Gadolin of Finland, a pioneer of rare-earth research. It is used in contrast agents for MRI scans, and because it absorbs neutrons extremely well, it is also used to control nuclear reactors."
     isotopes:
-      - [158, '天然の約25%']
-      - [157, '安定核で中性子吸収が最大']
+      - [158, '天然の約25%', "About 25% of natural gadolinium"]
+      - [157, '安定核で中性子吸収が最大', "Highest neutron absorption of any stable nucleus"]
 
   - Z: 65
     symbol: Tb
@@ -688,9 +753,10 @@ elements:
     ja: テルビウム
     discovered: 1843
     description: イッテルビー村にちなむ4つの元素の一つで、1843年にモサンデルが発見しました。緑色に光る蛍光体や、磁場で伸び縮みする磁歪材料、ネオジム磁石の性能向上に使われます。
+    description_en: "One of four elements named after the village of Ytterby, it was discovered by Mosander in 1843. It is used in green-glowing phosphors, in magnetostrictive materials that stretch and shrink in a magnetic field, and to improve the performance of neodymium magnets."
     isotopes:
-      - [159, '唯一の安定同位体']
-      - [161, 'がん治療用に研究中']
+      - [159, '唯一の安定同位体', "The only stable isotope"]
+      - [161, 'がん治療用に研究中', "Under study for cancer treatment"]
 
   - Z: 66
     symbol: Dy
@@ -698,9 +764,10 @@ elements:
     ja: ジスプロシウム
     discovered: 1886
     description: 分離が非常に難しかったことから、ギリシャ語の「近づきがたい」が名前の由来です。1886年にボアボードランが発見し、ネオジム磁石に加えて高温でも磁力を保つために使われます。
+    description_en: "Because it was so hard to separate, its name comes from the Greek for \"hard to get at.\" Discovered by Lecoq de Boisbaudran in 1886, it is added to neodymium magnets so that they keep their magnetism even at high temperatures."
     isotopes:
-      - [164, '天然の約28%']
-      - [163, '完全電離するとβ崩壊']
+      - [164, '天然の約28%', "About 28% of natural dysprosium"]
+      - [163, '完全電離するとβ崩壊', "Undergoes β decay when fully ionized"]
 
   - Z: 67
     symbol: Ho
@@ -708,10 +775,11 @@ elements:
     ja: ホルミウム
     discovered: 1878
     description: 1879年にスウェーデンのクレーベが分離し、ストックホルムのラテン名ホルミアにちなんで名付けられました。磁性がとても強い元素で、医療用レーザーや強力な電磁石の部品に使われます。
+    description_en: "Separated in 1879 by Cleve of Sweden, it is named after Holmia, the Latin name for Stockholm. It is a strongly magnetic element and is used in medical lasers and in parts for powerful electromagnets."
     isotopes:
-      - [165, '唯一の安定同位体']
-      - [163, 'ニュートリノ質量の研究']
-      - [166, 'がん治療に利用']
+      - [165, '唯一の安定同位体', "The only stable isotope"]
+      - [163, 'ニュートリノ質量の研究', "Used in research on the neutrino mass"]
+      - [166, 'がん治療に利用', "Used in cancer treatment"]
 
   - Z: 68
     symbol: Er
@@ -719,9 +787,10 @@ elements:
     ja: エルビウム
     discovered: 1843
     description: イッテルビー村にちなむ4つの元素の一つで、1843年にモサンデルが発見しました。光ファイバー通信の信号増幅器に欠かせない元素で、ガラスにピンク色をつけることもできます。
+    description_en: "One of four elements named after the village of Ytterby, it was discovered by Mosander in 1843. It is essential for the signal amplifiers used in fiber-optic communication, and it can also give glass a pink color."
     isotopes:
-      - [166, '天然の約34%']
-      - [169, '関節炎の放射線治療']
+      - [166, '天然の約34%', "About 34% of natural erbium"]
+      - [169, '関節炎の放射線治療', "Radiation therapy for arthritis"]
 
   - Z: 69
     symbol: Tm
@@ -729,9 +798,10 @@ elements:
     ja: ツリウム
     discovered: 1879
     description: 1879年にクレーベが発見し、北欧の古い呼び名「トゥーレ」にちなんで名付けられました。希土類の中でも特に存在量が少なく、携帯型X線装置の線源やレーザーに使われます。
+    description_en: "Discovered by Cleve in 1879, it is named after Thule, an old name for Scandinavia. It is especially scarce even among the rare earths, and it is used as the source in portable X-ray devices and in lasers."
     isotopes:
-      - [169, '唯一の安定同位体']
-      - [170, '携帯X線源・約129日']
+      - [169, '唯一の安定同位体', "The only stable isotope"]
+      - [170, '携帯X線源・約129日', "Portable X-ray source; about 129 days"]
 
   - Z: 70
     symbol: Yb
@@ -739,10 +809,11 @@ elements:
     ja: イッテルビウム
     discovered: 1878
     description: 1878年にスイスのマリニャックが発見した、イッテルビー村にちなむ4つの元素の一つです。光格子時計などの最先端の原子時計や、ファイバーレーザーに使われています。
+    description_en: "Discovered in 1878 by Marignac of Switzerland, it is one of four elements named after the village of Ytterby. It is used in cutting-edge atomic clocks such as optical lattice clocks, and in fiber lasers."
     isotopes:
-      - [174, '天然の約32%']
-      - [171, '光格子時計に利用']
-      - [169, '非破壊検査用のγ線源']
+      - [174, '天然の約32%', "About 32% of natural ytterbium"]
+      - [171, '光格子時計に利用', "Used in optical lattice clocks"]
+      - [169, '非破壊検査用のγ線源', "γ-ray source for nondestructive testing"]
 
   - Z: 71
     symbol: Lu
@@ -750,10 +821,11 @@ elements:
     ja: ルテチウム
     discovered: 1906
     description: フランスのユルバンやオーストリアのアウアー・フォン・ヴェルスバッハらがそれぞれ発見して1907年に発表し、パリの古いラテン名ルテティアにちなんで名付けられました。ランタノイドの最後の元素で、ルテチウム177はがんの放射性医薬品として使われています。
+    description_en: "Urbain of France, Auer von Welsbach of Austria and others each discovered it independently and announced it in 1907, and it is named after Lutetia, the old Latin name for Paris. It is the last of the lanthanides, and lutetium-177 is used as a radioactive drug for cancer."
     isotopes:
-      - [175, '天然の約97%']
-      - [176, '天然の放射性・年代測定']
-      - [177, 'がん治療に利用・約6.6日']
+      - [175, '天然の約97%', "About 97% of natural lutetium"]
+      - [176, '天然の放射性・年代測定', "Naturally radioactive; used for dating"]
+      - [177, 'がん治療に利用・約6.6日', "Used in cancer treatment; about 6.6 days"]
 
   - Z: 72
     symbol: Hf
@@ -761,10 +833,11 @@ elements:
     ja: ハフニウム
     discovered: 1922
     description: 1922年にコスターとヘヴェシーがコペンハーゲンで発見して1923年に発表し、その古いラテン名ハフニアにちなんで名付けられました。中性子をよく吸収するため原子炉の制御棒に使われ、半導体の絶縁膜にも利用されます。
+    description_en: "Discovered by Coster and Hevesy in Copenhagen in 1922 and announced in 1923, it is named after Hafnia, the city's old Latin name. Because it absorbs neutrons well, it is used in the control rods of nuclear reactors, and it is also used for insulating films in semiconductors."
     isotopes:
-      - [180, '天然の約35%']
-      - [178, '長寿命の核異性体をもつ']
-      - [182, '初期太陽系の年代指標']
+      - [180, '天然の約35%', "About 35% of natural hafnium"]
+      - [178, '長寿命の核異性体をもつ', "Has a long-lived nuclear isomer"]
+      - [182, '初期太陽系の年代指標', "Age marker for the early Solar System"]
 
   - Z: 73
     symbol: Ta
@@ -772,9 +845,10 @@ elements:
     ja: タンタル
     discovered: 1802
     description: 酸に溶けにくい性質から、ギリシャ神話で水を飲もうとしても飲めないタンタロスにちなんで名付けられました。小型で大容量のコンデンサーとしてスマートフォンなどに使われ、人体になじむため医療用にも利用されます。
+    description_en: "Because it hardly dissolves in acids, it is named after Tantalus, the figure in Greek mythology who tries to drink water but never can. It is used in small, high-capacity capacitors in smartphones and other devices, and because the human body tolerates it well, it is also used in medicine."
     isotopes:
-      - [181, '天然の約99.99%']
-      - [180, '準安定状態が天然に存在']
+      - [181, '天然の約99.99%', "About 99.99% of natural tantalum"]
+      - [180, '準安定状態が天然に存在', "Its metastable state occurs in nature"]
 
   - Z: 74
     symbol: W
@@ -782,10 +856,11 @@ elements:
     ja: タングステン
     discovered: 1781
     description: 元素記号Wはドイツ語名ヴォルフラムに由来し、英語名タングステンはスウェーデン語の「重い石」を意味します。金属の中で最も融点が高く、電球のフィラメントや超硬工具に使われます。
+    description_en: "Its symbol, W, comes from its German name, Wolfram, while the English name tungsten means \"heavy stone\" in Swedish. It has the highest melting point of any metal and is used in light-bulb filaments and carbide tools."
     isotopes:
-      - [184, '天然の約31%']
-      - [180, '天然のごく長寿命α放射体']
-      - [188, '医療用レニウムの親核']
+      - [184, '天然の約31%', "About 31% of natural tungsten"]
+      - [180, '天然のごく長寿命α放射体', "Natural, extremely long-lived α emitter"]
+      - [188, '医療用レニウムの親核', "Parent nucleus of medical rhenium"]
 
   - Z: 75
     symbol: Re
@@ -793,10 +868,11 @@ elements:
     ja: レニウム
     discovered: 1908
     description: 1925年にドイツのノダックらが発見し、ライン川のラテン名レヌスにちなんで名付けられました。1908年に小川正孝が「ニッポニウム」として報告した元素は、実はレニウムだったと考えられています。
+    description_en: "Discovered in 1925 by Noddack and colleagues in Germany, it is named after Rhenus, the Latin name for the Rhine. The element that Masataka Ogawa reported as \"nipponium\" in 1908 is now thought to have actually been rhenium."
     isotopes:
-      - [187, '天然の約63%だが放射性']
-      - [185, '唯一の安定同位体・約37%']
-      - [188, 'がん治療に利用']
+      - [187, '天然の約63%だが放射性', "About 63% of natural rhenium, yet radioactive"]
+      - [185, '唯一の安定同位体・約37%', "The only stable isotope; about 37%"]
+      - [188, 'がん治療に利用', "Used in cancer treatment"]
 
   - Z: 76
     symbol: Os
@@ -804,9 +880,10 @@ elements:
     ja: オスミウム
     discovered: 1803
     description: 酸化物が独特の強いにおいを放つことから、ギリシャ語の「におい」にちなんで名付けられました。1803年にテナントが発見し、密度が全元素の中でも最大級の非常に重い金属です。
+    description_en: "Because its oxide gives off a strong, distinctive smell, it is named after the Greek word for \"smell.\" Discovered by Tennant in 1803, it is a very heavy metal whose density is among the highest of all the elements."
     isotopes:
-      - [192, '天然の約41%']
-      - [187, '安定・Re-Os年代測定に']
+      - [192, '天然の約41%', "About 41% of natural osmium"]
+      - [187, '安定・Re-Os年代測定に', "Stable; used in Re-Os dating"]
 
   - Z: 77
     symbol: Ir
@@ -814,10 +891,11 @@ elements:
     ja: イリジウム
     discovered: 1803
     description: 塩がさまざまな色を示すことから虹の女神イリスにちなんで名付けられ、1803年にテナントが発見しました。腐食にきわめて強く、恐竜絶滅期の地層にイリジウムが多いことは隕石衝突説の証拠となりました。
+    description_en: "Because its salts show many different colors, it is named after Iris, the goddess of the rainbow; Tennant discovered it in 1803. It is extremely resistant to corrosion, and the large amount of iridium in rock layers from the time the dinosaurs died out became evidence for the theory that a meteorite impact caused their extinction."
     isotopes:
-      - [193, '天然の約63%']
-      - [191, '天然の約37%']
-      - [192, '非破壊検査・がん治療']
+      - [193, '天然の約63%', "About 63% of natural iridium"]
+      - [191, '天然の約37%', "About 37% of natural iridium"]
+      - [192, '非破壊検査・がん治療', "Nondestructive testing; cancer treatment"]
 
   - Z: 78
     symbol: Pt
@@ -825,9 +903,10 @@ elements:
     ja: 白金
     discovered: ancient
     description: 南米で見つかり、スペイン語の「小さな銀（プラティナ）」が名前の由来です。化学的に安定で美しいため宝飾品に使われるほか、排ガス浄化触媒や抗がん剤のシスプラチンにも利用されます。
+    description_en: "Found in South America, it takes its name from the Spanish for \"little silver\" (platina). Because it is chemically stable and beautiful, it is used in jewelry, and also in catalysts that clean exhaust gases and in the anticancer drug cisplatin."
     isotopes:
-      - [195, '天然の約34%']
-      - [190, '天然の放射性・α崩壊']
+      - [195, '天然の約34%', "About 34% of natural platinum"]
+      - [190, '天然の放射性・α崩壊', "Naturally radioactive; α decay"]
 
   - Z: 79
     symbol: Au
@@ -835,9 +914,10 @@ elements:
     ja: 金
     discovered: ancient
     description: 元素記号Auはラテン語の「アウルム」に由来し、さびずに輝きを保つため古代から貴重とされてきました。宇宙では中性子星の合体などで起こる急速な中性子捕獲（r過程）によって作られたと考えられています。
+    description_en: "Its symbol, Au, comes from the Latin aurum, and because it never rusts and keeps its shine, it has been treasured since ancient times. In the universe, it is thought to have been made by rapid neutron capture (the r-process) in events such as neutron-star mergers."
     isotopes:
-      - [197, '唯一の安定同位体']
-      - [198, '医療用・半減期約2.7日']
+      - [197, '唯一の安定同位体', "The only stable isotope"]
+      - [198, '医療用・半減期約2.7日', "Medical use; half-life about 2.7 days"]
 
   - Z: 80
     symbol: Hg
@@ -845,9 +925,10 @@ elements:
     ja: 水銀
     discovered: ancient
     description: 常温で液体の唯一の金属で、元素記号Hgは「水のような銀」を意味するラテン語名に由来します。体温計や蛍光灯に使われてきましたが、水俣病の原因となった強い毒性から使用が制限されています。
+    description_en: "It is the only metal that is liquid at room temperature, and its symbol, Hg, comes from its Latin name meaning \"watery silver.\" It was long used in clinical thermometers and fluorescent lamps, but its use is now restricted because of its high toxicity, which caused Minamata disease."
     isotopes:
-      - [202, '天然の約30%']
-      - [196, '原子炉で金に変えられる']
+      - [202, '天然の約30%', "About 30% of natural mercury"]
+      - [196, '原子炉で金に変えられる', "Can be turned into gold in a nuclear reactor"]
 
   - Z: 81
     symbol: Tl
@@ -855,10 +936,11 @@ elements:
     ja: タリウム
     discovered: 1861
     description: 1861年にクルックスが分光分析で発見し、スペクトルの緑の線からギリシャ語の「若い緑の枝」にちなんで名付けられました。毒性が強い一方、タリウム201は心臓の検査に使われます。
+    description_en: "William Crookes discovered it in 1861 by spectroscopy and, because of the green line in its spectrum, named it after the Greek for \"young green twig.\" Although it is highly toxic, thallium-201 is used in heart examinations."
     isotopes:
-      - [205, '天然の約70%']
-      - [203, '天然の約30%']
-      - [201, '心筋の画像診断']
+      - [205, '天然の約70%', "About 70% of natural thallium"]
+      - [203, '天然の約30%', "About 30% of natural thallium"]
+      - [201, '心筋の画像診断', "Imaging of the heart muscle"]
 
   - Z: 82
     symbol: Pb
@@ -866,10 +948,11 @@ elements:
     ja: 鉛
     discovered: ancient
     description: 古代ローマでは水道管に使われ、元素記号Pbはラテン語名プルンブムに由来します。陽子数82は魔法数で、鉛208は陽子数・中性子数がともに魔法数の「二重魔法数核」として特に安定です。
+    description_en: "It was used for water pipes in ancient Rome, and its symbol, Pb, comes from its Latin name, plumbum. Its proton number, 82, is a magic number, and lead-208, whose proton and neutron numbers are both magic numbers, is especially stable as a \"doubly magic\" nucleus."
     isotopes:
-      - [208, '二重魔法数・最も重い安定核']
-      - [206, 'ウラン系列の終点']
-      - [210, '堆積物の年代測定・約22年']
+      - [208, '二重魔法数・最も重い安定核', "Doubly magic; the heaviest stable nucleus"]
+      - [206, 'ウラン系列の終点', "End point of the uranium series"]
+      - [210, '堆積物の年代測定・約22年', "Dating of sediments; about 22 years"]
 
   - Z: 83
     symbol: Bi
@@ -877,9 +960,10 @@ elements:
     ja: ビスマス
     discovered: 1500
     description: 長く安定と考えられていましたが、2003年にビスマス209がきわめて長い半減期で崩壊することが確かめられました。理研でのニホニウム合成では、ビスマス209が標的として使われました。
+    description_en: "It was long thought to be stable, but in 2003 bismuth-209 was confirmed to decay, with an extremely long half-life. Bismuth-209 was used as the target when nihonium was synthesized at RIKEN."
     isotopes:
-      - [209, '天然の100%・極めて長寿命']
-      - [213, 'α線がん治療に研究中']
+      - [209, '天然の100%・極めて長寿命', "100% natural abundance; extremely long-lived"]
+      - [213, 'α線がん治療に研究中', "Under study for α-particle cancer therapy"]
 
   - Z: 84
     symbol: Po
@@ -887,9 +971,10 @@ elements:
     ja: ポロニウム
     discovered: 1898
     description: 1898年にキュリー夫妻が発見し、マリー・キュリーの祖国ポーランドにちなんで名付けられました。強い放射能を持つ元素で、ごく微量でも非常に危険な毒性を示します。
+    description_en: "Discovered by Pierre and Marie Curie in 1898, it is named after Poland, Marie Curie's homeland. It is intensely radioactive, and even a tiny trace is extremely toxic and dangerous."
     isotopes:
-      - [210, 'キュリー夫妻が発見・約138日']
-      - [209, '最も長寿命・約124年']
+      - [210, 'キュリー夫妻が発見・約138日', "Discovered by the Curies; about 138 days"]
+      - [209, '最も長寿命・約124年', "Longest-lived isotope; about 124 years"]
 
   - Z: 85
     symbol: At
@@ -897,9 +982,10 @@ elements:
     ja: アスタチン
     discovered: 1940
     description: 天然にはごくわずかしかない放射性元素で、1940年にカリフォルニア大学でビスマスにアルファ粒子を当てて作られました。ギリシャ語の「不安定な」が名前の由来で、アスタチン211はがん治療への応用が研究されています。
+    description_en: "A radioactive element found only in tiny traces in nature, it was made in 1940 at the University of California by bombarding bismuth with alpha particles. Its name comes from the Greek for \"unstable,\" and astatine-211 is being studied for use in cancer treatment."
     isotopes:
-      - [210, '最も長寿命・約8時間']
-      - [211, 'α線がん治療・理研で製造']
+      - [210, '最も長寿命・約8時間', "Longest-lived isotope; about 8 hours"]
+      - [211, 'α線がん治療・理研で製造', "α-particle cancer therapy; produced at RIKEN"]
 
   - Z: 86
     symbol: Rn
@@ -907,9 +993,10 @@ elements:
     ja: ラドン
     discovered: 1899
     description: ウランやラジウムが崩壊してできる放射性の貴ガスで、1899年にカナダでラザフォードとオーウェンズが発見しました。地中から湧き出て温泉などに含まれ、ラドン温泉として知られています。
+    description_en: "A radioactive noble gas produced by the decay of uranium and radium, it was discovered in Canada in 1899 by Rutherford and Owens. It seeps up from underground and is found in hot springs and elsewhere; such springs are known as radon hot springs."
     isotopes:
-      - [222, '空気中の自然放射能・約3.8日']
-      - [220, 'トロン・半減期約56秒']
+      - [222, '空気中の自然放射能・約3.8日', "Natural radioactivity in the air; about 3.8 days"]
+      - [220, 'トロン・半減期約56秒', "Thoron; half-life about 56 seconds"]
 
   - Z: 87
     symbol: Fr
@@ -917,8 +1004,9 @@ elements:
     ja: フランシウム
     discovered: 1939
     description: 1939年にフランスのペレーがアクチニウムの崩壊生成物から発見し、フランスにちなんで名付けられました。最も長寿命の同位体でも半減期は約22分と短く、天然にはごくわずかしか存在しません。
+    description_en: "Discovered in 1939 by Marguerite Perey of France among the decay products of actinium, it is named after France. Even its longest-lived isotope has a short half-life of about 22 minutes, and only tiny traces exist in nature."
     isotopes:
-      - [223, '最も長寿命・約22分']
+      - [223, '最も長寿命・約22分', "Longest-lived isotope; about 22 minutes"]
 
   - Z: 88
     symbol: Ra
@@ -926,10 +1014,11 @@ elements:
     ja: ラジウム
     discovered: 1898
     description: 1898年にキュリー夫妻が発見し、強い放射線を出すことからラテン語の「光線」にちなんで名付けられました。かつては夜光塗料に使われ、現在はラジウム223が骨に転移したがんの治療に使われています。
+    description_en: "Discovered by Pierre and Marie Curie in 1898, it is named after the Latin word for \"ray\" because it gives off intense radiation. It was once used in luminous paint, and today radium-223 is used to treat cancer that has spread to the bones."
     isotopes:
-      - [226, 'キュリー夫妻が発見・約1600年']
-      - [223, '骨転移のがん治療薬']
-      - [228, 'トリウム系列・約5.8年']
+      - [226, 'キュリー夫妻が発見・約1600年', "Discovered by the Curies; about 1600 years"]
+      - [223, '骨転移のがん治療薬', "Drug for cancer that has spread to the bones"]
+      - [228, 'トリウム系列・約5.8年', "Thorium series; about 5.8 years"]
 
   - Z: 89
     symbol: Ac
@@ -937,9 +1026,10 @@ elements:
     ja: アクチニウム
     discovered: 1902
     description: 1899年にフランスのドビエルヌが報告し、1902年にドイツのギーゼルも独立に発見しました。名前はギリシャ語の「光線」にちなみます。アクチノイドの先頭の元素で、アクチニウム225は新しいがんのアルファ線治療の候補として注目されています。
+    description_en: "It was reported in 1899 by Debierne of France, and in 1902 Giesel of Germany discovered it independently. Its name comes from the Greek for \"ray.\" It is the first of the actinides, and actinium-225 is drawing attention as a candidate for a new alpha-particle therapy for cancer."
     isotopes:
-      - [227, '最も長寿命・約22年']
-      - [225, 'α線がん治療に注目']
+      - [227, '最も長寿命・約22年', "Longest-lived isotope; about 22 years"]
+      - [225, 'α線がん治療に注目', "Promising for α-particle cancer therapy"]
 
   - Z: 90
     symbol: Th
@@ -947,10 +1037,11 @@ elements:
     ja: トリウム
     discovered: 1829
     description: 1828年にスウェーデンのベルセリウスが発見して1829年に発表し、北欧神話の雷神トールにちなんで名付けられました。天然に比較的豊富な放射性元素で、将来の原子力燃料の候補としても研究されています。
+    description_en: "Discovered in 1828 by Berzelius of Sweden and announced in 1829, it is named after Thor, the Norse god of thunder. It is a radioactive element that is relatively abundant in nature, and it is also being studied as a possible future nuclear fuel."
     isotopes:
-      - [232, '天然のほぼ全て・約140億年']
-      - [229, '原子核時計の候補']
-      - [230, 'サンゴ等の年代測定に']
+      - [232, '天然のほぼ全て・約140億年', "Almost all natural thorium; about 14 billion years"]
+      - [229, '原子核時計の候補', "Candidate for a nuclear clock"]
+      - [230, 'サンゴ等の年代測定に', "Used to date corals and more"]
 
   - Z: 91
     symbol: Pa
@@ -958,9 +1049,10 @@ elements:
     ja: プロトアクチニウム
     discovered: 1913
     description: 崩壊してアクチニウムになることから、「アクチニウムの親」という意味で名付けられました。1913年に短寿命の同位体が初めて見つかり、その後ハーンとマイトナーらが長寿命のプロトアクチニウム231を発見しました。
+    description_en: "Because it decays into actinium, it was given a name meaning \"parent of actinium.\" A short-lived isotope was first found in 1913, and later Otto Hahn, Lise Meitner and their colleagues discovered the long-lived protactinium-231."
     isotopes:
-      - [231, '最も長寿命・約3.3万年']
-      - [233, 'トリウム燃料サイクルの中間核']
+      - [231, '最も長寿命・約3.3万年', "Longest-lived isotope; about 33,000 years"]
+      - [233, 'トリウム燃料サイクルの中間核', "Intermediate nucleus in the thorium fuel cycle"]
 
   - Z: 92
     symbol: U
@@ -968,10 +1060,11 @@ elements:
     ja: ウラン
     discovered: 1789
     description: 1789年にドイツのクラプロートが発見し、少し前に見つかった天王星（ウラヌス）にちなんで名付けられました。1896年にベクレルがウランから放射能を発見し、ウラン235の核分裂は原子力発電に利用されています。
+    description_en: "Discovered in 1789 by Klaproth of Germany, it is named after the planet Uranus, which had been found a little earlier. In 1896 Becquerel discovered radioactivity in uranium, and the fission of uranium-235 is used to generate nuclear power."
     isotopes:
-      - [238, '天然の約99.3%・約45億年']
-      - [235, '核分裂性・天然の約0.7%']
-      - [233, '核分裂性・トリウムから生成']
+      - [238, '天然の約99.3%・約45億年', "About 99.3% of natural uranium; about 4.5 billion years"]
+      - [235, '核分裂性・天然の約0.7%', "Fissile; about 0.7% natural abundance"]
+      - [233, '核分裂性・トリウムから生成', "Fissile; produced from thorium"]
 
   - Z: 93
     symbol: Np
@@ -979,9 +1072,10 @@ elements:
     ja: ネプツニウム
     discovered: 1940
     description: 1940年にカリフォルニア大学のマクミランとエーベルソンが作った、最初の超ウラン元素です。ウランの次にあたることから、天王星の外側を回る海王星（ネプチューン）にちなんで名付けられました。
+    description_en: "It is the first transuranium element, made in 1940 by McMillan and Abelson at the University of California. Because it comes right after uranium, it is named after Neptune, the planet that orbits beyond Uranus."
     isotopes:
-      - [237, '最も長寿命・約214万年']
-      - [239, '初めて発見された超ウラン核']
+      - [237, '最も長寿命・約214万年', "Longest-lived isotope; about 2.14 million years"]
+      - [239, '初めて発見された超ウラン核', "The first transuranium nucleus discovered"]
 
   - Z: 94
     symbol: Pu
@@ -989,10 +1083,11 @@ elements:
     ja: プルトニウム
     discovered: 1941
     description: 1940年から翌年にかけてシーボーグらがカリフォルニア大学で合成し、冥王星（プルート）にちなんで名付けられました。プルトニウム239は原子炉の燃料などに、プルトニウム238は宇宙探査機の電源に使われます。
+    description_en: "Glenn Seaborg and colleagues synthesized it at the University of California from 1940 into 1941, and it is named after Pluto. Plutonium-239 is used as fuel for nuclear reactors and for other purposes, and plutonium-238 is used to power space probes."
     isotopes:
-      - [239, '核分裂性・約2.4万年']
-      - [238, '探査機の原子力電池']
-      - [244, '最も長寿命・約8100万年']
+      - [239, '核分裂性・約2.4万年', "Fissile; about 24,000 years"]
+      - [238, '探査機の原子力電池', "Nuclear batteries for space probes"]
+      - [244, '最も長寿命・約8100万年', "Longest-lived isotope; about 81 million years"]
 
   - Z: 95
     symbol: Am
@@ -1000,9 +1095,10 @@ elements:
     ja: アメリシウム
     discovered: 1944
     description: 1944年にシーボーグらが合成し、周期表で真上にあるユウロピウムにならってアメリカ大陸にちなんで名付けられました。アメリシウム241は家庭用の煙感知器に使われています。
+    description_en: "Synthesized by Seaborg and colleagues in 1944, it was named after the Americas, following the example of europium, which sits directly above it in the periodic table. Americium-241 is used in household smoke detectors."
     isotopes:
-      - [241, '煙感知器・約430年']
-      - [243, '最も長寿命・約7350年']
+      - [241, '煙感知器・約430年', "Smoke detectors; about 430 years"]
+      - [243, '最も長寿命・約7350年', "Longest-lived isotope; about 7350 years"]
 
   - Z: 96
     symbol: Cm
@@ -1010,10 +1106,11 @@ elements:
     ja: キュリウム
     discovered: 1944
     description: 1944年にシーボーグらがプルトニウムにアルファ粒子を当てて合成し、キュリー夫妻にちなんで名付けられました。強い放射能をもち、火星探査車に搭載されたX線分光装置の線源などに使われました。
+    description_en: "Synthesized in 1944 by Seaborg and colleagues by bombarding plutonium with alpha particles, it is named after Pierre and Marie Curie. It is intensely radioactive and has been used, for example, as the source in X-ray spectrometers carried on Mars rovers."
     isotopes:
-      - [242, '最初に合成された同位体']
-      - [244, '火星探査車のα線源']
-      - [247, '最も長寿命・約1560万年']
+      - [242, '最初に合成された同位体', "The first isotope synthesized"]
+      - [244, '火星探査車のα線源', "α source for Mars rovers"]
+      - [247, '最も長寿命・約1560万年', "Longest-lived isotope; about 15.6 million years"]
 
   - Z: 97
     symbol: Bk
@@ -1021,10 +1118,11 @@ elements:
     ja: バークリウム
     discovered: 1949
     description: 1949年にカリフォルニア大学バークレー校で合成され、バークレー市にちなんで名付けられました。超重元素テネシンの合成では、標的としてバークリウム249が使われました。
+    description_en: "Synthesized in 1949 at the University of California, Berkeley, it is named after the city of Berkeley. Berkelium-249 was used as the target in the synthesis of the superheavy element tennessine."
     isotopes:
-      - [243, '最初に合成された同位体']
-      - [247, '最も長寿命・約1400年']
-      - [249, 'テネシン合成の標的']
+      - [243, '最初に合成された同位体', "The first isotope synthesized"]
+      - [247, '最も長寿命・約1400年', "Longest-lived isotope; about 1400 years"]
+      - [249, 'テネシン合成の標的', "Target for making tennessine"]
 
   - Z: 98
     symbol: Cf
@@ -1032,10 +1130,11 @@ elements:
     ja: カリホルニウム
     discovered: 1950
     description: 1950年にカリフォルニア大学バークレー校で合成され、カリフォルニア州と大学にちなんで名付けられました。カリホルニウム252は自発核分裂で中性子を出すため、中性子源として利用されています。
+    description_en: "Synthesized in 1950 at the University of California, Berkeley, it is named after the state of California and the university. Californium-252 gives off neutrons through spontaneous fission, so it is used as a neutron source."
     isotopes:
-      - [252, '強力な中性子源・約2.6年']
-      - [251, '最も長寿命・約900年']
-      - [249, 'オガネソン合成の標的']
+      - [252, '強力な中性子源・約2.6年', "Powerful neutron source; about 2.6 years"]
+      - [251, '最も長寿命・約900年', "Longest-lived isotope; about 900 years"]
+      - [249, 'オガネソン合成の標的', "Target for making oganesson"]
 
   - Z: 99
     symbol: Es
@@ -1043,9 +1142,10 @@ elements:
     ja: アインスタイニウム
     discovered: 1952
     description: 1952年に太平洋で行われた初の水爆実験の降下物から発見され、アインシュタインにちなんで名付けられました。発見当初は軍事機密とされ、ごく微量しか作れないため用途は研究に限られています。
+    description_en: "It was discovered in the fallout from the first hydrogen-bomb test, carried out in the Pacific in 1952, and is named after Albert Einstein. At first its discovery was kept a military secret, and because only tiny amounts can be made, it is used only for research."
     isotopes:
-      - [253, '水爆実験の灰から発見']
-      - [252, '最も長寿命・約470日']
+      - [253, '水爆実験の灰から発見', "Found in the ash of a hydrogen-bomb test"]
+      - [252, '最も長寿命・約470日', "Longest-lived isotope; about 470 days"]
 
   - Z: 100
     symbol: Fm
@@ -1053,9 +1153,10 @@ elements:
     ja: フェルミウム
     discovered: 1953
     description: アインスタイニウムとともに1952年の水爆実験の降下物から発見され、物理学者フェルミにちなんで名付けられました。中性子を吸収させて作れる元素はここまでで、これより重い元素は加速器で合成されます。
+    description_en: "Discovered together with einsteinium in the fallout from the 1952 hydrogen-bomb test, it is named after the physicist Enrico Fermi. It is the last element that can be made by neutron absorption; heavier elements are synthesized with accelerators."
     isotopes:
-      - [255, '水爆実験の灰から発見']
-      - [257, '最も長寿命・約100日']
+      - [255, '水爆実験の灰から発見', "Found in the ash of a hydrogen-bomb test"]
+      - [257, '最も長寿命・約100日', "Longest-lived isotope; about 100 days"]
 
   - Z: 101
     symbol: Md
@@ -1063,9 +1164,10 @@ elements:
     ja: メンデレビウム
     discovered: 1955
     description: 1955年にカリフォルニア大学バークレー校で、ごく微量のアインスタイニウムにアルファ粒子を当てて合成されました。周期表を作ったメンデレーエフにちなんで名付けられ、最初の実験ではわずか十数個の原子しか作られませんでした。
+    description_en: "It was synthesized in 1955 at the University of California, Berkeley, by bombarding a tiny amount of einsteinium with alpha particles. It is named after Mendeleev, who created the periodic table, and the first experiment produced only a dozen or so atoms."
     isotopes:
-      - [256, '原子1個ずつ検出して発見']
-      - [258, '最も長寿命・約52日']
+      - [256, '原子1個ずつ検出して発見', "Discovered by detecting atoms one at a time"]
+      - [258, '最も長寿命・約52日', "Longest-lived isotope; about 52 days"]
 
   - Z: 102
     symbol: 'No'
@@ -1073,9 +1175,10 @@ elements:
     ja: ノーベリウム
     discovered: 1965  # 1965 年の実験（1966 年発表、Dubna）
     description: 1957年にストックホルムのノーベル研究所が発見を報告したことから、アルフレッド・ノーベルにちなんで名付けられました。その報告は再現されず、確実な合成はソ連のドゥブナの研究グループによるものと認められています。
+    description_en: "It is named after Alfred Nobel because the Nobel Institute in Stockholm reported its discovery in 1957. That report could not be reproduced, and the first reliable synthesis is credited to a research group in Dubna in the Soviet Union."
     isotopes:
-      - [254, '詳しく研究されている核']
-      - [259, '最も長寿命・約58分']
+      - [254, '詳しく研究されている核', "A nucleus studied in detail"]
+      - [259, '最も長寿命・約58分', "Longest-lived isotope; about 58 minutes"]
 
   - Z: 103
     symbol: Lr
@@ -1083,9 +1186,10 @@ elements:
     ja: ローレンシウム
     discovered: 1961
     description: 1961年にバークレーで合成が報告され、サイクロトロンを発明したローレンスにちなんで名付けられました。アクチノイドの最後の元素で、2015年に日本原子力研究開発機構がイオン化エネルギーを初めて測定しました。
+    description_en: "Its synthesis was reported at Berkeley in 1961, and it is named after Ernest Lawrence, who invented the cyclotron. It is the last of the actinides, and in 2015 the Japan Atomic Energy Agency measured its ionization energy for the first time."
     isotopes:
-      - [266, '既知で最長寿命・約22時間']
-      - [256, '日本で電離エネルギーを測定']
+      - [266, '既知で最長寿命・約22時間', "Longest-lived known isotope; about 22 hours"]
+      - [256, '日本で電離エネルギーを測定', "Ionization energy measured in Japan"]
 
   - Z: 104
     symbol: Rf
@@ -1093,9 +1197,10 @@ elements:
     ja: ラザホージウム
     discovered: 1969  # Dubna 1964 の主張は IUPAC が不採用
     description: 1960年代にソ連のドゥブナとアメリカのバークレーがそれぞれ合成を報告し、原子核を発見したラザフォードにちなんで名付けられました。最初の超アクチノイド元素で、化学的にはハフニウムに似た性質をもつことが確かめられています。
+    description_en: "In the 1960s, Dubna in the Soviet Union and Berkeley in the United States each reported synthesizing it, and it is named after Ernest Rutherford, who discovered the atomic nucleus. It is the first transactinide element, and its chemistry has been confirmed to be similar to that of hafnium."
     isotopes:
-      - [267, '既知で最長寿命・約2.5時間']
-      - [261, '化学実験に使われる']
+      - [267, '既知で最長寿命・約2.5時間', "Longest-lived known isotope; about 2.5 hours"]
+      - [261, '化学実験に使われる', "Used in chemistry experiments"]
 
   - Z: 105
     symbol: Db
@@ -1103,9 +1208,10 @@ elements:
     ja: ドブニウム
     discovered: 1970  # Dubna 1968 の主張は IUPAC が不採用
     description: 1960年代末から1970年にかけてソ連とアメリカがそれぞれ合成を報告し、命名争いの末にロシアの研究都市ドゥブナにちなんで名付けられました。ドゥブナの合同原子核研究所は数多くの超重元素の発見で知られています。
+    description_en: "From the late 1960s to 1970, the Soviet Union and the United States each reported synthesizing it, and after a naming dispute it was named after Dubna, a Russian science city. Dubna's Joint Institute for Nuclear Research is known for discovering many superheavy elements."
     isotopes:
-      - [268, '既知で最長寿命・約29時間']
-      - [262, 'ニホニウムの崩壊系列に登場']
+      - [268, '既知で最長寿命・約29時間', "Longest-lived known isotope; about 29 hours"]
+      - [262, 'ニホニウムの崩壊系列に登場', "Appears in the decay chain of nihonium"]
 
   - Z: 106
     symbol: Sg
@@ -1113,9 +1219,10 @@ elements:
     ja: シーボーギウム
     discovered: 1974
     description: 1974年にバークレーのギオルソらがカリホルニウムに酸素を当てて合成し、シーボーグにちなんで名付けられました。命名当時シーボーグは存命で、生きている人物の名を冠した最初の元素とされます。
+    description_en: "Synthesized in 1974 by Ghiorso and colleagues at Berkeley by bombarding californium with oxygen, it is named after Glenn Seaborg. Seaborg was still alive when it was named, and it is considered the first element named after a living person."
     isotopes:
-      - [263, '発見時に合成された同位体']
-      - [269, '既知で最長寿命・約5分']
+      - [263, '発見時に合成された同位体', "The isotope made in the discovery"]
+      - [269, '既知で最長寿命・約5分', "Longest-lived known isotope; about 5 minutes"]
 
   - Z: 107
     symbol: Bh
@@ -1123,10 +1230,11 @@ elements:
     ja: ボーリウム
     discovered: 1981
     description: 1981年にドイツのダルムシュタットにある重イオン研究所（GSI）で、ビスマスにクロムを当てて合成されました。原子模型で知られるデンマークの物理学者ニールス・ボーアにちなんで名付けられました。
+    description_en: "It was synthesized in 1981 at the heavy-ion research center GSI in Darmstadt, Germany, by bombarding bismuth with chromium. It is named after Niels Bohr, the Danish physicist known for his model of the atom."
     isotopes:
-      - [262, '発見時に合成された同位体']
-      - [266, '理研が直接合成し性質を確認']
-      - [270, '既知で最長寿命・約4分']
+      - [262, '発見時に合成された同位体', "The isotope made in the discovery"]
+      - [266, '理研が直接合成し性質を確認', "Made directly at RIKEN, which confirmed its properties"]
+      - [270, '既知で最長寿命・約4分', "Longest-lived known isotope; about 4 minutes"]
 
   - Z: 108
     symbol: Hs
@@ -1134,10 +1242,11 @@ elements:
     ja: ハッシウム
     discovered: 1984
     description: 1984年にGSIで鉛に鉄を当てて合成され、GSIのあるドイツ・ヘッセン州のラテン名ハッシアにちなんで名付けられました。寿命はごく短いものの化学実験が行われ、オスミウムと同じ族の性質をもつことが確かめられました。
+    description_en: "Synthesized at GSI in 1984 by bombarding lead with iron, it is named after Hassia, the Latin name for the German state of Hesse, where GSI is located. Although its lifetime is very short, chemistry experiments have been carried out on it, confirming that it behaves like a member of the same group as osmium."
     isotopes:
-      - [265, '発見時に合成された同位体']
-      - [269, '既知で最長寿命・約15秒']
-      - [270, '変形核の二重魔法数とされる']
+      - [265, '発見時に合成された同位体', "The isotope made in the discovery"]
+      - [269, '既知で最長寿命・約15秒', "Longest-lived known isotope; about 15 seconds"]
+      - [270, '変形核の二重魔法数とされる', "Considered a doubly magic deformed nucleus"]
 
   - Z: 109
     symbol: Mt
@@ -1145,9 +1254,10 @@ elements:
     ja: マイトネリウム
     discovered: 1982
     description: 1982年にGSIでビスマスに鉄を当てて合成され、最初はたった1個の原子が観測されただけでした。核分裂の発見に貢献したオーストリア出身の物理学者リーゼ・マイトナーにちなんで名付けられました。
+    description_en: "It was synthesized at GSI in 1982 by bombarding bismuth with iron, and at first just a single atom was observed. It is named after Lise Meitner, the Austrian-born physicist who helped discover nuclear fission."
     isotopes:
-      - [266, '発見時に合成された同位体']
-      - [270, 'ニホニウム崩壊系列で初観測']
+      - [266, '発見時に合成された同位体', "The isotope made in the discovery"]
+      - [270, 'ニホニウム崩壊系列で初観測', "First seen in the decay chain of nihonium"]
 
   - Z: 110
     symbol: Ds
@@ -1155,9 +1265,10 @@ elements:
     ja: ダームスタチウム
     discovered: 1994
     description: 1994年にGSIで鉛にニッケルを当てて合成され、研究所のあるダルムシュタット市にちなんで名付けられました。寿命は非常に短く、多くの同位体は1秒にも満たない時間で崩壊します。
+    description_en: "Synthesized at GSI in 1994 by bombarding lead with nickel, it is named after the city of Darmstadt, where the institute is located. Its lifetimes are very short, and most of its isotopes decay in less than a second."
     isotopes:
-      - [269, '発見時に合成された同位体']
-      - [281, '比較的長寿命・約14秒']
+      - [269, '発見時に合成された同位体', "The isotope made in the discovery"]
+      - [281, '比較的長寿命・約14秒', "Relatively long-lived; about 14 seconds"]
 
   - Z: 111
     symbol: Rg
@@ -1165,10 +1276,11 @@ elements:
     ja: レントゲニウム
     discovered: 1994
     description: 1994年にGSIでビスマスにニッケルを当てて合成され、X線を発見したレントゲンにちなんで名付けられました。周期表では金の下に位置しますが、ごくわずかな原子しか作れないため化学的性質はほとんどわかっていません。
+    description_en: "Synthesized at GSI in 1994 by bombarding bismuth with nickel, it is named after Röntgen, who discovered X-rays. It sits below gold in the periodic table, but because only a handful of atoms can be made, almost nothing is known about its chemistry."
     isotopes:
-      - [272, '発見時に合成された同位体']
-      - [274, 'ニホニウムの娘核・理研で発見']
-      - [282, '既知で最長寿命・約2分']
+      - [272, '発見時に合成された同位体', "The isotope made in the discovery"]
+      - [274, 'ニホニウムの娘核・理研で発見', "Daughter of nihonium; discovered at RIKEN"]
+      - [282, '既知で最長寿命・約2分', "Longest-lived known isotope; about 2 minutes"]
 
   - Z: 112
     symbol: Cn
@@ -1176,10 +1288,11 @@ elements:
     ja: コペルニシウム
     discovered: 1996
     description: 1996年にGSIで鉛に亜鉛を当てて合成され、地動説を唱えたコペルニクスにちなんで名付けられました。周期表では水銀の下に位置し、水銀に似て揮発しやすいことを示す化学実験も行われています。
+    description_en: "Synthesized at GSI in 1996 by bombarding lead with zinc, it is named after Copernicus, who proposed that the Earth moves around the Sun. It sits below mercury in the periodic table, and chemistry experiments have also shown that, like mercury, it evaporates easily."
     isotopes:
-      - [277, '発見時に合成・理研でも確認']
-      - [283, '化学実験に使われた']
-      - [285, '長寿命・半減期約30秒']
+      - [277, '発見時に合成・理研でも確認', "Made in the discovery; also confirmed at RIKEN"]
+      - [283, '化学実験に使われた', "Used in chemistry experiments"]
+      - [285, '長寿命・半減期約30秒', "Long-lived; half-life about 30 seconds"]
 
   - Z: 113
     symbol: Nh
@@ -1187,9 +1300,10 @@ elements:
     ja: ニホニウム
     discovered: 2004  # 出典は 2003–2004。理研の初観測 2004
     description: 理研の森田浩介らのグループが、線形加速器RILACで加速した亜鉛70をビスマス209に衝突させて合成し、2004年に初めて観測しました。2016年、アジアで初めて発見された元素として「日本」にちなんで命名されました。
+    description_en: "A group led by Kosuke Morita at RIKEN synthesized it by smashing zinc-70, accelerated in the RILAC linear accelerator, into bismuth-209, and first observed it in 2004. In 2016, as the first element discovered in Asia, it was named after \"Nihon\" (Japan)."
     isotopes:
-      - [278, '理研で合成・日本初の新元素']
-      - [286, '既知で最長寿命・約12秒']
+      - [278, '理研で合成・日本初の新元素', "Made at RIKEN; Japan's first new element"]
+      - [286, '既知で最長寿命・約12秒', "Longest-lived known isotope; about 12 seconds"]
 
   - Z: 114
     symbol: Fl
@@ -1197,8 +1311,9 @@ elements:
     ja: フレロビウム
     discovered: 1999
     description: 1998年以降、ロシアのドゥブナ合同原子核研究所でプルトニウム244にカルシウム48を当てて合成されました。同研究所のフレロフ原子核反応研究所と、その名の由来である物理学者フレロフにちなんで名付けられました。
+    description_en: "From 1998 onward, it was synthesized at the Joint Institute for Nuclear Research in Dubna, Russia, by bombarding plutonium-244 with calcium-48. It is named after the institute's Flerov Laboratory of Nuclear Reactions and the physicist Georgy Flerov, after whom the laboratory is named."
     isotopes:
-      - [289, 'カルシウムビームで合成・約2秒']
+      - [289, 'カルシウムビームで合成・約2秒', "Made with a calcium beam; about 2 seconds"]
 
   - Z: 115
     symbol: Mc
@@ -1206,9 +1321,10 @@ elements:
     ja: モスコビウム
     discovered: 2003
     description: 2003年にドゥブナ合同原子核研究所とアメリカの研究者が、アメリシウムにカルシウム48を当てて合成しました。研究所のあるモスクワ州にちなんで名付けられ、原子は1秒にも満たない時間で崩壊します。
+    description_en: "In 2003, researchers from the Joint Institute for Nuclear Research in Dubna and the United States synthesized it by bombarding americium with calcium-48. It is named after the Moscow region, where the institute is located, and its atoms decay in less than a second."
     isotopes:
-      - [288, '発見時に合成された同位体']
-      - [290, '既知で最長寿命・約0.8秒']
+      - [288, '発見時に合成された同位体', "The isotope made in the discovery"]
+      - [290, '既知で最長寿命・約0.8秒', "Longest-lived known isotope; about 0.8 seconds"]
 
   - Z: 116
     symbol: Lv
@@ -1216,9 +1332,10 @@ elements:
     ja: リバモリウム
     discovered: 2000
     description: 2000年にドゥブナでキュリウムにカルシウム48を当てて合成され、共同研究を行ったアメリカのローレンス・リバモア国立研究所にちなんで名付けられました。同位体の寿命は長いものでも1秒に届きません。
+    description_en: "Synthesized at Dubna in 2000 by bombarding curium with calcium-48, it is named after Lawrence Livermore National Laboratory in the United States, which took part in the joint research. Even its longest-lived isotopes last less than a second."
     isotopes:
-      - [292, 'キュリウム標的で合成']
-      - [293, '既知で最長寿命・約0.07秒']
+      - [292, 'キュリウム標的で合成', "Made with a curium target"]
+      - [293, '既知で最長寿命・約0.07秒', "Longest-lived known isotope; about 0.07 seconds"]
 
   - Z: 117
     symbol: Ts
@@ -1226,9 +1343,10 @@ elements:
     ja: テネシン
     discovered: 2009
     description: ドゥブナとアメリカの研究所の共同研究で、バークリウムにカルシウム48を当てて合成され、2010年に発表されました。標的のバークリウムを製造したオークリッジ国立研究所などがあるテネシー州にちなんで名付けられました。
+    description_en: "It was synthesized in joint research between Dubna and laboratories in the United States by bombarding berkelium with calcium-48, and was announced in 2010. It is named after the state of Tennessee, home to Oak Ridge National Laboratory, which produced the berkelium target, and other institutions."
     isotopes:
-      - [293, 'バークリウム標的で合成']
-      - [294, '既知で最長寿命・約0.07秒']
+      - [293, 'バークリウム標的で合成', "Made with a berkelium target"]
+      - [294, '既知で最長寿命・約0.07秒', "Longest-lived known isotope; about 0.07 seconds"]
 
   - Z: 118
     symbol: Og
@@ -1236,8 +1354,9 @@ elements:
     ja: オガネソン
     discovered: 2002
     description: 2006年にドゥブナとアメリカの共同研究グループが、カリホルニウムにカルシウム48を当てて合成したと報告しました。現在知られている中で最も重い元素で、超重元素研究を率いたユーリ・オガネシアンにちなんで名付けられました。
+    description_en: "In 2006, a joint research group from Dubna and the United States reported synthesizing it by bombarding californium with calcium-48. It is the heaviest element known today, and it is named after Yuri Oganessian, who led research on superheavy elements."
     isotopes:
-      - [294, 'カリホルニウム標的で合成']
+      - [294, 'カリホルニウム標的で合成', "Made with a californium target"]
 
   - Z: 119
     symbol: Uue

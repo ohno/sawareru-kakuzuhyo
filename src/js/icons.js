@@ -1,13 +1,17 @@
 // The icons of the page: line drawings on a 24 × 24 grid, in the color of the text around them.
 // camera, help-circle, moon, music, volume-2 and volume-x are from Feather, Copyright (c) 2013-2023 Cole Bemis,
-// MIT License; rotate-ccw and sun are from Lucide, Copyright (c) 2026 Lucide Icons and Contributors, ISC License
-// (see THIRD-PARTY-NOTICES). The magnifying glass is drawn for this page.
+// MIT License; languages, rotate-ccw and sun are from Lucide, Copyright (c) 2026 Lucide Icons and Contributors, ISC
+// License (see THIRD-PARTY-NOTICES). The magnifying glasses and the walking figure are drawn for this page.
 
 const NOTE = '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>';
 const SPEAKER = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>';
 
 const PATHS = {
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  zoom: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/>', // the magnifier with a plus
+  // someone walking: head, a body leaning forward, arms and legs swinging
+  walk: '<circle cx="13.5" cy="4" r="2"/><path d="M12.5 8 10.5 14.5M12.2 9.2 8.5 11.5 7.5 14.5M12.2 9.2l3.3 2.6 2.6.2M10.5 14.5l3.2 2.8.8 4.2M10.5 14.5 8.6 18.2 5.8 20.5"/>',
+  languages: '<path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>',
   camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
   reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
   help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',

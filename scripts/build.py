@@ -13,7 +13,10 @@ data/nuclides/092-U.yaml ... -> data/nuclides.json, with the short keys of the a
   Iso -> iso: Lbl -> f, Ex -> e, Ex_est -> ee, T -> ts or st / pu, Jpi -> j, BR -> d (the texts joined by ;)
 data/abundances.yaml -> data/abundances.json, per Z, with the share of all atoms and the rank worked out.
 Any other data/<name>.yaml -> data/<name>.json as it is, each table {columns: [...], rows: [...]} becoming its rows.
-data/README.md -> data/sources.json: its table of sources, which the app shows as its own list of sources.
+data/README.md -> data/sources.json: its table of sources, which the app shows as its own list of sources, and the same
+  table in English (under its heading "English"), shown when the app is in English.
+Texts written for this app come in Japanese with the English beside them (description_en, label_en, a last column of
+English notes); the app picks the language it shows.
 """
 import argparse
 import html
@@ -171,10 +174,10 @@ def abundances(data):
     per_z = [None] * (max(r[0] for r in rows) + 1)
     for rank, (z, eps, mass) in enumerate(rows, 1):
         per_z[z] = {"num": float(f"{10 ** (eps - 12) / total:.4g}"), "mass": mass, "rank": rank}
-    return {"label": data["label"], "cite": data["cite"], "elements": per_z}
+    return {"label": data["label"], "label_en": data["label_en"], "cite": data["cite"], "elements": per_z}
 
 
-SOURCE_COLUMNS = ["ファイル", "内容", "出典"]
+SOURCE_COLUMNS = {"ja": ["ファイル", "内容", "出典"], "en": ["File", "Contents", "Source"]}
 
 
 def inline_html(text):
@@ -187,13 +190,28 @@ def inline_html(text):
 
 
 def sources(readme, with_ktuy):
-    """the table of data/README.md -> [[what, where from (HTML)], ...]; without KTUY05, its row is left out"""
-    rows = [[cell.strip() for cell in line.strip().strip("|").split("|")]
-            for line in readme.read_text(encoding="utf-8").splitlines() if line.startswith("|")]
-    if not rows or rows[0] != SOURCE_COLUMNS or any(len(row) != len(SOURCE_COLUMNS) for row in rows):
-        raise SystemExit(f"{readme}: the table of sources should have the columns {' | '.join(SOURCE_COLUMNS)}")
-    return [[inline_html(what), inline_html(source)] for file, what, source in rows[2:]
-            if with_ktuy or "ktuy.py" not in file]
+    """
+    The tables of data/README.md, Japanese and English -> {"ja": [[what, where from (HTML)], ...], "en": [...]};
+    without KTUY05, its row is left out. The two tables must list the same files in the same order.
+    """
+    tables, rows = [], None
+    for line in readme.read_text(encoding="utf-8").splitlines() + [""]:
+        if line.startswith("|"):
+            rows = (rows or []) + [[cell.strip() for cell in line.strip().strip("|").split("|")]]
+        elif rows:
+            tables.append(rows)
+            rows = None
+    out = {}
+    for lang, columns in SOURCE_COLUMNS.items():
+        table = next((t for t in tables if t[0] == columns), None)
+        if not table or any(len(row) != len(columns) for row in table):
+            raise SystemExit(f"{readme}: there should be a table of sources with the columns {' | '.join(columns)}")
+        out[lang] = table[2:]
+    files = [[re.sub(r"[^\w./-]", "", re.search(r"`([^`]*)`|$", row[0])[0]) for row in out[lang]] for lang in out]
+    if files[0] != files[1]:
+        raise SystemExit(f"{readme}: the English table of sources should list the same files, in the same order")
+    return {lang: [[inline_html(what), inline_html(source)] for file, what, source in rows
+                   if with_ktuy or "ktuy.py" not in file] for lang, rows in out.items()}
 
 
 def main():
@@ -227,6 +245,8 @@ def main():
     for z, e in enumerate(elements):
         if e.get("Z") != z:
             raise SystemExit(f"elements.yaml: entry {z} ({e.get('symbol')}) has Z = {e.get('Z')}; entries go in order of Z")
+        if ("description" in e) != ("description_en" in e) or any(len(iso) != 3 for iso in e.get("isotopes", [])):
+            raise SystemExit(f"elements.yaml: {e['symbol']}: each text needs its English (description_en; isotopes [A, note, English])")
     nucs = nuclides([e["symbol"] for e in elements])
     write("nuclides", {"nuclides": nucs})
     for path in sorted(DATA.glob("*.yaml")):
@@ -237,7 +257,8 @@ def main():
         print("no predicted nuclei, no island of stability")
         for name in ktuy.OUTPUTS:
             write(name, None)
-    write("sources", {"sources": sources(DATA / "README.md", with_ktuy)})
+    table = sources(DATA / "README.md", with_ktuy)
+    write("sources", {"sources": table["ja"], "sources_en": table["en"]})
 
 
 if __name__ == "__main__":

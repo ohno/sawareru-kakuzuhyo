@@ -1,11 +1,50 @@
 // Decay graph (daughters, parents, chains) and its 3D visualisation (animated arcs + floating tags).
 import * as THREE from 'three';
-import { modeShift, isFission, modeCategory, modeLabel, arcColor, nuclideKey, fmtBranch, nucText, fmtHalfLife } from './nuclear.js';
+import { modeShift, isFission, modeCategory, modeLabel, arcColor, nuclideKey, fmtBranch, fmtShare, nucText, isoText, fmtHalfLife } from './nuclear.js';
 import { EMPH } from './chart.js';
 import { makeTextSprite } from './sprites.js';
+import { tr } from './i18n.js';
 
 // how thick an arrow is drawn for a branching ratio (%), on a logarithmic scale; unknown ratios in between
 const branchWeight = (val) => (val === null ? 0.35 : Math.min(1, Math.max(0.12, (Math.log10(val) + 3) / 5)));
+/** the ratio of branch d as written on an arrow: NUBASE's, or the share left to the β daughter (see netBeta) */
+export const branchLabel = (d) => (d.incl === undefined ? fmtBranch(d.raw) : fmtShare(d.op, d.val));
+
+// β-delayed emission. NUBASE's β⁻ ratio (β⁺, or EC where no β⁺ is listed) counts every β decay, those followed by
+// the emission of particles or by fission included, and gives those (β⁻n, β⁻2n, …, β⁺p, …, β⁺SF) as parts of it:
+// ¹¹Li is β⁻ 100 % with β⁻n 86.3 %, β⁻2n 4.1 %, …, so that only about 6 % stays ¹¹Be. The arrows and the main path go
+// by that share (netBeta); the panel lists NUBASE's ratios as they are.
+const DELAYED = {
+  'B-': ['B-n', 'B-2n', 'B-3n', 'B-4n', 'B-p', 'B-d', 'B-t', 'B-A', 'B-SF'],
+  'B+': ['B+p', 'B+2p', 'B+3p', 'B+A', 'B+pA', 'B+SF', 'ECSF'],
+};
+
+/**
+ * The share (%) of the β decays of nuclide nuc (its NUBASE entry m) that end on the β daughter itself: the β ratio less
+ * the delayed branches that have a value (written '=' or '~', and a lower limit '>' at its value), never below 0.
+ * Upper limits ('<') and branches without a value are not taken off; the share is then at most the result (op '≤'),
+ * otherwise about it ('~'). Null when nothing is taken off, or the β ratio itself has no value (or only a limit).
+ * Returns { val, op, delayed: the delayed branches (NUBASE entries) } .
+ */
+function netBeta(nuc, m) {
+  const [mode, op, val] = m;
+  const modes = nuc.d;
+  const plus = mode === 'B+' || (mode === 'EC' && !modes.some((x) => x[0] === 'B+'));
+  const group = mode === 'B-' ? DELAYED['B-'] : plus ? DELAYED['B+'] : null;
+  if (!group || val === null || (op !== '=' && op !== '~')) return null;
+  const delayed = modes.filter((x) => group.includes(x[0]));
+  const taken = delayed.filter((x) => x[2] !== null && (x[1] === '=' || x[1] === '~' || x[1] === '>'));
+  if (!taken.length) return null;
+  const net = Math.max(0, val - taken.reduce((sum, x) => sum + x[2], 0));
+  const atMost = delayed.some((x) => !taken.includes(x) || x[1] === '>');
+  return { val: net, op: atMost ? '≤' : '~', delayed };
+}
+
+// The data are those of ground states, but a few β decays are known to go almost wholly to an isomer of the daughter.
+// ²³⁴Th: its β⁻ decay goes to ²³⁴ᵐPa (1.16 min), which decays on to ²³⁴U; the ground state of ²³⁴Pa (6.70 h) gets only
+// the isomer's 0.16 % of isomeric transition. Only decays checked in the literature are listed here: for the others,
+// which level the decay goes to is not in the data, and nothing is guessed.
+const FEEDS_ISOMER = new Map([[nuclideKey(90, 144), { mode: 'B-', f: 'm' }]]);
 // of two branches, the one with the larger known ratio (the first one when neither is known)
 const larger = (best, d) => (d.val !== null && (best.val === null || d.val > best.val) ? d : best);
 // when a nucleus plays several parts in the picture, the ring it gets: the selection first, the fission region last
@@ -58,6 +97,7 @@ export class DecayGraph {
   /** whether branch d of nuclide i passes the branching-ratio threshold (%); the main branch always does */
   keepBranch(i, d, minBranch) {
     if (this.nuclides[i].st) return false; // e.g. "A ?" on 206Pb: allowed by energy but never observed
+    if (d.incl !== undefined && d.val === 0) return d === this.largest(i); // nothing left once the delayed ones are off (⁸B)
     if (minBranch <= 0 || (d.val !== null && d.val >= minBranch)) return true;
     return d === this.largest(i);
   }
@@ -80,9 +120,21 @@ export class DecayGraph {
       const shift = modeShift(mode);
       if (!shift) continue;
       const z = nuc.z + shift[0], n = nuc.n + shift[1];
-      out.push({ mode, op, val, cat, z, n, to: this.find(z, n), raw: m });
+      const d = { mode, op, val, cat, z, n, to: this.find(z, n), raw: m };
+      // a β decay with delayed branches: its share without them, NUBASE's own ratio kept as incl (and in raw)
+      const net = netBeta(nuc, m);
+      if (net) Object.assign(d, { op: net.op, val: net.val, incl: val, delayed: net.delayed });
+      out.push(d);
     }
     return out;
+  }
+
+  /** the isomer of the daughter (an entry of its `iso`) that branch d of nuclide i is known to go to, or null */
+  isomerFed(i, d) {
+    const nuc = this.nuclides[i];
+    const via = i >= 0 && d ? FEEDS_ISOMER.get(nuclideKey(nuc.z, nuc.n)) : null;
+    if (!via || d.mode !== via.mode || d.to < 0) return null;
+    return (this.nuclides[d.to].iso || []).find((x) => x.f === via.f) || null;
   }
 
   parents(i) {
@@ -292,7 +344,7 @@ export class DecayViz {
       const last = path.at(-1);
       if (!path.some((s) => s.fission) && last.idx >= 0 && last.idx !== i && this.chart.nuclides[last.idx].st) {
         const p = this.topOf(last.idx);
-        this.addTag(`${nucText(this.chart.nuclides[last.idx])} 安定`, p.clone().add(new THREE.Vector3(0, 0.9, 0)), {
+        this.addTag(`${nucText(this.chart.nuclides[last.idx])} ${tr('安定', 'stable')}`, p.clone().add(new THREE.Vector3(0, 0.9, 0)), {
           px: 15, bg: '#232326', color: '#ffffff', prio: 3,
         });
       }
@@ -319,12 +371,12 @@ export class DecayViz {
     const tagGroups = new Map(); // one tag per daughter nucleus, even if several modes lead there
     for (const d of g.shownDaughters(i, minBranch)) {
       const color = arcColor(d.cat);
-      const label = `${modeLabel(d.mode)} ${fmtBranch(d.raw)}`;
+      const label = `${modeLabel(d.mode)} ${branchLabel(d)}`;
       if (d.fission) {
         d.fragments.forEach((f, k) => {
           const fi = g.find(f.z, f.n);
           const to = this.topOf(fi, f.z, f.n);
-          this.addArc(sel, to, d.cat, { radius: 0.11, opacity: 0.8, weight: branchWeight(d.val), apexTag: k === 0 ? `${label}（分裂片の目安）` : null });
+          this.addArc(sel, to, d.cat, { radius: 0.11, opacity: 0.8, weight: branchWeight(d.val), apexTag: k === 0 ? tr(`${label}（分裂片の目安）`, `${label} (typical fragments)`) : null });
           for (let da = -6; da <= 6; da++) {
             const af = f.a + da;
             const zc = (nuc.z * af) / nuc.a;
@@ -342,7 +394,9 @@ export class DecayViz {
     }
     for (const { d, to, labels, color } of tagGroups.values()) {
       const dn = d.to >= 0 ? this.chart.nuclides[d.to] : null;
-      const name = dn ? `${nucText(dn)}  ${fmtHalfLife(dn)}` : `Z=${d.z}, N=${d.n}（未登録）`;
+      const iso = g.isomerFed(i, d); // ²³⁴Th → ²³⁴ᵐPa: the isomer it goes to, with its half-life
+      const name = iso ? `${isoText(dn, iso)}  ${fmtHalfLife(iso)}`
+        : dn ? `${nucText(dn)}  ${fmtHalfLife(dn)}` : tr(`Z=${d.z}, N=${d.n}（未登録）`, `Z=${d.z}, N=${d.n} (not in the data)`);
       this.addTag(`${labels.join(' / ')}  →  ${name}`, to.clone().add(new THREE.Vector3(0, 1.0, 0)), {
         px: 15, bg: 'rgba(255,255,255,0.95)', color: '#1d1d1f', border: color, prio: 1,
       });

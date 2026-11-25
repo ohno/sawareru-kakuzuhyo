@@ -24,8 +24,14 @@ import {
 } from './panel.js';
 import { icon, drawIcons } from './icons.js';
 import { recall, remember } from './storage.js';
+import { tr, EN, setLang, translatePage } from './i18n.js';
+import { WalkMode } from './walk.js';
 
 THREE.ColorManagement.enabled = false;
+
+// the page's own words in its language, at once (the JA / EN buttons on the toolbar switch it)
+translatePage();
+if (EN) document.title = 'RIKEN Touchable Periodic Table';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -94,8 +100,8 @@ async function init() {
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   } catch {
-    throw Object.assign(new Error('このブラウザでは 3D 表示（WebGL 2）を使えません。'), {
-      advice: 'ブラウザを最新版にするか、別のブラウザや端末でお試しください。',
+    throw Object.assign(new Error(tr('このブラウザでは 3D 表示（WebGL 2）を使えません。', 'This browser cannot show 3D graphics (WebGL 2).')), {
+      advice: tr('ブラウザを最新版にするか、別のブラウザや端末でお試しください。', 'Update the browser, or try another browser or device.'),
     });
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -123,7 +129,7 @@ async function init() {
   const pointer = new Pointer({
     canvas, camera, controls, chart, hyper,
     onHover: setHover,
-    onClick: (id) => (id < 0 || id === state.pinned ? unpin() : pin(id)),
+    onClick: (id) => !walk.on && (id < 0 || id === state.pinned ? unpin() : pin(id)), // walking: a click only looks around
     onMove: () => views.cancelFlight(),
   });
   function setDragMode(mode) {
@@ -161,7 +167,8 @@ async function init() {
   drawIcons();
   if (!island.available) {
     $('#opt-island').disabled = true;
-    $('#opt-island').closest('label').title = '安定の島のデータ（KTUY05 質量公式）は、この版には入っていません';
+    $('#opt-island').closest('label').title = tr('安定の島のデータ（KTUY05 質量公式）は、この版には入っていません',
+      'The data for the island of stability (the KTUY05 mass formula) is not in this version');
   }
 
   // ---------- selection / hover ----------
@@ -177,7 +184,7 @@ async function init() {
     info.classList.toggle('collapsed', folded.detail);
     const t = $('#info-toggle');
     t.textContent = folded.detail ? '+' : '−';
-    t.title = folded.detail ? '広げる' : 'たたむ';
+    t.title = folded.detail ? tr('広げる', 'Open') : tr('たたむ', 'Fold');
     t.setAttribute('aria-label', t.title);
     t.setAttribute('aria-expanded', String(!folded.detail));
   }
@@ -344,7 +351,7 @@ async function init() {
   function goto(q) {
     const { i, note } = parseQuery(q);
     const msg = $('#search-msg');
-    msg.textContent = i < 0 ? `「${q}」に一致する核種が見つかりません` : note || '';
+    msg.textContent = i < 0 ? tr(`「${q}」に一致する核種が見つかりません`, `No nuclide matches “${q}”`) : note || '';
     msg.classList.toggle('note', i >= 0); // not an error
     if (i < 0) return false;
     reveal(i);
@@ -380,6 +387,11 @@ async function init() {
       e.preventDefault();
       return display.stop();
     }
+    if (walk.on) {
+      if (walk.key(e, true)) e.preventDefault();
+      else if (e.key.toLowerCase() === 'm') toggleSound();
+      return;
+    }
     if (tutorial.active) return tutorial.key(e);
     const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (key === 'Escape') return unpin();
@@ -387,6 +399,7 @@ async function init() {
     if (key === 'r') return resetAll();
     if (key === 'm') return toggleSound();
     if (key === 'd') return display.start();
+    if (key === 'w') return startWalk();
     // the arrows step from the selected nuclide to its neighbour, over gaps of up to three cells
     const cur = state.pinned >= 0 ? state.pinned : state.hover;
     const dir = ARROWS[key];
@@ -447,7 +460,7 @@ async function init() {
   });
   $('#hscale').addEventListener('input', (e) => {
     chart.heightScale = +e.target.value;
-    $('#hscale-out').textContent = `${+chart.heightScale.toFixed(2)} 倍`; // 1 = the standard look
+    $('#hscale-out').textContent = tr(`${+chart.heightScale.toFixed(2)} 倍`, `${+chart.heightScale.toFixed(2)}×`); // 1 = the standard look
     chart.retarget();
     redraw();
   });
@@ -548,7 +561,7 @@ async function init() {
     const toLight = theme === 'dark';
     const button = $('#theme');
     button.innerHTML = icon(toLight ? 'sun' : 'moon');
-    button.title = toLight ? 'ライトモードにする' : 'ダークモードにする';
+    button.title = toLight ? tr('ライトモードにする', 'Light mode') : tr('ダークモードにする', 'Dark mode');
     button.setAttribute('aria-label', button.title);
     redraw();
   }
@@ -669,6 +682,7 @@ async function init() {
   /** the view a mode opens with */
   const homeView = () => (state.dim === '2d' ? views.top() : chart.hyper ? views.hyperLayers() : views.overview());
   function setHyper(on, { fly = true } = {}) {
+    if (on) walk.stop(); // the hypernucleus mode has cubes on layers, nothing to walk on
     if (on && chart.filter === 'riken') setModes(false, state.cycle); // no hypernucleus was found at RIKEN
     chart.hyper = on;
     chart.showNormal = normalShown();
@@ -731,6 +745,7 @@ async function init() {
     if (chart.colorMode === 'height') chart.recolor();
     updateLegend();
     redraw();
+    if (walk.on) return; // the camera stays with the character, which walks on the flat boxes as well
     setDragMode(flat ? 'pan' : 'rotate');
     if (fly) views.flyTo(homeView());
   }
@@ -760,7 +775,7 @@ async function init() {
     const b = $('#sound');
     b.innerHTML = icon(on ? 'soundOn' : 'soundOff');
     setPressed(b, on);
-    b.title = on ? '音を消す（m キー）' : '核を選んだときに音を鳴らす（m キー）';
+    b.title = on ? tr('音を消す（m キー）', 'Mute (m key)') : tr('核を選んだときに音を鳴らす（m キー）', 'Play a sound when a nucleus is selected (m key)');
     b.setAttribute('aria-label', b.title);
   }
   function toggleSound() {
@@ -812,6 +827,7 @@ async function init() {
 
   // ---------- reset: the view the page opens with (resetView), and every setting as well (resetAll) ----------
   function resetView() {
+    walk.stop();
     timeline.stop();
     if (state.pinned >= 0) unpin();
     if (chart.hyper) setHyper(false, { fly: false });
@@ -888,6 +904,56 @@ async function init() {
   });
   $('#help').addEventListener('click', () => tutorial.start());
 
+  // ---------- the language: one button at the right end of the toolbar, to the other language (the page loads again) ----------
+  const langButton = $('#lang');
+  langButton.title = EN ? '日本語で表示 / Japanese' : 'Show in English / 英語で表示';
+  langButton.setAttribute('aria-label', langButton.title);
+  langButton.addEventListener('click', () => setLang(EN ? 'ja' : 'en'));
+
+  // ---------- walking mode (w key): a little character walks and jumps on the boxes, the camera following ----------
+  const walkHere = $('#walk-here');
+  const walk = new WalkMode({
+    scene, chart, camera, controls, nuclides,
+    find: (z, n) => graph.find(z, n),
+    onStand(i) {
+      // the box underfoot: its name and half-life, and a ring around it
+      walkHere.innerHTML = i < 0 ? `<span class="walk-board">${tr('ボードの上', 'On the board')}</span>` : tooltipHtml(nuclides[i], graph, i);
+      chart.setEmphasis(new Map(i < 0 ? [] : [[i, EMPH.selected]]));
+    },
+    // the sounds of walking, jumping and the stars, while the sound is on; a step sounds like the box underfoot, high
+    // on a short column and low on a tall one (the column's length, on a log scale, from 950 Hz down to 190 Hz)
+    onSound(name, i = -1) {
+      const len = name === 'step' && i >= 0 ? Math.max(0.3, chart.columnLength(i, chart.metric3d)) : 0;
+      sound.effect(name, len ? 950 / 5 ** Math.min(1, Math.log(len / 0.3) / Math.log(80 / 0.3)) : 330);
+    },
+    onStar(i) {
+      decay.setCallouts([{ idx: i, text: `★ ${nucText(nuclides[i])}`, bg: '#c99400' }]);
+    },
+    onExit(i) {
+      setPressed($('#walk'), false);
+      setModes(chart.filter === 'riken', state.cycle); // puts back the name tags of a display mode
+      if (i >= 0) pin(i);
+      else applyEmphasis();
+    },
+  });
+  function startWalk() {
+    if (walk.on || tutorial.active || display.on) return;
+    const from = state.pinned >= 0 && !isHyper(state.pinned) && chart.visible[state.pinned] ? state.pinned : -1;
+    stopMelody();
+    timeline.stop();
+    if (chart.hyper) setHyper(false, { fly: false });
+    if (state.pinned >= 0) unpin();
+    setHover(-1);
+    views.cancelFlight();
+    setDragMode('rotate');
+    document.activeElement?.blur(); // Space jumps; it must not press the focused button
+    setPressed($('#walk'), true);
+    walk.start(from);
+  }
+  $('#walk').addEventListener('click', () => (walk.on ? walk.stop() : startWalk()));
+  window.addEventListener('keyup', (e) => walk.on && walk.key(e, false));
+  window.addEventListener('blur', () => walk.held.clear()); // keys let go in another window
+
   // ---------- display mode (d key), for a screen at an exhibition ----------
   const display = new DisplayMode({
     controls, views, timeline, decay, nuclides,
@@ -931,6 +997,7 @@ async function init() {
     const dt = Math.min(clock.getDelta(), 0.25);
     const t = clock.elapsedTime;
     views.step(dt);
+    walk.update(dt);
     controls.update();
     chart.update(dt, t);
     timeline.step(dt);
@@ -940,14 +1007,14 @@ async function init() {
     focus.value += (dim - focus.value) * (1 - Math.exp(-dt * 8));
 
     display.update(dt);
-    pointer.update(display.on);
+    pointer.update(display.on || walk.on);
     chart.uniforms.uTarget.value.copy(controls.target);
     decay.update(t, camera, window.innerWidth, window.innerHeight);
     nihonium.update(t, renderer.domElement.height / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)), camera);
     island.update();
     tutorial.update(dt);
     chart.updateLabelLod(camera);
-    chart.updateLocalAxes(camera, window.innerWidth, window.innerHeight, safeRect(), dt, display.on); // none in the display mode
+    chart.updateLocalAxes(camera, window.innerWidth, window.innerHeight, safeRect(), dt, display.on || walk.on); // none in the display and walking modes
     renderer.render(scene, camera);
     if (first) {
       first = false;
@@ -961,6 +1028,6 @@ async function init() {
   // for the browser's console, and for automated checks of the page
   window.__nuclide = {
     chart, graph, decay, hyper, nihonium, island, views, timeline, tutorial, display, pointer, camera, controls, renderer, scene,
-    state, pin, goto, setHyper, setDragMode,
+    state, pin, goto, setHyper, setDragMode, walk, sound,
   };
 }

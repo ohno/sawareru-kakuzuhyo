@@ -6,6 +6,7 @@ import { ELEMENTS, HYPERNUCLEI, HYPER_DRIP_SOURCES as DRIP_DATA } from './data.j
 import { hexToRgb } from './nuclear.js';
 import { ribbon, FOOT, MASS_OFFSET, N_EDGE } from './chart.js';
 import { makeTextSprite } from './sprites.js';
+import { tr } from './i18n.js';
 
 // how each paper's drip lines are drawn (in the color of their layer), and the one shown at first: only one, so that
 // the lines do not lie on top of each other
@@ -23,46 +24,51 @@ export const isHyper = (id) => id >= HYPER_BASE;
 
 export const HYPER_KINDS = {
   L: {
-    s: 1, sym: 'Λ', name: 'Λハイパー核', en: 'Λ hypernucleus', color: '#e8262f', bind: 'B<sub>Λ</sub>', bindTitle: 'Λ の結合エネルギー',
-    desc: 'ストレンジクォークを含むΛ粒子（uds）が原子核に束縛された原子核。Λは核子とは別の粒子なのでパウリの排他原理を受けず、原子核の奥まで入り込めます。',
+    s: 1, sym: 'Λ', name: tr('Λハイパー核', 'Λ hypernucleus'), en: 'Λ hypernucleus', color: '#e8262f', bind: 'B<sub>Λ</sub>', bindTitle: tr('Λ の結合エネルギー', 'Binding energy of the Λ'),
+    desc: tr('ストレンジクォークを含むΛ粒子（uds）が原子核に束縛された原子核。Λは核子とは別の粒子なのでパウリの排他原理を受けず、原子核の奥まで入り込めます。',
+      'A nucleus with a Λ particle (uds), which contains a strange quark, bound inside it. The Λ is not a nucleon, so the Pauli exclusion principle does not keep it out, and it can go deep into the nucleus.'),
   },
   S: {
-    s: 1, sym: 'Σ', name: 'Σハイパー核', en: 'Σ hypernucleus', color: '#f07a1a', bind: 'B<sub>Σ</sub>', bindTitle: 'Σ の結合エネルギー',
-    desc: 'Σ粒子が束縛されたハイパー核。Σは原子核の中でΛに変わりやすく、束縛状態として確立しているものはごくわずかです。',
+    s: 1, sym: 'Σ', name: tr('Σハイパー核', 'Σ hypernucleus'), en: 'Σ hypernucleus', color: '#f07a1a', bind: 'B<sub>Σ</sub>', bindTitle: tr('Σ の結合エネルギー', 'Binding energy of the Σ'),
+    desc: tr('Σ粒子が束縛されたハイパー核。Σは原子核の中でΛに変わりやすく、束縛状態として確立しているものはごくわずかです。',
+      'A hypernucleus with a bound Σ particle. Inside a nucleus the Σ easily turns into a Λ, so very few bound states are firmly established.'),
   },
   LL: {
-    s: 2, sym: 'ΛΛ', name: 'ダブルΛハイパー核', en: 'double-Λ hypernucleus', color: '#d23fd2', bind: 'B<sub>ΛΛ</sub>', bindTitle: '2個の Λ の結合エネルギー',
-    desc: 'Λ粒子を2個含むハイパー核。2個のΛの間にはたらく力（ΛΛ相互作用）を調べる手がかりになり、原子核乾板実験で見つかっています。',
+    s: 2, sym: 'ΛΛ', name: tr('ダブルΛハイパー核', 'Double-Λ hypernucleus'), en: 'double-Λ hypernucleus', color: '#d23fd2', bind: 'B<sub>ΛΛ</sub>', bindTitle: tr('2個の Λ の結合エネルギー', 'Binding energy of the two Λs'),
+    desc: tr('Λ粒子を2個含むハイパー核。2個のΛの間にはたらく力（ΛΛ相互作用）を調べる手がかりになり、原子核乾板実験で見つかっています。',
+      'A hypernucleus with two Λ particles. It is a clue to the force between two Λs (the ΛΛ interaction), and such nuclei have been found in nuclear emulsion experiments.'),
   },
   X: {
-    s: 2, sym: 'Ξ', name: 'Ξハイパー核', en: 'Ξ hypernucleus', color: '#8f45e6', bind: 'B<sub>Ξ</sub>', bindTitle: 'Ξ⁻ の結合エネルギー',
-    desc: 'ストレンジクォークを2個含むΞ⁻粒子（dss）が原子核に束縛された系。原子核乾板実験で、Ξ⁻と¹⁴Nなどの束縛状態が見つかっています。',
+    s: 2, sym: 'Ξ', name: tr('Ξハイパー核', 'Ξ hypernucleus'), en: 'Ξ hypernucleus', color: '#8f45e6', bind: 'B<sub>Ξ</sub>', bindTitle: tr('Ξ⁻ の結合エネルギー', 'Binding energy of the Ξ⁻'),
+    desc: tr('ストレンジクォークを2個含むΞ⁻粒子（dss）が原子核に束縛された系。原子核乾板実験で、Ξ⁻と¹⁴Nなどの束縛状態が見つかっています。',
+      'A system in which a Ξ⁻ particle (dss), with two strange quarks, is bound to a nucleus. Nuclear emulsion experiments have found bound states of a Ξ⁻ with ¹⁴N and other nuclei.'),
   },
 };
 
 // where each experiment of data/hypernuclei.yaml was done and how the hypernuclei were made: [site, production]
-const STOPPED_XI = '(K⁻, K⁺) 反応で作った Ξ⁻ を原子核乾板の中で止め、原子核に吸収させる';
+const STOPPED_XI = tr('(K⁻, K⁺) 反応で作った Ξ⁻ を原子核乾板の中で止め、原子核に吸収させる',
+  'A Ξ⁻ made in the (K⁻, K⁺) reaction is stopped in nuclear emulsion and absorbed by a nucleus');
 export const EXPERIMENTS = {
-  'Berkeley Bevatron emulsion': ['米国 バークレー（Bevatron）', '原子核乾板に K⁻ 中間子を当てて止める'],
-  emulsion: ['複数の研究所（原子核乾板データの集計）', '原子核乾板に K⁻ 中間子を当てて止める'],
-  'CERN (K⁻,π⁻)': ['CERN（欧州）', '(K⁻, π⁻) 反応'],
-  'JLab Hall A (e,e′K⁺)': ['米国 ジェファーソン研究所（JLab）Hall A', '(e, e′K⁺) 反応（電子線）'],
-  'BNL AGS (π⁺,K⁺)': ['米国 ブルックヘブン国立研究所（AGS）', '(π⁺, K⁺) 反応'],
-  'KEK 12-GeV PS (π⁺,K⁺)': ['KEK（12 GeV 陽子シンクロトロン）', '(π⁺, K⁺) 反応'],
-  'KEK (K⁻,π⁻)': ['KEK', '(K⁻, π⁻) 反応'],
-  'emulsion (Danysz event)': ['CERN（Danysz らの原子核乾板実験）', '原子核乾板に K⁻ 中間子を当てる'],
-  'KEK E373 (NAGARA)': ['KEK（E373 実験、NAGARA 事象）', STOPPED_XI],
-  'KEK E373 (HIDA)': ['KEK（E373 実験、HIDA 事象）', STOPPED_XI],
-  'KEK E373 (KISO)': ['KEK（E373 実験、KISO 事象）', STOPPED_XI],
-  'KEK E176': ['KEK（E176 実験）', STOPPED_XI],
-  'KEK E176 (#10-09-06, #13-11-14)': ['KEK（E176 実験）', STOPPED_XI],
+  'Berkeley Bevatron emulsion': [tr('米国 バークレー（Bevatron）', 'Berkeley, USA (Bevatron)'), tr('原子核乾板に K⁻ 中間子を当てて止める', 'K⁻ mesons stopped in nuclear emulsion')],
+  emulsion: [tr('複数の研究所（原子核乾板データの集計）', 'Several laboratories (nuclear emulsion data combined)'), tr('原子核乾板に K⁻ 中間子を当てて止める', 'K⁻ mesons stopped in nuclear emulsion')],
+  'CERN (K⁻,π⁻)': [tr('CERN（欧州）', 'CERN (Europe)'), tr('(K⁻, π⁻) 反応', '(K⁻, π⁻) reaction')],
+  'JLab Hall A (e,e′K⁺)': [tr('米国 ジェファーソン研究所（JLab）Hall A', 'Jefferson Lab (JLab) Hall A, USA'), tr('(e, e′K⁺) 反応（電子線）', '(e, e′K⁺) reaction (electron beam)')],
+  'BNL AGS (π⁺,K⁺)': [tr('米国 ブルックヘブン国立研究所（AGS）', 'Brookhaven National Laboratory (AGS), USA'), tr('(π⁺, K⁺) 反応', '(π⁺, K⁺) reaction')],
+  'KEK 12-GeV PS (π⁺,K⁺)': [tr('KEK（12 GeV 陽子シンクロトロン）', 'KEK (12 GeV proton synchrotron)'), tr('(π⁺, K⁺) 反応', '(π⁺, K⁺) reaction')],
+  'KEK (K⁻,π⁻)': ['KEK', tr('(K⁻, π⁻) 反応', '(K⁻, π⁻) reaction')],
+  'emulsion (Danysz event)': [tr('CERN（Danysz らの原子核乾板実験）', 'CERN (nuclear emulsion experiment by Danysz et al.)'), tr('原子核乾板に K⁻ 中間子を当てる', 'K⁻ mesons sent into nuclear emulsion')],
+  'KEK E373 (NAGARA)': [tr('KEK（E373 実験、NAGARA 事象）', 'KEK (E373 experiment, NAGARA event)'), STOPPED_XI],
+  'KEK E373 (HIDA)': [tr('KEK（E373 実験、HIDA 事象）', 'KEK (E373 experiment, HIDA event)'), STOPPED_XI],
+  'KEK E373 (KISO)': [tr('KEK（E373 実験、KISO 事象）', 'KEK (E373 experiment, KISO event)'), STOPPED_XI],
+  'KEK E176': [tr('KEK（E176 実験）', 'KEK (E176 experiment)'), STOPPED_XI],
+  'KEK E176 (#10-09-06, #13-11-14)': [tr('KEK（E176 実験）', 'KEK (E176 experiment)'), STOPPED_XI],
 };
 
 /** the strangeness layers (s: number of s quarks): what lies on each, the tag on its plane, and its colors */
 export const HYPER_LAYERS = [
-  { s: 0, name: '通常核', label: '通常核（u, d クォークの世界）', color: '#e9c44a', ink: '#5a4500' },
-  { s: 1, name: 'Λ, Σ ハイパー核', label: 'Λ, Σ ハイパー核', color: '#ff5b6e', ink: '#b0102a' },
-  { s: 2, name: 'ΛΛ, Ξ ハイパー核', label: 'ΛΛ, Ξ ハイパー核', color: '#d65bd6', ink: '#8a1d8a' },
+  { s: 0, name: tr('通常核', 'Ordinary nuclei'), label: tr('通常核（u, d クォークの世界）', 'Ordinary nuclei (u and d quarks only)'), color: '#e9c44a', ink: '#5a4500' },
+  { s: 1, name: tr('Λ, Σ ハイパー核', 'Λ, Σ hypernuclei'), label: tr('Λ, Σ ハイパー核', 'Λ, Σ hypernuclei'), color: '#ff5b6e', ink: '#b0102a' },
+  { s: 2, name: tr('ΛΛ, Ξ ハイパー核', 'ΛΛ, Ξ hypernuclei'), label: tr('ΛΛ, Ξ ハイパー核', 'ΛΛ, Ξ hypernuclei'), color: '#d65bd6', ink: '#8a1d8a' },
 ];
 
 // the translucent plane of each layer (x = N, z = -Z), and where the s-quark axis stands: at the board's front-left
@@ -218,7 +224,7 @@ export class HyperLayers {
           group.add(m);
         }
         const end = (lines.neutron || lines.proton).reduce((a, b) => (b[0] > a[0] ? b : a));
-        const t = makeTextSprite('ハイパー核のドリップライン（存在限界の理論予想）', { color, weight: 700, size: 2, anchor: 'left', stroke: outline });
+        const t = makeTextSprite(tr('ハイパー核のドリップライン（存在限界の理論予想）', 'Hypernuclear drip line (theoretical limit of existence)'), { color, weight: 700, size: 2, anchor: 'left', stroke: outline });
         t.position.set(Math.min(N_EDGE, end[1] + 2), y + 0.8, -end[0]);
         group.add(t);
         this.layerGroups.get(+s).add(group);
@@ -242,7 +248,7 @@ export class HyperLayers {
       t.position.set(axisX - 3, layer.s * gap + 1, axisZ);
       g.add(t);
     }
-    const name = makeTextSprite('s クォーク数', { color: '#fff', bg: red, weight: 700, size: 3.2 });
+    const name = makeTextSprite(tr('s クォーク数', 'Strange quarks'), { color: '#fff', bg: red, weight: 700, size: 3.2 });
     name.position.set(axisX, top + 5.5, axisZ);
     g.add(name);
   }

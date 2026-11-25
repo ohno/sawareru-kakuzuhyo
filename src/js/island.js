@@ -6,8 +6,10 @@
 import * as THREE from 'three';
 import { makeTextSprite } from './sprites.js';
 import { nuclideKey } from './nuclear.js';
+import { tr } from './i18n.js';
 
-const ISLAND_SOURCE = 'KTUY05 質量公式の殻エネルギー（Koura et al., Prog. Theor. Phys. 113, 305 (2005)）';
+const ISLAND_SOURCE = tr('KTUY05 質量公式の殻エネルギー（Koura et al., Prog. Theor. Phys. 113, 305 (2005)）',
+  'the KTUY05 mass formula (Koura et al., Prog. Theor. Phys. 113, 305 (2005))');
 
 const Z_MIN = 104; // keeps the island apart from the deep shell gap of lead (Z = 82, N = 126)
 const SHORE = -6, PEAK = -10; // MeV: where the glow starts, and where it is full
@@ -58,8 +60,8 @@ export class StabilityIsland {
     this.group = new THREE.Group();
     this.group.visible = false;
     scene.add(this.group);
-    this.label = makeTextSprite('安定の島（理論予測）', { color: '#fff', bg: '#16743a', border: '#7ee08f', weight: 700, size: 3 });
-    this.note = makeTextSprite(`${ISLAND_SOURCE} が −6 MeV より深い核`, { color: '#16743a', weight: 600, size: 1.4, stroke: '#ffffff' });
+    this.label = makeTextSprite(tr('安定の島（理論予測）', 'Island of stability (predicted)'), { color: '#fff', bg: '#16743a', border: '#7ee08f', weight: 700, size: 3 });
+    this.note = makeTextSprite(tr(`${ISLAND_SOURCE} が −6 MeV より深い核`, `Nuclei with a shell energy below −6 MeV in ${ISLAND_SOURCE}`), { color: '#16743a', weight: 600, size: 1.4, stroke: '#ffffff' });
     this.group.add(this.shore, this.label, this.note);
   }
 

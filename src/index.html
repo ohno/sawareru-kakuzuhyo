@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>さわれる核図表</title>
+  <title>RIKENさわれる周期表</title>
   <meta name="description" content="約 3,400 種の原子核を立体に並べた核図表。回して、近づいて、箱にふれると、半減期や崩壊のゆくえがわかります。">
   <meta name="theme-color" content="#f6f5f1">
   <link rel="canonical" href="https://ohno.github.io/sawareru-kakuzuhyo/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <!-- link previews: ogp.png (1200 × 630) is the chart as the app draws it, with the title -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="さわれる核図表">
-  <meta property="og:title" content="さわれる核図表">
+  <meta property="og:site_name" content="RIKENさわれる周期表">
+  <meta property="og:title" content="RIKENさわれる周期表">
   <meta property="og:description" content="約 3,400 種の原子核を立体に並べた核図表。回して、近づいて、箱にふれると、半減期や崩壊のゆくえがわかります。">
   <meta property="og:url" content="https://ohno.github.io/sawareru-kakuzuhyo/">
-  <meta property="og:image" content="https://ohno.github.io/sawareru-kakuzuhyo/ogp.png">
+  <meta property="og:image" content="https://ohno.github.io/sawareru-kakuzuhyo/ogp.png?v=3"><!-- ?v=: a new image gets a new address, so link previews fetch it again -->
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="理研レゴ核図表の配色で原子核を立体に並べた核図表と、タイトル「さわれる核図表」">
+  <meta property="og:image:alt" content="理研レゴ核図表の配色で原子核を立体に並べた核図表と、タイトル「RIKENさわれる周期表」">
   <meta property="og:locale" content="ja_JP">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,110 +34,111 @@
   </script>
 </head>
 <body>
-  <canvas id="scene" role="img" aria-label="3D 核図表"></canvas>
+  <canvas id="scene" role="img" aria-label="3D 核図表" data-en-aria-label="3D chart of nuclides"></canvas>
 
   <!-- left panel: search, tutorial and settings. The lists marked "filled by main.js" come from the tables in js/ and data/. -->
-  <aside id="controls" class="panel left collapsed" aria-label="検索と設定">
+  <aside id="controls" class="panel left collapsed" aria-label="検索と設定" data-en-aria-label="Search and settings">
     <header class="brand">
-      <h1 class="logo" aria-label="さわれる核図表"><span class="k-r">さ</span><span class="k-g">わ</span><span class="k-y">れ</span><span class="k-b">る</span>核図表</h1>
-      <button id="collapse" class="icon-btn" title="パネルを開く・たたむ" aria-label="パネルを開く・たたむ" aria-expanded="false">+</button>
+      <h1 class="logo" aria-label="RIKENさわれる周期表" data-en-aria-label="RIKEN Touchable Periodic Table" data-en-html='<small class="logo-org">RIKEN</small><span class="logo-name"><span class="k-r">T</span><span class="k-g">o</span><span class="k-y">u</span><span class="k-b">c</span>hable Periodic Table</span>'><small class="logo-org">RIKEN</small><span class="logo-name"><span class="k-r">さ</span><span class="k-g">わ</span><span class="k-y">れ</span><span class="k-b">る</span>周期表</span></h1>
+      <button id="collapse" class="icon-btn" title="パネルを開く・たたむ" aria-label="パネルを開く・たたむ" data-en-title="Open or fold the panel" data-en-aria-label="Open or fold the panel" aria-expanded="false">+</button>
     </header>
     <div class="panel-body">
       <div id="stats" class="intro"></div><!-- filled by main.js -->
       <form id="search-form" class="search" autocomplete="off" role="search">
-        <input id="search" type="search" placeholder="核種を検索（例: 238U、ウラン）" aria-label="核種を検索" title="238U、U-238、ウラン、uranium のほか、Z=50、N=82、A=208（いちばん安定な核）、Z=50 N=82（両方を満たす核）でも探せます">
-        <button type="submit" class="btn search-go" title="検索した核へ移動" aria-label="検索した核へ移動" data-icon="search"></button>
+        <input id="search" type="search" placeholder="核種を検索（例: 238U、ウラン）" aria-label="核種を検索" title="238U、U-238、ウラン、uranium のほか、Z=50、N=82、A=208（いちばん安定な核）、Z=50 N=82（両方を満たす核）でも探せます"
+          data-en-placeholder="Search nuclides (e.g. 238U, uranium)" data-en-aria-label="Search nuclides" data-en-title="238U, U-238, uranium or ウラン; also Z=50, N=82, A=208 (the most stable such nucleus) or Z=50 N=82 (both at once)">
+        <button type="submit" class="btn search-go" title="検索した核へ移動" aria-label="検索した核へ移動" data-en-title="Go to the nuclide" data-en-aria-label="Go to the nuclide" data-icon="search"></button>
       </form>
       <p id="search-msg" class="search-msg" role="status"></p>
-      <p class="hint">試しに検索: <a href="#14C" data-goto="14C">¹⁴C</a> · <a href="#56Fe" data-goto="56Fe">⁵⁶Fe</a> · <a href="#137Cs" data-goto="137Cs">¹³⁷Cs</a> · <a href="#235U" data-goto="235U">²³⁵U</a> · <a href="#278Nh" data-goto="278Nh">²⁷⁸Nh</a></p>
-      <button class="tut-start" data-tutorial>▶ チュートリアルを見る<small>核図表とこのページの使い方（約 1 分半）</small></button>
+      <p class="hint" data-en="Try:">試しに検索: <a href="#14C" data-goto="14C">¹⁴C</a> · <a href="#56Fe" data-goto="56Fe">⁵⁶Fe</a> · <a href="#137Cs" data-goto="137Cs">¹³⁷Cs</a> · <a href="#235U" data-goto="235U">²³⁵U</a> · <a href="#278Nh" data-goto="278Nh">²⁷⁸Nh</a></p>
+      <button class="tut-start" data-tutorial data-en="▶ Take the tutorial">▶ チュートリアルを見る<small data-en="The chart of nuclides and how to use this page (about 1½ minutes)">核図表とこのページの使い方（約 1 分半）</small></button>
 
       <details class="sec" data-sec="howto">
-        <summary>使い方</summary>
+        <summary data-en="How to use">使い方</summary>
         <div id="howto" class="sec-body"></div><!-- filled by main.js -->
       </details>
 
       <details class="sec" data-sec="view">
-        <summary>表示</summary>
+        <summary data-en="Show">表示</summary>
         <div class="sec-body checks">
-          <label class="check"><input type="checkbox" id="opt-toolbar" checked> 操作バー</label>
-          <label class="check"><input type="checkbox" id="opt-timeline" checked> 時間発展バー</label>
-          <label class="check"><input type="checkbox" id="opt-dim" checked> 選択中は他の核を暗く</label>
-          <label class="check"><input type="checkbox" id="opt-xray" checked> カメラの手前の核を半透明に</label>
-          <label class="check"><input type="checkbox" id="opt-labels" checked> 元素記号ラベル</label>
-          <label class="check"><input type="checkbox" id="opt-elements" checked> 元素名</label>
-          <label class="check"><input type="checkbox" id="opt-z" checked> 原子番号 Z</label>
-          <label class="check"><input type="checkbox" id="opt-nh" checked> ニホニウムの強調</label>
-          <label class="check"><input type="checkbox" id="opt-magic" checked> 魔法数ライン</label>
-          <label class="check"><input type="checkbox" id="opt-drip"> ドリップライン（存在限界の理論予想）</label>
-          <label class="check" title="超重核で閉殻（Z = 114〜126, N = 184 付近）が強く束縛し、寿命の長い核があると予測される領域。KTUY05 質量公式の殻エネルギーが −6 MeV より深い核を緑に光らせます（深いほど強く）。未発見の元素 119〜126 の予測核も加わります"><input type="checkbox" id="opt-island"> 安定の島（理論予測）</label>
-          <span class="sub-legend">核の分類（理研レゴ核図表の配色）</span>
+          <label class="check" data-en="Toolbar"><input type="checkbox" id="opt-toolbar" checked> 操作バー</label>
+          <label class="check" data-en="Timeline bar"><input type="checkbox" id="opt-timeline" checked> 時間発展バー</label>
+          <label class="check" data-en="Dim the others while one is selected"><input type="checkbox" id="opt-dim" checked> 選択中は他の核を暗く</label>
+          <label class="check" data-en="See through nuclei near the camera"><input type="checkbox" id="opt-xray" checked> カメラの手前の核を半透明に</label>
+          <label class="check" data-en="Labels on the boxes"><input type="checkbox" id="opt-labels" checked> 元素記号ラベル</label>
+          <label class="check" data-en="Element names"><input type="checkbox" id="opt-elements" checked> 元素名</label>
+          <label class="check" data-en="Atomic number Z"><input type="checkbox" id="opt-z" checked> 原子番号 Z</label>
+          <label class="check" data-en="Highlight nihonium"><input type="checkbox" id="opt-nh" checked> ニホニウムの強調</label>
+          <label class="check" data-en="Magic-number lines"><input type="checkbox" id="opt-magic" checked> 魔法数ライン</label>
+          <label class="check" data-en="Drip lines (theoretical limits of existence)"><input type="checkbox" id="opt-drip"> ドリップライン（存在限界の理論予想）</label>
+          <label class="check" data-en="Island of stability (theoretical prediction)" data-en-title="A superheavy region where closed shells (around Z = 114–126, N = 184) are predicted to bind strongly and give long-lived nuclei. Nuclei whose KTUY05 shell energy is deeper than −6 MeV glow green (brighter the deeper). Predicted nuclei of the undiscovered elements 119–126 come with it." title="超重核で閉殻（Z = 114〜126, N = 184 付近）が強く束縛し、寿命の長い核があると予測される領域。KTUY05 質量公式の殻エネルギーが −6 MeV より深い核を緑に光らせます（深いほど強く）。未発見の元素 119〜126 の予測核も加わります"><input type="checkbox" id="opt-island"> 安定の島（理論予測）</label>
+          <span class="sub-legend" data-en="Classes (colors of RIKEN's LEGO chart of nuclides)">核の分類（理研レゴ核図表の配色）</span>
           <div id="lego-checks" class="checks-sub"></div><!-- filled by main.js -->
-          <span class="sub-legend">推定値</span>
-          <label class="check"><input type="checkbox" id="opt-unobs" checked> 未観測核（推定値）</label>
-          <label class="check" title="NUBASE2020 に推定値だけが載っている、原子核として結合しないと見積もられた未観測の核（³Li、⁵Be、⁶B など）"><input type="checkbox" id="opt-unbound"> 未観測の非束縛核（推定値）</label>
-          <span class="sub-legend">核燃料サイクル</span>
-          <label class="check"><input type="checkbox" data-mode="fp"> 核分裂生成物（FP）</label>
-          <label class="check"><input type="checkbox" data-mode="llfp"> 長寿命核分裂生成物（LLFP）</label>
-          <label class="check"><input type="checkbox" data-mode="ma"> マイナーアクチノイド（MA）</label>
-          <label class="check"><input type="checkbox" data-mode="fuel"> 使用済み燃料の主な核種</label>
+          <span class="sub-legend" data-en="Estimates">推定値</span>
+          <label class="check" data-en="Unobserved nuclei (estimates)"><input type="checkbox" id="opt-unobs" checked> 未観測核（推定値）</label>
+          <label class="check" data-en="Unobserved unbound nuclei (estimates)" data-en-title="Unobserved nuclei that NUBASE2020 lists with estimates only and expects not to hold together (³Li, ⁵Be, ⁶B, …)" title="NUBASE2020 に推定値だけが載っている、原子核として結合しないと見積もられた未観測の核（³Li、⁵Be、⁶B など）"><input type="checkbox" id="opt-unbound"> 未観測の非束縛核（推定値）</label>
+          <span class="sub-legend" data-en="Nuclear fuel cycle">核燃料サイクル</span>
+          <label class="check" data-en="Fission products (FP)"><input type="checkbox" data-mode="fp"> 核分裂生成物（FP）</label>
+          <label class="check" data-en="Long-lived fission products (LLFP)"><input type="checkbox" data-mode="llfp"> 長寿命核分裂生成物（LLFP）</label>
+          <label class="check" data-en="Minor actinides (MA)"><input type="checkbox" data-mode="ma"> マイナーアクチノイド（MA）</label>
+          <label class="check" data-en="Main nuclides of spent fuel"><input type="checkbox" data-mode="fuel"> 使用済み燃料の主な核種</label>
           <p id="mode-desc" class="caption mode-desc"></p>
-          <span class="sub-legend">核の種類</span>
+          <span class="sub-legend" data-en="Kinds of nuclei">核の種類</span>
           <div id="kind-checks" class="checks-sub"></div><!-- filled by main.js -->
-          <span class="sub-legend">ハイパー核モードの平面</span>
+          <span class="sub-legend" data-en="Layers of the hypernucleus mode">ハイパー核モードの平面</span>
           <div id="layer-checks" class="checks-sub"></div><!-- filled by main.js -->
-          <span class="sub-legend">ハイパー核のドリップライン（存在限界の理論予想）</span>
+          <span class="sub-legend" data-en="Hypernuclear drip lines (theoretical limits of existence)">ハイパー核のドリップライン（存在限界の理論予想）</span>
           <div id="hyper-drip-checks" class="checks-sub"></div><!-- filled by main.js -->
         </div>
       </details>
 
       <details class="sec" data-sec="look">
-        <summary>高さと色</summary>
+        <summary data-en="Height and color">高さと色</summary>
         <div class="sec-body">
           <label class="field">
-            <span>高さ</span>
+            <span data-en="Height">高さ</span>
             <select id="height">
-              <optgroup label="結合エネルギー・質量">
-                <option value="meA" selected>核子1個あたりの質量</option>
-                <option value="bfe">B/A の ⁵⁶Fe との差</option>
-                <option value="bfeA">B/A の ⁵⁶Fe との差 × A</option>
-                <option value="me">質量超過 Δ</option>
-                <option value="ba">結合エネルギー B/A</option>
-                <option value="b">結合エネルギー B</option>
+              <optgroup label="結合エネルギー・質量" data-en-label="Binding energy and mass">
+                <option value="meA" selected data-en="Mass per nucleon">核子1個あたりの質量</option>
+                <option value="bfe" data-en="B/A relative to ⁵⁶Fe">B/A の ⁵⁶Fe との差</option>
+                <option value="bfeA" data-en="B/A relative to ⁵⁶Fe × A">B/A の ⁵⁶Fe との差 × A</option>
+                <option value="me" data-en="Mass excess Δ">質量超過 Δ</option>
+                <option value="ba" data-en="Binding energy B/A">結合エネルギー B/A</option>
+                <option value="b" data-en="Binding energy B">結合エネルギー B</option>
               </optgroup>
-              <optgroup label="そのほか">
-                <option value="hl">半減期（対数）</option>
-                <option value="s2n">2中性子分離エネルギー S₂ₙ</option>
-                <option value="sn">中性子分離エネルギー Sₙ</option>
-                <option value="qa">α崩壊 Q値 Qα</option>
-                <option value="fy">核分裂収率（²³⁵U）</option>
-                <option value="year">核種の発見年</option>
-                <option value="flat">なし（2D）</option>
+              <optgroup label="そのほか" data-en-label="Others">
+                <option value="hl" data-en="Half-life (log)">半減期（対数）</option>
+                <option value="s2n" data-en="Two-neutron separation energy S₂ₙ">2中性子分離エネルギー S₂ₙ</option>
+                <option value="sn" data-en="Neutron separation energy Sₙ">中性子分離エネルギー Sₙ</option>
+                <option value="qa" data-en="α-decay Q value Qα">α崩壊 Q値 Qα</option>
+                <option value="fy" data-en="Fission yield (²³⁵U)">核分裂収率（²³⁵U）</option>
+                <option value="year" data-en="Year of discovery">核種の発見年</option>
+                <option value="flat" data-en="None (2D)">なし（2D）</option>
               </optgroup>
             </select>
           </label>
           <p id="height-note" class="caption"></p>
           <label class="field inline">
-            <span>高さの倍率</span>
+            <span data-en="Height scale">高さの倍率</span>
             <input type="range" id="hscale" min="0.25" max="2" step="0.05" value="1">
-            <output id="hscale-out" for="hscale">1 倍</output>
+            <output id="hscale-out" for="hscale" data-en="1×">1 倍</output>
           </label>
-          <label class="field inline" title="高さの基準面を持ち上げます。この値より低い部分はボードの下に沈みます">
-            <span>基準面</span>
+          <label class="field inline" title="高さの基準面を持ち上げます。この値より低い部分はボードの下に沈みます" data-en-title="Raises the base level: whatever is lower than this value sinks below the board">
+            <span data-en="Base level">基準面</span>
             <input type="range" id="hbase" min="0" max="3" step="0.05" value="0">
             <output id="hbase-out" for="hbase">0</output>
           </label>
           <label class="field">
-            <span>色</span>
+            <span data-en="Color">色</span>
             <select id="color">
-              <option value="lego" selected>理研レゴ核図表の配色</option>
-              <option value="hl">半減期</option>
-              <option value="decay">崩壊モード</option>
-              <option value="ba">結合エネルギー B/A</option>
-              <option value="year">核種の発見年</option>
-              <option value="fy">核分裂収率（²³⁵U）</option>
-              <option value="group">使用済み燃料の分類</option>
-              <option value="height">高さと同じ量</option>
+              <option value="lego" selected data-en="Colors of RIKEN's LEGO chart">理研レゴ核図表の配色</option>
+              <option value="hl" data-en="Half-life">半減期</option>
+              <option value="decay" data-en="Decay mode">崩壊モード</option>
+              <option value="ba" data-en="Binding energy B/A">結合エネルギー B/A</option>
+              <option value="year" data-en="Year of discovery">核種の発見年</option>
+              <option value="fy" data-en="Fission yield (²³⁵U)">核分裂収率（²³⁵U）</option>
+              <option value="group" data-en="Spent-fuel groups">使用済み燃料の分類</option>
+              <option value="height" data-en="Same as the height">高さと同じ量</option>
             </select>
           </label>
           <div id="legend" class="legend"></div>
@@ -145,97 +146,109 @@
       </details>
 
       <details class="sec" data-sec="decay">
-        <summary>崩壊の矢印</summary>
+        <summary data-en="Decay arrows">崩壊の矢印</summary>
         <div class="sec-body">
-          <p class="arrow-key"><i class="solid"></i>崩壊先<i class="dotted"></i>崩壊元（親核）</p>
+          <p class="arrow-key" data-en-html='<i class="solid"></i>Decays to<i class="dotted"></i>Decays from (parents)'><i class="solid"></i>崩壊先<i class="dotted"></i>崩壊元（親核）</p>
           <label class="field row">
-            <span>分岐比のしきい値</span>
+            <span data-en="Smallest branching ratio">分岐比のしきい値</span>
             <select id="opt-branch">
-              <option value="0">すべて</option>
-              <option value="0.1">0.1 % 以上</option>
-              <option value="1" selected>1 % 以上</option>
-              <option value="5">5 % 以上</option>
-              <option value="10">10 % 以上</option>
-              <option value="50">50 % 以上</option>
+              <option value="0" data-en="All">すべて</option>
+              <option value="0.1" data-en="0.1 % or more">0.1 % 以上</option>
+              <option value="1" selected data-en="1 % or more">1 % 以上</option>
+              <option value="5" data-en="5 % or more">5 % 以上</option>
+              <option value="10" data-en="10 % or more">10 % 以上</option>
+              <option value="50" data-en="50 % or more">50 % 以上</option>
             </select>
           </label>
           <label class="field row">
-            <span>親核をさかのぼる</span>
+            <span data-en="Parents to trace back">親核をさかのぼる</span>
             <select id="opt-gen">
-              <option value="0">しない</option>
-              <option value="1">1 世代</option>
-              <option value="2" selected>2 世代</option>
-              <option value="3">3 世代</option>
-              <option value="4">4 世代</option>
-              <option value="5">5 世代</option>
-              <option value="6">6 世代</option>
+              <option value="0" data-en="None">しない</option>
+              <option value="1" data-en="1 generation">1 世代</option>
+              <option value="2" selected data-en="2 generations">2 世代</option>
+              <option value="3" data-en="3 generations">3 世代</option>
+              <option value="4" data-en="4 generations">4 世代</option>
+              <option value="5" data-en="5 generations">5 世代</option>
+              <option value="6" data-en="6 generations">6 世代</option>
             </select>
           </label>
-          <label class="check"><input type="checkbox" id="opt-chain" checked> 安定核までの崩壊系列</label>
+          <label class="check" data-en="Decay chain down to a stable nucleus"><input type="checkbox" id="opt-chain" checked> 安定核までの崩壊系列</label>
         </div>
       </details>
 
       <details class="sec" data-sec="sources">
-        <summary>データの出典</summary>
+        <summary data-en="Data sources">データの出典</summary>
         <div class="sec-body">
           <dl id="sources" class="sources"></dl><!-- filled by main.js: the table of data/README.md -->
-          <p class="caption">ソースコードとライセンスは <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">GitHub</a> にあります。</p>
+          <p class="caption" data-en-html='The source code and the licenses are on <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">GitHub</a>.'>ソースコードとライセンスは <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">GitHub</a> にあります。</p>
         </div>
       </details>
     </div>
   </aside>
 
   <!-- the icons are drawn by js/icons.js (data-icon) -->
-  <div class="toolbar" role="toolbar" aria-label="視点と表示モード">
-    <div class="seg" role="group" aria-label="表示モード">
-      <button class="btn" data-dim="2d" aria-pressed="false" title="平らにして真上から見る">2Dモード</button>
-      <button class="btn" data-dim="3d" aria-pressed="true" title="高さを付けて斜めから見る">3Dモード</button>
+  <div class="toolbar" role="toolbar" aria-label="視点と表示モード" data-en-aria-label="Views and modes">
+    <div class="seg" role="group" aria-label="表示モード" data-en-aria-label="View mode">
+      <button class="btn" data-dim="2d" aria-pressed="false" title="平らにして真上から見る" data-en-title="Flatten and look straight down" data-en="2D">2Dモード</button>
+      <button class="btn" data-dim="3d" aria-pressed="true" title="高さを付けて斜めから見る" data-en-title="Give the boxes heights and look from an angle" data-en="3D">3Dモード</button>
     </div>
     <span class="sep"></span>
-    <div class="seg" role="group" aria-label="ドラッグ操作">
-      <button class="btn" data-drag="pan" aria-pressed="false" title="ドラッグで平行移動">移動</button>
-      <button class="btn" data-drag="rotate" aria-pressed="true" title="ドラッグで回転">回転</button>
+    <div class="seg" role="group" aria-label="ドラッグ操作" data-en-aria-label="Dragging">
+      <button class="btn" data-drag="pan" aria-pressed="false" title="ドラッグで平行移動" data-en-title="Drag to pan" data-en="Pan">移動</button>
+      <button class="btn" data-drag="rotate" aria-pressed="true" title="ドラッグで回転" data-en-title="Drag to rotate" data-en="Rotate">回転</button>
     </div>
     <span class="sep"></span>
-    <button class="btn" id="focus" title="選んだ核へカメラを近づける（f キー）">選択核をズーム</button>
+    <button class="btn riken-btn" id="riken" aria-pressed="false" title="理研で発見された核種だけを表示" data-en-title="Show only the nuclides discovered at RIKEN" data-en="Found at RIKEN">理研が発見</button>
+    <button class="btn hyper-btn" id="hyper" aria-pressed="false" title="ストレンジクォークを含むハイパー核を、s クォーク数の層に重ねて表示" data-en-title="Hypernuclei, which contain strange quarks, on layers stacked by the number of s quarks" data-en="Hypernuclei">ハイパー核</button>
     <span class="sep"></span>
-    <button class="btn riken-btn" id="riken" aria-pressed="false" title="理研で発見された核種だけを表示">理研が発見</button>
-    <button class="btn hyper-btn" id="hyper" aria-pressed="false" title="ストレンジクォークを含むハイパー核を、s クォーク数の層に重ねて表示">ハイパー核</button>
-    <span class="sep"></span>
+    <button class="btn icon" id="focus" title="選んだ核へカメラを近づける（f キー）" aria-label="選んだ核へズーム" data-en-title="Zoom in on the selected nucleus (f key)" data-en-aria-label="Zoom in on the selected nucleus" data-icon="zoom"></button>
     <button class="btn icon" id="sound" aria-pressed="false"></button>
+    <button class="btn icon walk-btn" id="walk" aria-pressed="false" title="ボールのキャラクターで核図表の上を歩いて遊ぶ（w キー）" aria-label="歩いて遊ぶ" data-en-title="Roll across the chart as a little ball (w key)" data-en-aria-label="Walk" data-icon="walk"></button>
     <button class="btn icon" id="theme"></button>
-    <button class="btn icon" id="shot" title="画像として保存" aria-label="画像として保存" data-icon="camera"></button>
-    <button class="btn icon" id="reset" title="表示をリセット（r キー）" aria-label="表示をリセット" data-icon="reset"></button>
-    <button class="btn icon" id="help" title="チュートリアルを見る" aria-label="チュートリアルを見る" data-icon="help"></button>
+    <button class="btn icon" id="shot" title="画像として保存" aria-label="画像として保存" data-en-title="Save as an image" data-en-aria-label="Save as an image" data-icon="camera"></button>
+    <button class="btn icon" id="reset" title="表示をリセット（r キー）" aria-label="表示をリセット" data-en-title="Reset everything (r key)" data-en-aria-label="Reset everything" data-icon="reset"></button>
+    <button class="btn icon" id="help" title="チュートリアルを見る" aria-label="チュートリアルを見る" data-en-title="Take the tutorial" data-en-aria-label="Take the tutorial" data-icon="help"></button>
+    <!-- the language, one button that switches to the other (its name in both languages: main.js) -->
+    <button class="btn icon" id="lang" data-icon="languages"></button>
   </div>
 
   <!-- right panel: the nuclide under the pointer, or the selected one -->
-  <aside id="info" class="panel right" aria-label="原子核の情報" hidden>
-    <button id="info-close" class="icon-btn info-close" title="閉じる（核をクリックするとまた開きます）" aria-label="閉じる">×</button>
+  <aside id="info" class="panel right" aria-label="原子核の情報" data-en-aria-label="About the nucleus" hidden>
+    <button id="info-close" class="icon-btn info-close" title="閉じる（核をクリックするとまた開きます）" aria-label="閉じる" data-en-title="Close (click a nucleus to open it again)" data-en-aria-label="Close">×</button>
     <button id="info-toggle" class="icon-btn info-toggle" title="たたむ" aria-label="たたむ" aria-expanded="true">−</button>
     <div id="info-body" aria-live="polite"></div>
   </aside>
 
-  <div class="timeline" role="group" aria-label="時間発展">
-    <select id="time-mode" class="time-mode" aria-label="時間発展の種類" title="時間発展の種類">
-      <option value="year" selected>発見年</option>
-      <option value="height">高い順に消す</option>
+  <div class="timeline" role="group" aria-label="時間発展" data-en-aria-label="Timeline">
+    <select id="time-mode" class="time-mode" aria-label="時間発展の種類" title="時間発展の種類" data-en-aria-label="Kind of timeline" data-en-title="Kind of timeline">
+      <option value="year" selected data-en="Discovery">発見年</option>
+      <option value="height" data-en="Tallest first">高い順に消す</option>
     </select>
-    <button id="play" class="btn play" aria-label="発見の歴史を再生">▶</button>
-    <input id="year" type="range" step="1" aria-label="時間発展の位置">
+    <button id="play" class="btn play" aria-label="発見の歴史を再生" data-en-aria-label="Play the history of discovery">▶</button>
+    <input id="year" type="range" step="1" aria-label="時間発展の位置" data-en-aria-label="Position in the timeline">
     <div id="year-label" class="year-label"></div>
   </div>
 
   <div id="tooltip" class="tooltip" hidden></div>
   <div class="credit"><a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">© 2026 RIKEN</a></div>
-  <div id="loading" class="loading"><div class="spinner"></div><p>核データを読み込み中…</p></div>
-  <noscript><div class="loading"><p>このページの表示には JavaScript が必要です。</p></div></noscript>
+  <!-- walking mode (walk.js): what the character stands on, the stars, the keys, and the controls for touch screens -->
+  <div id="walk-hud" class="walk-hud" hidden>
+    <div id="walk-here" class="walk-here"></div>
+    <div id="walk-stars" class="walk-stars"></div>
+  </div>
+  <p id="walk-keys" class="walk-keys" hidden data-en-html="<b>WASD</b> / arrows: move · <b>Shift</b>: run · <b>Space</b>: jump (press again and again to fly) · drag: look around · <b>Esc</b>: stop"><b>WASD</b>・矢印: 移動　<b>Shift</b>: 走る　<b>Space</b>: ジャンプ（連打で飛ぶ）　ドラッグ: 見回す　<b>Esc</b>: やめる</p>
+  <div id="walk-pad" class="walk-pad" hidden aria-hidden="true"><div class="walk-knob"></div></div>
+  <button id="walk-jump" class="walk-jump" hidden aria-label="ジャンプ" data-en-aria-label="Jump">↑</button>
+
+  <div id="loading" class="loading"><div class="spinner"></div><p data-en="Loading nuclear data…">核データを読み込み中…</p></div>
+  <noscript><div class="loading"><p>このページの表示には JavaScript が必要です。<br>This page needs JavaScript.</p></div></noscript>
 
   <script>
     // a page opened straight from a file cannot load its scripts and data: say so instead of loading forever
     if (location.protocol === 'file:') {
       document.getElementById('loading').innerHTML = '<div class="load-error"><h2>このままでは開けません</h2>'
-        + '<p>ファイルを直接開くと、ブラウザがプログラムとデータを読み込めません。README の「手元で動かす」のとおり、ローカルサーバーから開いてください。</p></div>';
+        + '<p>ファイルを直接開くと、ブラウザがプログラムとデータを読み込めません。README の「手元で動かす」のとおり、ローカルサーバーから開いてください。</p>'
+        + '<p lang="en">Opened straight from a file, the page cannot load its program and data. Serve it from a local server, as the README says.</p></div>';
     }
   </script>
   <script type="module" src="js/main.js"></script>
