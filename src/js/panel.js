@@ -106,7 +106,7 @@ function elementHtml(nuc, graph) {
 function modesHtml(nuc, idx, graph, minBranch) {
   const daughters = graph.daughters(idx);
   const rows = (nuc.d || []).map((m) => {
-    const d = daughters.find((x) => x.raw === m);
+    const d = daughters.find((x) => x.raw === m || x.parts?.includes(m));
     const color = arcColor(modeCategory(m[0]));
     const w = m[2] === null ? 0 : Math.max(2, Math.min(100, m[2]));
     let target = '';
@@ -125,13 +125,26 @@ function modesHtml(nuc, idx, graph, minBranch) {
   return rows.filter((r) => !r.minor).map((r) => r.html).join('')
     + (minor.length ? `<details class="more"><summary>${tr(`しきい値未満の分岐 ${minor.length} 件（3D表示では省略）`,
       `${minor.length} ${plural(minor.length, 'branch', 'branches')} below the threshold (left out of the 3D view)`)}</summary>${minor.map((r) => r.html).join('')}</details>` : '')
-    + daughters.filter((d) => d.incl !== undefined).map((d) => delayedNote(d, graph)).join('');
+    + daughters.filter((d) => d.incl !== undefined).map((d) => delayedNote(d, graph)).join('')
+    + daughters.filter((d) => d.parts).map((d) => partsNote(d, graph)).join('');
+}
+
+// branches that NUBASE gives both as a whole and in parts, all to one daughter (²²Na: β⁺ 100 % = e⁺ 90.57 % + EC
+// 9.43 %): one arrow, drawn with the largest value (see computeDaughters in decay.js)
+function partsNote(d, graph) {
+  const to = d.to >= 0 ? nucHtml(graph.nuclides[d.to]) : `Z=${d.z}, N=${d.n}`;
+  // positron emission as e⁺, apart from the β⁺ that also counts electron capture
+  const list = esc([d.raw, ...d.parts].map((m) => `${m[0] === 'e+' ? 'e⁺' : modeLabel(m[0])} ${fmtBranch(m)}`).join(tr('、', ', ')));
+  const main = esc(`${modeLabel(d.mode)} ${fmtBranch(d.raw)}`);
+  return `<p class="muted small">${tr(
+    `${to} へ向かう分岐（${list}）は、1 本の矢印にまとめ、いちばん大きい値（${main}）で描いています。`,
+    `The branches to ${to} (${list}) are drawn as one arrow, with the largest value (${main}).`)}</p>`;
 }
 
 // a β ratio that counts the β-delayed branches too (NUBASE's convention): what is left to the β daughter itself, which
 // the arrows and the main route go by (see netBeta in decay.js)
 function delayedNote(d, graph) {
-  const beta = esc(modeLabel(d.mode)), ratio = esc(fmtBranch(d.raw)), share = esc(fmtShare(d.op, d.val));
+  const beta = esc(modeLabel(d.mode)), ratio = esc(fmtBranch(d.raw)), share = esc(fmtShare(d.lo, d.hi));
   const list = esc(d.delayed.map((x) => modeLabel(x[0])).join(tr('・', ', ')));
   const to = d.to >= 0 ? nucHtml(graph.nuclides[d.to]) : `Z=${d.z}, N=${d.n}`;
   const fission = d.delayed.some((x) => isFission(x[0]));
@@ -168,7 +181,9 @@ export function detailHtml(nuc, idx, graph, { theme, minBranch = 1, generations 
   const el = ELEMENTS[nuc.z];
   const cat = primaryCategory(nuc);
   const catColor = categoryHex(cat, theme);
-  const badges = [`<span class="badge" style="--c:${catColor};--fg:${inkFor(hexToRgb(catColor))}">${CATEGORIES[cat].name}</span>`];
+  // the gray class covers two cases: an undiscovered nucleus, and a discovered one without decay data (¹⁸³Tm)
+  const catName = cat !== 'un' ? CATEGORIES[cat].name : nuc.y ? tr('崩壊のデータなし', 'No decay data') : tr('未発見（推定値）', 'Undiscovered (estimate)');
+  const badges = [`<span class="badge" style="--c:${catColor};--fg:${inkFor(hexToRgb(catColor))}">${catName}</span>`];
   const mz = isMagic(nuc.z), mn = isMagic(nuc.n);
   if (mz && mn) badges.push(`<span class="badge magic">${tr('二重魔法数', 'Doubly magic')}</span>`);
   else if (mz) badges.push(`<span class="badge magic">${tr('魔法数', 'Magic number')} Z=${nuc.z}</span>`);
@@ -178,10 +193,11 @@ export function detailHtml(nuc, idx, graph, { theme, minBranch = 1, generations 
   if (nuc.ab !== undefined && !nuc.st) badges.push(`<span class="badge plain">${tr('天然存在比', 'Natural abundance')} ${nuc.ab} %</span>`);
   if (nuc.p) badges.push(`<span class="badge plain">${tr('未発見（理論予測）', 'Undiscovered (theoretical prediction)')}</span>`);
   else if (nuc.x) badges.push(`<span class="badge plain">${tr('NUBASE2020 未収録', 'Not in NUBASE2020')}</span>`);
-  else if (nuc.ub) badges.push(`<span class="badge plain">${tr('未観測・非束縛（推定値）', 'Unobserved, unbound (estimate)')}</span>`);
-  else if (!nuc.y) badges.push(`<span class="badge plain">${tr('未観測', 'Unobserved')}</span>`);
+  else if (nuc.fd) badges.push(`<span class="badge plain">${tr('NUBASE2020 では未発見', 'Undiscovered in NUBASE2020')}</span>`);
+  else if (nuc.ub) badges.push(`<span class="badge plain">${tr('未発見・非束縛（推定値）', 'Undiscovered, unbound (estimate)')}</span>`);
+  else if (!nuc.y) badges.push(`<span class="badge plain">${tr('未発見', 'Undiscovered')}</span>`);
 
-  const found = nuc.y ? tr(`${nuc.y} 年`, `${nuc.y}`) : nuc.rk ? tr(`${nuc.rk} 年`, `${nuc.rk}`) : tr('未観測', 'unobserved');
+  const found = nuc.y ? tr(`${nuc.y} 年`, `${nuc.y}`) : tr('未発見', 'undiscovered');
   const foundTitle = tr('この同位体が初めて確認された年（元素の発見年とは異なります）',
     'The year this isotope was first identified (not the year its element was discovered)');
   // key figures: half-life, the main decay (or the abundance of a stable nuclide), the year of discovery
@@ -190,7 +206,8 @@ export function detailHtml(nuc, idx, graph, { theme, minBranch = 1, generations 
     [tr('半減期', 'Half-life'), esc(fmtHalfLife(nuc)) || '—'],
     nuc.st
       ? [tr('天然存在比', 'Natural abundance'), nuc.ab !== undefined ? `${nuc.ab} %` : '—']
-      : [tr('主な崩壊', 'Main decay'), dom ? `${esc(modeLabel(dom.mode))} <small>${esc(fmtBranch(dom.raw))}</small>` : '—'],
+      : [tr('主な崩壊', 'Main decay'), dom ? `${esc(modeLabel(dom.mode))} <small>${esc(fmtBranch(dom.raw))}${
+        graph.largestSure(idx) ? '' : tr('（最多かは不明）', ' (may not be the largest)')}</small>` : '—'],
     [tr('発見', 'Discovered'), found, foundTitle],
   ]);
 
@@ -225,7 +242,7 @@ export function detailHtml(nuc, idx, graph, { theme, minBranch = 1, generations 
   const sources = [
     tr('# は系統性からの推定値', '# marks an estimate from systematics'),
     tr('核データ: NUBASE2020 (Kondev et al., Chin. Phys. C 45, 030001)', 'Nuclear data: NUBASE2020 (Kondev et al., Chin. Phys. C 45, 030001)'),
-    nuc.rk ? tr('発見機関: FRIB Discovery of Nuclides Project', 'Discovering laboratory: FRIB Discovery of Nuclides Project') : '',
+    nuc.rk || nuc.fd ? tr('発見機関: FRIB Discovery of Nuclides Project', 'Discovering laboratory: FRIB Discovery of Nuclides Project') : '',
     nuc.fyc || nuc.fyi ? `${tr('核分裂収率', 'Fission yields')}: ${esc(FY_SOURCE)}` : '',
     nuc.mk ? tr('質量: KTUY05 質量公式による予測（Koura et al., Prog. Theor. Phys. 113, 305 (2005)）',
       'Mass: predicted by the KTUY05 mass formula (Koura et al., Prog. Theor. Phys. 113, 305 (2005))') : '',
@@ -244,7 +261,8 @@ export function detailHtml(nuc, idx, graph, { theme, minBranch = 1, generations 
   ${facts}
   <div class="badges">${badges.join('')}</div>
   ${nuc.fuelNote ? `<p class="fuel-note" style="--c:${FUEL_GROUPS[nuc.fuel].color}">${esc(nuc.fuelNote)}</p>` : ''}
-  ${nuc.rkRef ? `<p class="rk-ref">${tr('理研での発見', 'Discovery at RIKEN')}: ${paperHtml(nuc.rkRef, nuc.rkDoi)}</p>` : ''}
+  ${nuc.rkRef ? `<p class="rk-ref">${tr('理研での発見', 'Discovery at RIKEN')}: ${paperHtml(nuc.rkRef, nuc.rkDoi)}</p>`
+    : nuc.fd ? `<p class="rk-ref">${tr(`発見（${esc(nuc.fd.lab)}）`, `Discovery (${esc(nuc.fd.lab)})`)}: ${paperHtml(nuc.fd.ref, nuc.fd.doi)}</p>` : ''}
 
   ${elementHtml(nuc, graph)}
 
@@ -287,6 +305,9 @@ function melodyButton(idx, graph, route) {
   return `<button class="melody" data-melody="${idx}" aria-pressed="false" title="${title}">${MELODY_LABEL.play}</button>`;
 }
 
+/** the heading of a flow with a step whose branch is not surely the largest */
+export const FLOW_EXAMPLE = tr('一例（主分岐は不明）', 'One possible path (main branch unknown)');
+
 // the route as a row of nuclides joined by arrows
 function chainFlowHtml(idx, graph, route) {
   // each step with the one before and after it, and the isomer it is known to go through (²³⁴Th → ²³⁴ᵐPa), if any
@@ -299,7 +320,7 @@ function chainFlowHtml(idx, graph, route) {
   const items = steps.map((s) => {
     if (s === null) return '<span class="flow-gap">…</span>';
     const arrow = s.via
-      ? `<span class="flow-arrow${s.fission ? ' fission' : ''}" style="--c:${arcColor(s.via.cat)}"><span>${esc(modeLabel(s.via.mode))}</span></span>`
+      ? `<span class="flow-arrow${s.fission ? ' fission' : ''}${s.unsure ? ' unsure' : ''}" style="--c:${arcColor(s.via.cat)}"><span>${esc(modeLabel(s.via.mode))}${s.unsure ? '?' : ''}</span></span>`
       : '';
     if (s.idx < 0) return `${arrow}<span class="flow-node unknown">Z=${s.z}, N=${s.n}</span>`;
     const nuc = graph.nuclides[s.idx];
@@ -315,7 +336,14 @@ function chainFlowHtml(idx, graph, route) {
       'After spontaneous fission (SF), the chain follows one example fragment as a rough guide (the heavy peak at A ≈ 140, or an even split for A ≳ 256; charge from the UCD approximation). Real fission gives many different nuclei and also releases neutrons.')}</p>`
     : '';
   const total = tr(`全 ${path.length - 1} 段の崩壊（中間を省略）`, `${path.length - 1} decay steps in all (the middle ones left out)`);
-  return `<div class="flow">${items.join('')}</div>${cut ? `<p class="muted small">${total}</p>` : ''}${fission}${isomers}`;
+  // a step whose branch is not surely the largest (only limits, or no value: ²³²Pu, α < 20 % beside EC ?) makes the
+  // whole path one example of where the decays may go
+  const unsure = path.some((s) => s.unsure)
+    ? `<p class="flow-caveat"><b>${FLOW_EXAMPLE}</b>${tr(
+      '「?」の段は、分岐比が上限・下限だけか値がないため、どの崩壊が最も多いかが決まりません。値の示された分岐のうち最も大きいものをたどっています。',
+      'At the steps marked “?”, the branching ratios are given only as limits or not at all, so which decay is the most frequent is not settled; the path takes the largest of the values given.')}</p>`
+    : '';
+  return `${unsure}<div class="flow">${items.join('')}</div>${cut ? `<p class="muted small">${total}</p>` : ''}${fission}${isomers}`;
 }
 
 // a step of the flow that goes through an isomer of the nuclide (²³⁴ᵐPa): what the data say about it, and that the
@@ -473,7 +501,7 @@ const checkHtml = (attr, label, { swatch = '', cls = '', checked = true, title =
 
 /** the classes of the LEGO chart, each of which can be switched off (data-lego) */
 export const legoChecksHtml = () => LEGO_PALETTE.map((c) => checkHtml(`data-lego="${c.key}"`, c.name, {
-  swatch: `--sw:${c.color}${c.dark ? `;--sw-dark:${c.dark}` : ''}`, cls: ' lego-sw',
+  swatch: `--sw:${c.color}${c.dark ? `;--sw-dark:${c.dark}` : ''}`, cls: ' lego-sw', title: c.title,
 })).join('');
 
 /** ordinary nuclei and the four kinds of hypernuclei (data-kind) */

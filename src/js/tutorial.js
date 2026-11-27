@@ -72,7 +72,7 @@ const speech = typeof speechSynthesis === 'undefined' ? null : speechSynthesis;
 // other voices may get wrong (陽子 is also a given name, ようこ). New subtitles need the same check.
 const READINGS = [
   ['周期表', 'しゅうきひょう'], ['核図表', 'かくずひょう'], ['核子', 'かくし'], ['陽子', 'ようし'], ['中性子', 'ちゅうせいし'],
-  ['縦軸', 'たてじく'], ['横軸', 'よこじく'], ['原子量', 'げんしりょう'], ['同位体', 'どういたい'], ['軽すぎ', 'かるすぎ'],
+  ['縦軸', 'たてじく'], ['横軸', 'よこじく'], ['原子量', 'げんしりょう'], ['質量数', 'しつりょうすう'], ['同位体', 'どういたい'], ['軽すぎ', 'かるすぎ'],
   ['重すぎ', 'おもすぎ'], ['谷底', 'たにぞこ'], ['谷を', 'たにを'], ['ハイパー核', 'ハイパーかく'], ['クォーク', 'クオーク'],
   ['2D', 'ツーディー'], ['3D', 'スリーディー'], ['≒', 'およそ'], ['+', 'たす'],
 ];
@@ -130,8 +130,8 @@ export class Tutorial {
         ms: 7500, enter: () => this.layout('column'), tiles: true, flat: true, axisNames: true,
       },
       {
-        text: tr('原子核には陽子のほかに<b>中性子</b>もあります。下の<b>横軸</b>は中性子の数 N。それぞれの元素を、原子量（≒ 陽子の数 + 中性子の数）から決まる位置へ動かします。',
-          'Besides protons, a nucleus also holds <b>neutrons</b>. The <b>horizontal axis</b> at the bottom is the neutron number, N. Each element now moves to the place set by its atomic weight, which is roughly the number of protons plus the number of neutrons.'),
+        text: tr('原子核には陽子のほかに<b>中性子</b>もあります。下の<b>横軸</b>は中性子の数 N。それぞれの元素を、代表的な原子核（天然にある元素は質量数が原子量に近いもの、ない元素はいちばん長生きのもの）の中性子の数の位置へ動かします。',
+          'Besides protons, a nucleus also holds <b>neutrons</b>. The <b>horizontal axis</b> at the bottom is the neutron number, N. Each element now moves to the neutron number of one of its nuclei: for an element found in nature, the one whose mass number is closest to its atomic weight; otherwise, its longest-lived one.'),
         ms: 8000, enter: () => this.layout('chart'), tiles: true, flat: true, axisNames: true,
       },
       {

@@ -1,6 +1,6 @@
 // The icons of the page: line drawings on a 24 × 24 grid, in the color of the text around them.
 // camera, help-circle, moon, music, volume-2 and volume-x are from Feather, Copyright (c) 2013-2023 Cole Bemis,
-// MIT License; languages, rotate-ccw and sun are from Lucide, Copyright (c) 2026 Lucide Icons and Contributors, ISC
+// MIT License; check, copy, languages, rotate-ccw and sun are from Lucide, Copyright (c) 2026 Lucide Icons and Contributors, ISC
 // License (see THIRD-PARTY-NOTICES). The magnifying glasses and the walking figure are drawn for this page.
 
 const NOTE = '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>';
@@ -8,6 +8,8 @@ const SPEAKER = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>';
 
 const PATHS = {
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
   zoom: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/>', // the magnifier with a plus
   // someone walking: head, a body leaning forward, arms and legs swinging
   walk: '<circle cx="13.5" cy="4" r="2"/><path d="M12.5 8 10.5 14.5M12.2 9.2 8.5 11.5 7.5 14.5M12.2 9.2l3.3 2.6 2.6.2M10.5 14.5l3.2 2.8.8 4.2M10.5 14.5 8.6 18.2 5.8 20.5"/>',
@@ -24,8 +26,8 @@ const PATHS = {
   voiceOn: `${SPEAKER}<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>`,
   voiceOff: `${SPEAKER}<line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>`,
 };
-// the magnifying glass sits in a smaller button
-const SIZE = { search: 16 };
+// the magnifying glass and the copy button are smaller buttons
+const SIZE = { search: 16, copy: 14, check: 14 };
 const STROKE = { search: 2.2 };
 
 /** the SVG of an icon */

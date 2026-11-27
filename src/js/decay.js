@@ -8,7 +8,7 @@ import { tr } from './i18n.js';
 // how thick an arrow is drawn for a branching ratio (%), on a logarithmic scale; unknown ratios in between
 const branchWeight = (val) => (val === null ? 0.35 : Math.min(1, Math.max(0.12, (Math.log10(val) + 3) / 5)));
 /** the ratio of branch d as written on an arrow: NUBASE's, or the share left to the β daughter (see netBeta) */
-export const branchLabel = (d) => (d.incl === undefined ? fmtBranch(d.raw) : fmtShare(d.op, d.val));
+export const branchLabel = (d) => (d.incl === undefined ? fmtBranch(d.raw) : fmtShare(d.lo, d.hi));
 
 // β-delayed emission. NUBASE's β⁻ ratio (β⁺, or EC where no β⁺ is listed) counts every β decay, those followed by
 // the emission of particles or by fission included, and gives those (β⁻n, β⁻2n, …, β⁺p, …, β⁺SF) as parts of it:
@@ -21,10 +21,11 @@ const DELAYED = {
 
 /**
  * The share (%) of the β decays of nuclide nuc (its NUBASE entry m) that end on the β daughter itself: the β ratio less
- * the delayed branches that have a value (written '=' or '~', and a lower limit '>' at its value), never below 0.
- * Upper limits ('<') and branches without a value are not taken off; the share is then at most the result (op '≤'),
- * otherwise about it ('~'). Null when nothing is taken off, or the β ratio itself has no value (or only a limit).
- * Returns { val, op, delayed: the delayed branches (NUBASE entries) } .
+ * its delayed branches, as a range { lo, hi }, never below 0. A delayed branch with a value (= or ~) is taken off as
+ * it is; an upper limit (<) takes off from nothing to the limit, a lower limit (>) from the limit to the whole β ratio,
+ * and a branch without a value (?) from nothing to the whole: ²²O, β⁻ 100 % with β⁻n < 22 %, leaves 78–100 % to ²²F.
+ * Null when there is no delayed branch, or the β ratio itself has no value (or only a limit).
+ * Returns { lo, hi, delayed: the delayed branches (NUBASE entries) } .
  */
 function netBeta(nuc, m) {
   const [mode, op, val] = m;
@@ -33,12 +34,29 @@ function netBeta(nuc, m) {
   const group = mode === 'B-' ? DELAYED['B-'] : plus ? DELAYED['B+'] : null;
   if (!group || val === null || (op !== '=' && op !== '~')) return null;
   const delayed = modes.filter((x) => group.includes(x[0]));
-  const taken = delayed.filter((x) => x[2] !== null && (x[1] === '=' || x[1] === '~' || x[1] === '>'));
-  if (!taken.length) return null;
-  const net = Math.max(0, val - taken.reduce((sum, x) => sum + x[2], 0));
-  const atMost = delayed.some((x) => !taken.includes(x) || x[1] === '>');
-  return { val: net, op: atMost ? '≤' : '~', delayed };
+  if (!delayed.length) return null;
+  let lo = val, hi = val;
+  for (const [, o, v] of delayed) {
+    const [least, most] = v === null ? [0, val] : o === '<' ? [0, v] : o === '>' ? [v, val] : [v, v];
+    lo -= most;
+    hi -= least;
+  }
+  return { lo: Math.max(0, lo), hi: Math.max(0, hi), delayed };
 }
+
+/** what a ratio as NUBASE writes it allows, as a range of % { lo, hi }: '=' and '~' a value, '<' and '>' a limit */
+function rangeOf(op, val) {
+  if (val === null) return { lo: 0, hi: 100 };
+  if (op === '<') return { lo: 0, hi: val };
+  if (op === '>') return { lo: val, hi: 100 };
+  return { lo: val, hi: val };
+}
+
+/**
+ * Whether branch d is surely the largest of `among`: no other can be as large, by the ranges of their ratios. Not so
+ * for ²³²Pu, α < 20 % beside EC with no value: the main route then takes α as one example of a path (step flag `unsure`).
+ */
+const surelyLargest = (d, among) => among.every((o) => o === d || o.hi < d.lo || (o.hi === d.lo && (o.lo < o.hi || d.lo < d.hi)));
 
 // The data are those of ground states, but a few β decays are known to go almost wholly to an isomer of the daughter.
 // ²³⁴Th: its β⁻ decay goes to ²³⁴ᵐPa (1.16 min), which decays on to ²³⁴U; the ground state of ²³⁴Pa (6.70 h) gets only
@@ -94,6 +112,12 @@ export class DecayGraph {
     return best && !best.fission ? best : null;
   }
 
+  /** whether the largest branch of nuclide i is surely the largest, by the ranges of the ratios (²³²Pu: no) */
+  largestSure(i) {
+    const best = this.largest(i);
+    return !best || surelyLargest(best, this.daughters(i));
+  }
+
   /** whether branch d of nuclide i passes the branching-ratio threshold (%); the main branch always does */
   keepBranch(i, d, minBranch) {
     if (this.nuclides[i].st) return false; // e.g. "A ?" on 206Pb: allowed by energy but never observed
@@ -120,11 +144,24 @@ export class DecayGraph {
       const shift = modeShift(mode);
       if (!shift) continue;
       const z = nuc.z + shift[0], n = nuc.n + shift[1];
-      const d = { mode, op, val, cat, z, n, to: this.find(z, n), raw: m };
+      const d = { mode, op, val, cat, z, n, to: this.find(z, n), raw: m, ...rangeOf(op, val) };
       // a β decay with delayed branches: its share without them, NUBASE's own ratio kept as incl (and in raw)
       const net = netBeta(nuc, m);
-      if (net) Object.assign(d, { op: net.op, val: net.val, incl: val, delayed: net.delayed });
-      out.push(d);
+      if (net) Object.assign(d, { op: net.lo === net.hi ? '~' : '≤', val: net.hi, lo: net.lo, hi: net.hi, incl: val, delayed: net.delayed });
+      // one arrow per daughter: NUBASE gives β⁺ both as a whole (B+, or EC where no B+ is listed) and in its parts
+      // (e+ and EC): ²²Na, β⁺ 100 % = e⁺ 90.57 % + EC 9.43 %, all to ²²Ne. The largest stays; the others are its `parts`.
+      const same = out.findIndex((x) => !x.fission && x.z === z && x.n === n);
+      if (same < 0) {
+        out.push(d);
+        continue;
+      }
+      const keep = larger(out[same], d), part = keep === d ? out[same] : d;
+      keep.parts = [...(keep.parts || []), part.raw, ...(part.parts || [])];
+      out[same] = keep;
+    }
+    // a ratio without a value is at most what the other branches leave
+    for (const d of out) {
+      if (d.val === null) d.hi = Math.max(0, 100 - out.reduce((sum, x) => (x === d ? sum : sum + x.lo), 0));
     }
     return out;
   }
@@ -194,7 +231,8 @@ export class DecayGraph {
    *                       decay chain the diagram draws (e.g. ²⁶²Db: α 48 % rather than SF 52 %);
    *   'main'            — at each step the largest branch, fission included.
    * When the 'avoid' route runs into a nucleus with no decay data (e.g. ²⁷⁸Bh → ²⁷⁴Db by α), the 'main' route is
-   * used instead. Where fission is taken (or is the only way on), the path goes on from one typical fragment (step flagged
+   * used instead. A step whose branch is not surely the largest of those it was chosen from is flagged `unsure`
+   * (surelyLargest): the path is then one example. Where fission is taken (or is the only way on), the path goes on from one typical fragment (step flagged
    * `fission`): the heavy peak (A ≈ 140), or half the nucleus for the symmetric fission above A ≈ 256, with the
    * charge of the unchanged-charge-distribution estimate. Real fission gives a wide spread of fragments and emits
    * neutrons, so that part is only a guide.
@@ -212,26 +250,29 @@ export class DecayGraph {
     for (let s = 0; s < maxSteps; s++) {
       if (this.nuclides[i].st) break;
       const d = route === 'main' ? this.dominant(i) : this.largestDecay(i);
+      const all = this.daughters(i);
       if (!d) {
         const f = this.largest(i);
         if (!f || !f.fission) break;
         const frag = f.fragments[0];
         const j = this.find(frag.z, frag.n);
+        const unsure = !surelyLargest(f, all);
         if (j < 0 || seen.has(j)) {
-          path.push({ idx: -1, via: f, z: frag.z, n: frag.n, fission: true });
+          path.push({ idx: -1, via: f, z: frag.z, n: frag.n, fission: true, unsure });
           break;
         }
-        path.push({ idx: j, via: f, fission: true });
+        path.push({ idx: j, via: f, fission: true, unsure });
         seen.add(j);
         i = j;
         continue;
       }
+      const unsure = !surelyLargest(d, route === 'main' ? all : all.filter((x) => !x.fission));
       if (d.to < 0) {
-        path.push({ idx: -1, via: d, z: d.z, n: d.n });
+        path.push({ idx: -1, via: d, z: d.z, n: d.n, unsure });
         break;
       }
       if (seen.has(d.to)) break;
-      path.push({ idx: d.to, via: d });
+      path.push({ idx: d.to, via: d, unsure });
       seen.add(d.to);
       i = d.to;
     }

@@ -41,9 +41,9 @@ const island = optional('island');
  */
 export const loadNuclideTables = async () => Promise.all([read(await nubase, 'nuclides'), predicted, island]);
 
-const FILES = ['elements', 'abundances', 'riken-discoveries', 'fission-yields', 'fuel-cycle', 'driplines', 'hypernuclei',
+const FILES = ['elements', 'abundances', 'discoveries', 'fission-yields', 'fuel-cycle', 'driplines', 'hypernuclei',
   'hyper-driplines', 'sources'];
-const [elements, abundances, riken, fission, fuel, drip, hyper, hyperDrip, sources] = await Promise.all(FILES.map(load)).catch((err) => {
+const [elements, abundances, discoveries, fission, fuel, drip, hyper, hyperDrip, sources] = await Promise.all(FILES.map(load)).catch((err) => {
   showLoadError(err);
   return new Promise(() => {}); // the modules that need the data never run, and the message stays
 });
@@ -57,8 +57,11 @@ export const ELEMENT_DISCOVERY = elements.elements.map((e) => e.discovered);
 /** protosolar abundances: label, cite, and per Z { num, mass, rank } (shares of all atoms and of all mass) or null */
 export const ABUNDANCE = { ...abundances, label: tr(abundances.label, abundances.label_en) };
 
-/** nuclides first identified at RIKEN [Z, A, year, reference, doi] */
-export const RIKEN_NUCLIDES = riken.nuclides;
+/**
+ * discoveries of nuclides from the FRIB Discovery of Nuclides Project [Z, A, year, lab, reference, doi]: the build keeps
+ * those made at RIKEN and those that NUBASE2020 does not date (scripts/build.py)
+ */
+export const DISCOVERIES = discoveries.nuclides;
 /** thermal fission of ²³⁵U: [Z, A, cumulative yield, independent yield] */
 export const FISSION_YIELDS = fission.yields;
 export const FY_SOURCE = fission.source;

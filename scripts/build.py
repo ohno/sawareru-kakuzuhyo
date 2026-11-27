@@ -12,6 +12,8 @@ data/nuclides/092-U.yaml ... -> data/nuclides.json, with the short keys of the a
   BR -> d, as [mode, relation, value %, NUBASE text]
   Iso -> iso: Lbl -> f, Ex -> e, Ex_est -> ee, T -> ts or st / pu, Jpi -> j, BR -> d (the texts joined by ;)
 data/abundances.yaml -> data/abundances.json, per Z, with the share of all atoms and the rank worked out.
+data/discoveries.yaml -> data/discoveries.json, only the rows the app uses: the nuclides found at RIKEN, and those
+  whose discovery NUBASE2020 does not record (no Year), which the app counts as discovered from this list.
 Any other data/<name>.yaml -> data/<name>.json as it is, each table {columns: [...], rows: [...]} becoming its rows.
 data/README.md -> data/sources.json: its table of sources, which the app shows as its own list of sources, and the same
   table in English (under its heading "English"), shown when the app is in English.
@@ -180,6 +182,12 @@ def abundances(data):
 SOURCE_COLUMNS = {"ja": ["ファイル", "内容", "出典"], "en": ["File", "Contents", "Source"]}
 
 
+def discoveries(data, nucs):
+    """the FRIB list cut to the rows the app reads (see the top of this file); rows [Z, A, year, lab, reference, doi]"""
+    dated = {(r["z"], r["n"]) for r in nucs if "y" in r}
+    return {"nuclides": [r for r in data["nuclides"] if r[3] == "RIKEN" or (r[0], r[1] - r[0]) not in dated]}
+
+
 def inline_html(text):
     """the Markdown of a table cell ([text](url), **bold**, *italic*, `code`) -> HTML"""
     text = html.escape(text, quote=False)
@@ -251,7 +259,11 @@ def main():
     write("nuclides", {"nuclides": nucs})
     for path in sorted(DATA.glob("*.yaml")):
         data = tables(load(path), path.name)
-        write(path.stem, abundances(data) if path.stem == "abundances" else data)
+        if path.stem == "abundances":
+            data = abundances(data)
+        elif path.stem == "discoveries":
+            data = discoveries(data, nucs)
+        write(path.stem, data)
     with_ktuy = not args.no_ktuy and ktuy.build({(r["z"], r["n"]) for r in nucs}, write, args.raw)
     if not with_ktuy:
         print("no predicted nuclei, no island of stability")

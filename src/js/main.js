@@ -2,7 +2,7 @@
 // What is drawn, computed or animated lives in the other modules; this one holds the selection and the settings.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RIKEN_NUCLIDES, SOURCES, showLoadError } from './data.js';
+import { SOURCES, showLoadError } from './data.js';
 import { loadNuclides } from './nuclides.js';
 import { METRICS, LEGO_RED, nucText, cssRgb, inkFor, fmtHalfLife } from './nuclear.js';
 import { NuclideChart, EMPH } from './chart.js';
@@ -156,10 +156,38 @@ async function init() {
   $('#stats').innerHTML = statsHtml({
     total: nuclides.filter((n) => !n.x && !n.p).length,
     stable: nuclides.filter((n) => n.st).length,
-    riken: RIKEN_NUCLIDES.length,
+    riken: nuclides.filter((n) => n.rk).length,
   });
   $('#howto').innerHTML = howtoHtml();
   $('#sources').innerHTML = sourcesHtml(SOURCES);
+  // under the sources: copies the address of the public page; where the clipboard is refused (an old browser, a framed page)
+  // the address is selected instead, to be copied by hand
+  const shareUrl = $('#share-url');
+  shareUrl.addEventListener('focus', () => shareUrl.select());
+  $('#share-copy').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(shareUrl.value);
+      copied = true;
+    } catch {
+      shareUrl.select();
+      try { copied = document.execCommand('copy'); } catch { /* stays selected */ }
+    }
+    // copied: a check mark for two seconds; otherwise the address stays selected
+    const label = copied ? tr('コピーしました', 'Copied') : tr('選択しました。Ctrl+C でコピーできます', 'Selected: press Ctrl+C to copy');
+    btn.innerHTML = icon(copied ? 'check' : 'copy');
+    btn.classList.toggle('done', copied);
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
+    clearTimeout(btn.timer);
+    btn.timer = setTimeout(() => {
+      btn.innerHTML = icon('copy');
+      btn.classList.remove('done');
+      btn.title = tr('URL をコピー', 'Copy the address');
+      btn.setAttribute('aria-label', btn.title);
+    }, 2000);
+  });
   $('#lego-checks').innerHTML = legoChecksHtml();
   $('#kind-checks').innerHTML = kindChecksHtml();
   $('#layer-checks').innerHTML = layerChecksHtml();

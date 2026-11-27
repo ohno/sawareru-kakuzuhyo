@@ -75,8 +75,8 @@
           <span class="sub-legend" data-en="Classes (colors of RIKEN's LEGO chart of nuclides)">核の分類（理研レゴ核図表の配色）</span>
           <div id="lego-checks" class="checks-sub"></div><!-- filled by main.js -->
           <span class="sub-legend" data-en="Estimates">推定値</span>
-          <label class="check" data-en="Unobserved nuclei (estimates)"><input type="checkbox" id="opt-unobs" checked> 未観測核（推定値）</label>
-          <label class="check" data-en="Unobserved unbound nuclei (estimates)" data-en-title="Unobserved nuclei that NUBASE2020 lists with estimates only and expects not to hold together (³Li, ⁵Be, ⁶B, …)" title="NUBASE2020 に推定値だけが載っている、原子核として結合しないと見積もられた未観測の核（³Li、⁵Be、⁶B など）"><input type="checkbox" id="opt-unbound"> 未観測の非束縛核（推定値）</label>
+          <label class="check" data-en="Undiscovered nuclei (estimates)"><input type="checkbox" id="opt-unobs" checked> 未発見の核（推定値）</label>
+          <label class="check" data-en="Undiscovered unbound nuclei (estimates)" data-en-title="Undiscovered nuclei that NUBASE2020 lists with estimates only and expects not to hold together (³Li, ⁵Be, ⁶B, …)" title="NUBASE2020 に推定値だけが載っている、原子核として結合しないと見積もられた未発見の核（³Li、⁵Be、⁶B など）"><input type="checkbox" id="opt-unbound"> 未発見の非束縛核（推定値）</label>
           <span class="sub-legend" data-en="Nuclear fuel cycle">核燃料サイクル</span>
           <label class="check" data-en="Fission products (FP)"><input type="checkbox" data-mode="fp"> 核分裂生成物（FP）</label>
           <label class="check" data-en="Long-lived fission products (LLFP)"><input type="checkbox" data-mode="llfp"> 長寿命核分裂生成物（LLFP）</label>
@@ -180,6 +180,14 @@
         <summary data-en="Data sources">データの出典</summary>
         <div class="sec-body">
           <dl id="sources" class="sources"></dl><!-- filled by main.js: the table of data/README.md -->
+          <!-- under the last entry of the list (how to cite this project): the page's QR code and address -->
+          <div class="share">
+            <img class="share-qr" src="img/qr.svg" width="200" height="200" alt="このページの QR コード" data-en-alt="QR code of this page">
+            <div class="share-url">
+              <input id="share-url" type="text" value="https://ohno.github.io/sawareru-kakuzuhyo/" readonly aria-label="このページの URL" data-en-aria-label="Address of this page">
+              <button id="share-copy" type="button" class="copy-btn" data-icon="copy" title="URL をコピー" aria-label="URL をコピー" data-en-title="Copy the address" data-en-aria-label="Copy the address"></button>
+            </div>
+          </div>
           <p class="caption" data-en-html='The source code and the licenses are on <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">GitHub</a>.'>ソースコードとライセンスは <a href="https://github.com/ohno/sawareru-kakuzuhyo" target="_blank" rel="noopener">GitHub</a> にあります。</p>
         </div>
       </details>

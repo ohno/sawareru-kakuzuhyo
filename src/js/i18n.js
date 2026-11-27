@@ -37,8 +37,8 @@ export function setLang(lang) {
 /**
  * Puts index.html into English. Its Japanese stays in the markup; the English rides along in data-en attributes:
  * data-en (the element's own text: its first text node, so a check box or a link inside stays), data-en-html (the
- * whole content), and data-en-title, -aria-label, -placeholder, -label (optgroup) and -content (meta) for those
- * attributes.
+ * whole content), and data-en-title, -aria-label, -placeholder, -label (optgroup), -content (meta) and -alt (img)
+ * for those attributes.
  */
 export function translatePage(root = document) {
   document.documentElement.lang = LANG;
@@ -54,7 +54,7 @@ export function translatePage(root = document) {
     text.textContent = before + el.dataset.en + after;
   }
   for (const el of root.querySelectorAll('[data-en-html]')) el.innerHTML = el.dataset.enHtml;
-  const attrs = { enTitle: 'title', enAriaLabel: 'aria-label', enPlaceholder: 'placeholder', enLabel: 'label', enContent: 'content' };
+  const attrs = { enTitle: 'title', enAriaLabel: 'aria-label', enPlaceholder: 'placeholder', enLabel: 'label', enContent: 'content', enAlt: 'alt' };
   for (const [key, attr] of Object.entries(attrs)) {
     const sel = `[data-${key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())}]`;
     for (const el of root.querySelectorAll(sel)) el.setAttribute(attr, el.dataset[key]);

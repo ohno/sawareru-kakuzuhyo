@@ -30,7 +30,7 @@ export const CATEGORIES = {
   p: { name: tr('陽子放出', 'Proton emission'), light: '#f5a35a', dark: '#ef8f3e', arc: '#f07a12' },
   n: { name: tr('中性子放出', 'Neutron emission'), light: '#a796ea', dark: '#9581e3', arc: '#7a5ee3' },
   cl: { name: tr('クラスター等', 'Cluster and other'), light: '#58c4b4', dark: '#3fb3a2', arc: '#109e8c' },
-  un: { name: tr('未観測（推定値）', 'Unobserved (estimate)'), light: '#dedcd5', dark: '#3d4149' },
+  un: { name: tr('未発見・崩壊のデータなし', 'Undiscovered, or no decay data'), light: '#dedcd5', dark: '#3d4149' },
 };
 export const categoryHex = (cat, theme) => CATEGORIES[cat][theme] ?? CATEGORIES[cat].light;
 export const arcColor = (cat) => CATEGORIES[cat].arc || '#888';
@@ -298,11 +298,14 @@ export function halfLifeColor(nuc) {
 export const HL_CSS = `linear-gradient(90deg, ${HL_STOPS.map(([v, c]) => `${c} ${(((v - HL_RANGE[0]) / (HL_RANGE[1] - HL_RANGE[0])) * 100).toFixed(1)}%`).join(', ')})`;
 
 // The RIKEN Nishina Center LEGO chart of nuclides (exhibit legend): black = stable, red = unstable and discovered,
-// yellow = unstable and not yet discovered, green = discovered at RIKEN, blue = superheavy nucleus discovered at RIKEN
+// yellow = unstable and not yet discovered, green = discovered at RIKEN, blue = superheavy nucleus discovered at RIKEN.
+// Discovered here means recorded in NUBASE2020 or in the FRIB Discovery of Nuclides list (version of 2026-09-25).
 export const LEGO_PALETTE = [
   { key: 'st', name: tr('安定核', 'Stable nuclei'), color: '#1b1b1d', dark: '#e9e6dc' }, // black would vanish on the dark board
   { key: 'found', name: tr('不安定核（発見済み）', 'Unstable nuclei (discovered)'), color: '#c91a09' },
-  { key: 'unfound', name: tr('不安定核（未発見）', 'Unstable nuclei (undiscovered)'), color: '#f5c400' },
+  { key: 'unfound', name: tr('不安定核（未発見・2026年9月時点）', 'Unstable nuclei (undiscovered as of Sep 2026)'), color: '#f5c400',
+    title: tr('NUBASE2020 にも、FRIB の発見核種の一覧（2026年9月25日版）にも、発見の記録がない核',
+      "Nuclei with no recorded discovery in NUBASE2020 or in FRIB's Discovery of Nuclides list (version of 25 September 2026)") },
   { key: 'riken', name: tr('理研で発見した原子核', 'Nuclei discovered at RIKEN'), color: '#237841' },
   { key: 'rikenSH', name: tr('理研で発見した超重原子核', 'Superheavy nuclei discovered at RIKEN'), color: '#0055bf' },
 ];
@@ -349,9 +352,10 @@ export function fmtBranch(m) {
   const v = val >= 0.1 ? +val.toPrecision(4) : val.toExponential(1);
   return `${pre}${v} %`;
 }
-/** a share (%) worked out from the data rather than given in it, with its relation: ≈ (or ≤, at most) */
-export function fmtShare(op, val) {
-  if (val === 0) return '0 %';
-  const v = val >= 10 ? String(+val.toPrecision(3)) : val >= 0.01 ? val.toPrecision(2) : val.toExponential(1);
-  return `${op === '≤' ? '≤' : '≈'} ${v} %`;
+/** a share (%) worked out from the data rather than given in it, as a range: ≈ a value, ≤ a limit, or from–to */
+export function fmtShare(lo, hi) {
+  if (hi === 0) return '0 %';
+  const f = (v) => (v >= 10 ? String(+v.toPrecision(3)) : v >= 0.01 ? v.toPrecision(2) : v.toExponential(1));
+  if (lo === hi) return `≈ ${f(hi)} %`;
+  return lo > 0 ? `${f(lo)}–${f(hi)} %` : `≤ ${f(hi)} %`;
 }

@@ -12,14 +12,15 @@
 //   worked out here (nuclear.js, fuel.js)
 //     a, s            mass number, element symbol
 //     ba, sn, sp, s2n, s2p, qa, qb, qec   B/A, separation energies and Q values (keV)
-//     ub              never observed and, by NUBASE's own estimate, not even bound (e.g. ³Li, ⁵Be, ⁶B)
+//     ub              never discovered and, by NUBASE's own estimate, not even bound (e.g. ³Li, ⁵Be, ⁶B)
 //     rk, rkRef, rkDoi   first identified at RIKEN: year, paper, DOI
-//     x               found at RIKEN after NUBASE2020 was compiled: a bare entry, shown only among RIKEN's discoveries
-//     p, mk           predicted by the KTUY05 mass formula and not yet observed; the mass is KTUY05's
+//     fd              discovered by the FRIB list alone (NUBASE2020 gives no year): { lab, ref, doi }; y is FRIB's year
+//     x               missing from NUBASE2020 (found since, by the FRIB list): a bare entry
+//     p, mk           predicted by the KTUY05 mass formula and not yet discovered; the mass is KTUY05's
 //     isl             of an element not yet discovered (Z > 118): shown only with the island of stability
 //     fyc, fyi        cumulative and independent yield in the thermal fission of ²³⁵U
 //     fuel, fuelNote  group in the nuclear fuel cycle and what to say about it
-import { ELEMENTS, RIKEN_NUCLIDES, loadNuclideTables } from './data.js';
+import { ELEMENTS, DISCOVERIES, loadNuclideTables } from './data.js';
 import { deriveFromMasses, bindingPerNucleon, nuclideKey } from './nuclear.js';
 import { annotateFuel } from './fuel.js';
 
@@ -28,7 +29,7 @@ export async function loadNuclides() {
   const [nubase, predicted, island] = await loadNuclideTables();
   const nuclides = nubase.nuclides;
   deriveFromMasses(nuclides);
-  addRikenDiscoveries(nuclides);
+  addDiscoveries(nuclides);
   for (const nuc of nuclides) {
     if (!nuc.y && (nuc.pu || ['sn', 's2n', 'sp', 's2p'].some((k) => nuc[k] !== undefined && nuc[k] < 0))) nuc.ub = 1;
   }
@@ -40,28 +41,34 @@ export async function loadNuclides() {
 const byZN = (nuclides) => new Map(nuclides.map((nuc) => [nuclideKey(nuc.z, nuc.n), nuc]));
 
 /**
- * Marks the nuclides credited to RIKEN by the FRIB Discovery of Nuclides Project. Those found after NUBASE2020 and
- * missing from it are appended as bare entries (flag x).
+ * Adds the discoveries of the FRIB Discovery of Nuclides Project. A nuclide counts as discovered when NUBASE2020 or
+ * this list records its discovery (NUBASE2020's year comes first); those missing from NUBASE2020 are appended as bare
+ * entries (flag x). The nuclides credited to RIKEN are marked (rk).
  */
-function addRikenDiscoveries(nuclides) {
+function addDiscoveries(nuclides) {
   const known = byZN(nuclides);
-  for (const [z, a, year, ref, doi] of RIKEN_NUCLIDES) {
+  for (const [z, a, year, lab, ref, doi] of DISCOVERIES) {
     let nuc = known.get(nuclideKey(z, a - z));
     if (!nuc) {
-      nuc = { z, n: a - z, a, s: ELEMENTS[z][0], x: 1, y: year };
+      nuc = { z, n: a - z, a, s: ELEMENTS[z][0], x: 1 };
       nuclides.push(nuc);
     }
-    nuc.rk = year;
-    nuc.rkRef = ref;
-    nuc.rkDoi = doi;
-    if (!nuc.y) nuc.y = year; // observed since NUBASE2020 was compiled
+    if (!nuc.y) {
+      nuc.y = year;
+      nuc.fd = { lab, ref, doi };
+    }
+    if (lab === 'RIKEN') {
+      nuc.rk = year;
+      nuc.rkRef = ref;
+      nuc.rkDoi = doi;
+    }
   }
 }
 
 /**
  * Adds the not-yet-discovered nuclei that the KTUY05 mass formula predicts to be bound (rows [Z, N, mass excess],
  * out to its drip lines, N ≤ 200) — the yellow blocks of RIKEN's LEGO chart, whose heights came from the same
- * formula. Nuclides found after NUBASE2020 (the RIKEN extras) take their mass from it too.
+ * formula. Nuclides missing from NUBASE2020 (flag x) take their mass from it too.
  */
 function addPredicted(nuclides, rows) {
   const known = byZN(nuclides);
